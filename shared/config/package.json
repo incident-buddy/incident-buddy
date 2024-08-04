@@ -1,0 +1,13 @@
+{
+  "name": "config",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc ./src/index.ts --outDir ./dist --declaration"
+  },
+  "dependencies": {
+    "yaml": "2.5.0",
+    "zod": "3.23.8"
+  }
+}

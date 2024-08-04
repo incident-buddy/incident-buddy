@@ -1,0 +1,150 @@
+integration:
+  slack:
+    baseChannelId: &baseChannelId C0606T6A3B5
+    channelPrefix: inc_
+  datastore:
+    type: dynamodb
+    region: ap-northeast-1
+    table: incident
+stdField:
+  description:
+    label: 概要
+    placeholder: 決済システムが500エラー
+  status:
+    label: ステータス
+    items:
+      - code: open
+        type: open
+        label: 未対応
+      - code: inProgress
+        type: open
+        label: 対応中
+      - code: resolved
+        type: closed
+        label: 解決済
+  level:
+    label: インシデントレベル
+    items:
+      - code: sev1
+        label: ":police-car-light: SEV1"
+      - code: sev2
+        label: ":prohibited: SEV2"
+      - code: sev3
+        label: ":warning: SEV3"
+      - code: sev4
+        label: ":man-facepalming: SEV4"
+      - code: sev5
+        label: ":eyes: SEV5"
+  role:
+    label: ロール
+    items:
+      - code: commander
+        label: インシデントコマンダー
+      - code: effectInvestigator
+        label: 影響調査担当
+      - code: causeInvestigator
+        label: 原因調査担当
+customField:
+  service:
+    type: multiSelect
+    label: 影響サービス
+    items:
+      - code: delivery
+        label: "配送管理"
+      - code: merchandise
+        label: "商品管理"
+      - code: claim
+        label: "請求管理"
+  triage:
+    type: singleSelect
+    label: 温度感
+    items:
+      - code: emergency
+        label: ":fire: サービスに影響が出ており、緊急の対応が必要"
+      - code: investigate
+        label: ":male-detective: サービスへの影響は不明で、調査が必要"
+      - code: maintain
+        label: ":relieved: サービスへの影響はなし（予防措置をとる）"
+  affectedCustomerCount:
+    type: number
+    label: 影響顧客数
+  cause:
+    type: text
+    label: 障害の原因
+notificationGroups:
+  executive: &executive
+    label: 事業部長
+    ids:
+      - U06042X1P29 # demo EC事業部長
+  teamDelivery: &teamDelivery
+    label: 配送管理チーム
+    ids:
+      - U05V6EBAGG7 # demo 配送T dev
+      - U05V6EBD087 # demo 配送T dev
+      - U060W0FU9ME # demo 配送T mgr
+  teamMerchandise: &teamMerchandise
+    label: 商品管理チーム
+    ids:
+      - U06070MSEF4 # demo 商品T dev
+      - U06042WPP9B # demo 商品T dev
+      - U0609DVTLKW # demo 商品T mgr
+  teamClaim: &teamClaim
+    label: 請求管理チーム
+    ids:
+      - U060KKCKK17 # demo 請求T dev
+      - U05V6EBJ3AB # demo 請求T dev
+      - U0606T6F61H # demo 請求T mgr
+  sre: &sre
+    label: SRE
+    ids:
+      - U0606T6PQG3 # demo SRE
+  pdm: &pdm
+    label: PdM
+    ids:
+      - U06070MR5DG # demo PdM
+createIncident:
+  modal:
+    title: インシデントの疑いを報告
+    elements:
+      - type: header
+        text: インシデントの疑いを報告
+      - type: text
+        text: インシデントの疑いを報告します。
+      - type: fillField
+        field: custom.services
+        label: 影響サービス
+      - type: fillField
+        field: custom.triage
+        label: 温度感
+      - type: fillField
+        field: std.description
+        label: 発生している事象
+      - type: note
+        text: 今わかっていることをざっくりで構いません
+    submit:
+      label: 報告
+    cancel:
+      label: キャンセル
+actionListener:
+  - listen: inc/createIncident
+    condition: "std.status.type == 'open'"
+    exec:
+      action: inc/cyclicPost
+      interval: 15m
+      elements:
+        - type: text
+          text: 状況をアップデートしましょう
+        - type: announce
+notificationPolicies:
+  - label: "[緊急] 配送サービス"
+    condition: "(custom.triage.code == 'emergency' || std.level.code == 'sev1') && custom.service.code == 'delivery'"
+    recipients:
+      - *executive
+      - *teamDelivery
+      - *sre
+      - *pdm
+fallbackNotificationPolicy:
+  - *teamDelivery
+  - *teamMerchandise
+  - *teamClaim
+  - *sre

@@ -4,7 +4,7 @@
   "main": "./dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc ./src/index.ts --outDir ./dist --declaration"
+    "build": "tsc --outDir ./dist --declaration"
   },
   "dependencies": {
     "yaml": "2.5.0",

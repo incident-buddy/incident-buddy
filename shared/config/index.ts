@@ -1,10 +1,10 @@
 import { readFile } from "node:fs/promises";
+import type { FillFieldElement } from "model/ui-element";
 import { parse } from "yaml";
 import { z } from "zod";
 import { CustomField, StdField } from "./field";
 import { Flow } from "./flow";
 import { Integration } from "./integrations";
-import type { FillFieldElement } from "./model/ui-element.ts";
 import {
 	FallbackNotificationPolicy,
 	NotificationGroups,

@@ -1,5 +1,5 @@
+import { ModalElement, PostElement } from "model/ui-element";
 import { z } from "zod";
-import { ModalElement, PostElement } from "./model/ui-element";
 
 const CreateIncidentStep = z.object({
 	name: z.string(),

@@ -2,7 +2,8 @@
   "name": "bot-function",
   "type": "module",
   "scripts": {
-    "build": "tsx build.ts"
+    "build": "tsx build.ts",
+    "test": "glob -c \"node --import tsx --no-warnings --test\" \"./**/*.test.ts\""
   },
   "dependencies": {
     "@aws-sdk/client-sqs": "3.621.0",

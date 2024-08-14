@@ -1,3 +1,4 @@
+import { readdir } from "node:fs";
 import { App, AwsLambdaReceiver } from "@slack/bolt";
 import type {
   AwsCallback,
@@ -5,13 +6,21 @@ import type {
 } from "@slack/bolt/dist/receivers/AwsLambdaReceiver.js";
 import { Config } from "config";
 
-const { signingSecret, token } = loadEnv();
+const { signingSecret, token, configPath } = loadEnv();
 
 const receiver = new AwsLambdaReceiver({ signingSecret });
 
 const app = new App({ token, receiver });
-const config = await Config.load("config.yaml");
-console.log(config);
+console.log(configPath);
+const config = await Config.load(configPath);
+
+app.command("/hello", async ({ ack, body, client }) => {
+  await ack();
+  await client.chat.postMessage({
+    channel: body.channel_id,
+    text: JSON.stringify(config),
+  });
+});
 
 export const lambdaHandler = async (
   event: AwsEvent,
@@ -22,7 +31,11 @@ export const lambdaHandler = async (
   return handler(event, context, callback);
 };
 
-function loadEnv(): { signingSecret: string; token: string } {
+function loadEnv(): {
+  signingSecret: string;
+  token: string;
+  configPath: string;
+} {
   const signingSecret = process.env.SLACK_SIGNING_SECRET;
   if (!signingSecret) {
     throw new Error("SLACK_SIGNING_SECRET is not defined");
@@ -33,5 +46,7 @@ function loadEnv(): { signingSecret: string; token: string } {
     throw new Error("SLACK_BOT_TOKEN is not defined");
   }
 
-  return { signingSecret, token };
+  const configPath = process.env.CONFIG_PATH ?? "/opt/config.yaml";
+
+  return { signingSecret, token, configPath };
 }

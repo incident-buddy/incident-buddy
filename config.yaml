@@ -22,7 +22,7 @@ stdField:
       - code: resolved
         type: closed
         label: 解決済
-  level:
+  severity:
     label: インシデントレベル
     items:
       - code: sev1

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 const SlackIntegration = z.object({
   baseChannelId: z.string(),
@@ -8,7 +8,7 @@ const SlackIntegration = z.object({
 const DynamoDBIntegration = z.object({
   type: z.literal("dynamodb"),
   region: z.string(),
-  tableName: z.string(),
+  table: z.string(),
 });
 
 export const Integration = z.object({

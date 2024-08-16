@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "glob -c \"node --import tsx --no-warnings --test\" \"./**/*.test.ts\""
+    "test": "glob -i \"node_modules/**/*\" -c \"node --import tsx --no-warnings --test\" \"./**/*.test.ts\""
   },
   "workspaces": [
     "bot-function",
@@ -14,7 +14,7 @@
   "devDependencies": {
     "@tsconfig/node20": "20.1.4",
     "@types/node": "20.14.14",
-    "biome": "0.3.3",
+    "biome": "0.2.2",
     "tsx": "4.16.2",
     "typescript-language-server": "4.3.3"
   }

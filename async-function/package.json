@@ -3,7 +3,7 @@
   "devDependencies": {
     "@tsconfig/node20": "20.1.4",
     "@types/node": "20.14.14",
-    "biome": "0.3.3",
+    "biome": "0.2.2",
     "glob": "11.0.0",
     "tsx": "4.17.0",
     "typescript-language-server": "4.3.3"

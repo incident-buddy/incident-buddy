@@ -136,7 +136,7 @@ actionListener:
           text: 状況をアップデートしましょう
 notificationPolicies:
   - label: "[緊急] 配送サービス"
-    condition: "(custom.triage.code == 'emergency' || std.level.code == 'sev1') && custom.service.code == 'delivery'"
+    condition: "(custom.triage.code === 'emergency' || std.level.code === 'sev1') && custom.service.code === 'delivery'"
     recipients:
       - *executive
       - *teamDelivery

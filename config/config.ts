@@ -32,6 +32,10 @@ export class Config {
     this._config = parsed;
   }
 
+  toString(): string {
+    return JSON.stringify(this._config, null, 2);
+  }
+
   static async load(path: string): Promise<Config> {
     const file = await readFile(path);
     const rawConfig = parse(file.toString("utf-8"));

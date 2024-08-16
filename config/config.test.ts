@@ -5,4 +5,5 @@ import { Config } from "./config";
 test("Config.load", async (t) => {
   const config = await Config.load("config.yaml");
   assert(config);
+  console.log(config.toString());
 });

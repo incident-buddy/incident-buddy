@@ -1,17 +1,20 @@
-import { ModalElement, PostElement } from "model/ui-element";
+import { ModalElement, PostElement } from "model/ui-element.ts";
 import { z } from "zod";
-
-export const CreateIncident = z.object({
-  modal: z.object({
-    title: z.string(),
-    elements: z.array(ModalElement),
-    submit: z.object({
-      label: z.string(),
-    }),
-    cancel: z.object({
-      label: z.string(),
-    }),
+export const CreateIncidentModalConfig = z.object({
+  title: z.string(),
+  elements: z.array(ModalElement),
+  submit: z.object({
+    label: z.string(),
   }),
+  cancel: z.object({
+    label: z.string(),
+  }),
+});
+export type CreateIncidentModalConfig = z.infer<
+  typeof CreateIncidentModalConfig
+>;
+export const CreateIncident = z.object({
+  modal: CreateIncidentModalConfig,
 });
 
 const CyclicPostAction = z.object({

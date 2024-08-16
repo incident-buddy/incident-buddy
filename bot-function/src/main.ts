@@ -1,26 +1,17 @@
-import { readdir } from "node:fs";
 import { App, AwsLambdaReceiver } from "@slack/bolt";
 import type {
   AwsCallback,
   AwsEvent,
-} from "@slack/bolt/dist/receivers/AwsLambdaReceiver.js";
+} from "@slack/bolt/dist/receivers/AwsLambdaReceiver.d.ts";
 import { Config } from "config";
+import { setupBot } from "./setup-bot.ts";
 
 const { signingSecret, token, configPath } = loadEnv();
 
 const receiver = new AwsLambdaReceiver({ signingSecret });
-
 const app = new App({ token, receiver });
-console.log(configPath);
 const config = await Config.load(configPath);
-
-app.command("/hello", async ({ ack, body, client }) => {
-  await ack();
-  await client.chat.postMessage({
-    channel: body.channel_id,
-    text: JSON.stringify(config),
-  });
-});
+setupBot(app, config);
 
 export const lambdaHandler = async (
   event: AwsEvent,

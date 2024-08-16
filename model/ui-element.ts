@@ -4,6 +4,7 @@ import { z } from "zod";
 const FillFieldElement = z.object({
   type: z.literal("fillField"),
   field: z.string(),
+  label: z.string(),
 });
 
 export type FillFieldElement = z.infer<typeof FillFieldElement>;
@@ -81,9 +82,7 @@ const TextElement = z.object({
   type: z.literal("text"),
   text: z.string(),
 });
-export type TextElement = z.infer<
-  typeof TextElement
->;
+export type TextElement = z.infer<typeof TextElement>;
 
 const NoteElement = z.object({
   type: z.literal("note"),
@@ -98,7 +97,7 @@ const DefinitionListElement = z.object({
 export type DefinitionListElement = z.infer<typeof DefinitionListElement>;
 
 const DividerElement = z.object({
-  type: z.literal("divider")
+  type: z.literal("divider"),
 });
 export type DividerElement = z.infer<typeof DividerElement>;
 

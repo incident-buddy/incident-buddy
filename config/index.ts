@@ -3,7 +3,11 @@ import type { FillFieldElement } from "model/ui-element.ts";
 import { parse } from "yaml";
 import { z } from "zod";
 import { CustomField, StdField } from "./field.ts";
-import { ActionListener, CreateIncident } from "./flow.ts";
+import {
+  ActionListener,
+  CreateIncident,
+  type CreateIncidentModalConfig,
+} from "./flow.ts";
 import { Integration } from "./integrations.ts";
 import {
   FallbackNotificationPolicy,
@@ -30,6 +34,10 @@ export class Config {
     const parsed = ConfigSchema.parse(input);
     this.validateFillField(parsed);
     this._config = parsed;
+  }
+
+  get createIncidentModal(): CreateIncidentModalConfig {
+    return this._config.createIncident.modal;
   }
 
   toString(): string {

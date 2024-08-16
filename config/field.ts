@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const StdField = z.object({
   description: z.object({
-    name: z.string(),
+    label: z.string(),
     placeholder: z.string().optional(),
   }),
   status: z.object({

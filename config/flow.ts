@@ -12,7 +12,6 @@ export const CreateIncident = z.object({
       label: z.string(),
     }),
   }),
-  description: z.string(),
 });
 
 const CyclicPostAction = z.object({

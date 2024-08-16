@@ -134,7 +134,6 @@ actionListener:
       elements:
         - type: text
           text: 状況をアップデートしましょう
-        - type: announce
 notificationPolicies:
   - label: "[緊急] 配送サービス"
     condition: "(custom.triage.code == 'emergency' || std.level.code == 'sev1') && custom.service.code == 'delivery'"

@@ -10,7 +10,7 @@ import {
   NotificationGroups,
   NotificationPolicies,
 } from "./notification";
-import type { CreateIncidentStep, Step } from "./steps";
+import type { Step } from "./steps";
 
 const ConfigSchema = z.object({
   integration: Integration,
@@ -33,7 +33,6 @@ export class Config {
   }
 
   static async load(path: string): Promise<Config> {
-    console.log("path", path);
     const file = await readFile(path);
     const rawConfig = parse(file.toString("utf-8"));
     return new Config(rawConfig);

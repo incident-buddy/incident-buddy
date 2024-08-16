@@ -3,9 +3,13 @@
     "target": "es2020",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "sourceMap": true,
   }
 }

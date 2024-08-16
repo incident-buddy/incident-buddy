@@ -1,6 +1,7 @@
 {
   "name": "config",
   "version": "1.0.0",
+  "type": "module",
   "dependencies": {
     "angel-eval": "1.0.7",
     "yaml": "2.5.0",

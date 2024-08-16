@@ -1,16 +1,16 @@
 import { readFile } from "node:fs/promises";
-import type { FillFieldElement } from "model/ui-element";
+import type { FillFieldElement } from "model/ui-element.ts";
 import { parse } from "yaml";
 import { z } from "zod";
-import { CustomField, StdField } from "./field";
-import { ActionListener, CreateIncident } from "./flow";
-import { Integration } from "./integrations";
+import { CustomField, StdField } from "./field.ts";
+import { ActionListener, CreateIncident } from "./flow.ts";
+import { Integration } from "./integrations.ts";
 import {
   FallbackNotificationPolicy,
   NotificationGroups,
   NotificationPolicies,
-} from "./notification";
-import type { Step } from "./steps";
+} from "./notification.ts";
+import type { Step } from "./steps.ts";
 
 const ConfigSchema = z.object({
   integration: Integration,
@@ -51,6 +51,9 @@ export class Config {
       const [kind, key] = elem.field.split(".");
       if (kind !== "std" && kind !== "custom") {
         throw new Error(`Invalid field kind "${kind}": ${elem.field}`);
+      }
+      if (!key) {
+        throw new Error(`Invalid field": ${elem.field}`);
       }
       if (kind === "std") {
         if (!stdFieldNames.includes(key)) {

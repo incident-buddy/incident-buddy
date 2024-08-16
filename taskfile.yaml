@@ -1,0 +1,8 @@
+version: "3"
+
+tasks:
+  build-bot:
+    dir: ./bot-function
+    cmds:
+      - npm run build
+      - zip -Dj ./dist/bot-function.zip ./dist/main.mjs

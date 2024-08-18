@@ -35,6 +35,26 @@ export function selectBlock(element: PlainSelectElement): KnownBlock {
   };
 }
 
+export function multiSelectBlock(element: PlainSelectElement): KnownBlock {
+  return {
+    type: "input",
+    block_id: element.elementId,
+    label: {
+      type: "plain_text",
+      text: element.label,
+    },
+    element: {
+      type: "multi_static_select",
+      action_id: element.elementId,
+      placeholder: {
+        type: "plain_text",
+        text: element.label,
+      },
+      options: plainTextOptions(element.options),
+    },
+  };
+}
+
 export function channelSelectBlock(element: ChannelSelectElement): KnownBlock {
   return {
     type: "input",
@@ -213,21 +233,21 @@ export function definitionListBlock(
 }
 
 function plainTextOptions(items: OptionItems): PlainTextOption[] {
-  return Object.entries(items).map(([code, item]) => ({
+  return items.map((item) => ({
     text: {
       type: "plain_text",
       text: item.label,
     },
-    value: code,
+    value: item.code,
   }));
 }
 
 function mrkdwnOptions(items: OptionItems): Option[] {
-  return Object.entries(items).map(([code, item]) => ({
+  return items.map((item) => ({
     text: {
       type: "mrkdwn",
       text: item.label,
     },
-    value: code,
+    value: item.code,
   }));
 }

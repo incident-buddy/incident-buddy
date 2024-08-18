@@ -9,9 +9,9 @@ const FillFieldElement = z.object({
 
 export type FillFieldElement = z.infer<typeof FillFieldElement>;
 
-const OptionItems = z.record(
-  z.string(),
+const OptionItems = z.array(
   z.object({
+    code: z.string(),
     label: z.string(),
   }),
 );
@@ -109,8 +109,24 @@ export const ButtonElement = z.object({
 });
 export type ButtonElement = z.infer<typeof ButtonElement>;
 
-export const ModalElement = z.discriminatedUnion("type", [
+/** Elements that can be used in config */
+export const ModalConfigElement = z.discriminatedUnion("type", [
   FillFieldElement,
+  PlainSelectElement,
+  ChannelSelectElement,
+  UserSelectElement,
+  RadioElement,
+  CheckboxElement,
+  TextInputElement,
+  DateTimePickerElement,
+  HeaderElement,
+  TextElement,
+  NoteElement,
+]);
+export type ModalConfigElement = z.infer<typeof ModalConfigElement>;
+
+/** Elements that can be used in instatiated modal */
+export const ModalElement = z.discriminatedUnion("type", [
   PlainSelectElement,
   ChannelSelectElement,
   UserSelectElement,

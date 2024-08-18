@@ -1,8 +1,14 @@
 import { readFile } from "node:fs/promises";
-import type { FillFieldElement } from "model/ui-element.ts";
+import type {
+  FillFieldElement,
+  ModalConfigElement,
+  ModalElement,
+  PostElement,
+} from "model/ui-element.ts";
 import { parse } from "yaml";
 import { z } from "zod";
 import { CustomField, StdField } from "./field.ts";
+import type { StdField as StdFieldType } from "./field.ts";
 import {
   ActionListener,
   CreateIncident,
@@ -14,7 +20,6 @@ import {
   NotificationGroups,
   NotificationPolicies,
 } from "./notification.ts";
-import type { Step } from "./steps.ts";
 
 const ConfigSchema = z.object({
   integration: Integration,
@@ -30,14 +35,74 @@ type ConfigSchema = z.infer<typeof ConfigSchema>;
 
 export class Config {
   private _config: ConfigSchema;
+
   private constructor(private input: unknown) {
     const parsed = ConfigSchema.parse(input);
     this.validateFillField(parsed);
     this._config = parsed;
   }
 
+  get baseChannelId(): string {
+    return this._config.integration.slack.baseChannelId;
+  }
+
   get createIncidentModal(): CreateIncidentModalConfig {
     return this._config.createIncident.modal;
+  }
+
+  /** get field's metadata specified in config */
+  getFieldSchema(field: string): FillFiledSchema {
+    const [kind, key] = field.split(".");
+    if (!key) {
+      throw new Error(`Invalid field format": ${field}`);
+    }
+
+    if (isStdFieldKey(key)) {
+      const field = this._config.stdField[key];
+      switch (field.type) {
+        case "stdDescription":
+          return {
+            kind: "std",
+            key,
+            type: "text",
+            label: field.label,
+          };
+        case "stdStatus":
+        case "stdSeverity":
+          return {
+            kind: "std",
+            key,
+            type: "singleSelect",
+            label: field.label,
+            items: field.items,
+          };
+      }
+    }
+
+    const customField = this._config.customField[key];
+    if (customField) {
+      switch (customField.type) {
+        case "text":
+        case "number":
+        case "user":
+          return {
+            kind: "custom",
+            key,
+            type: customField.type,
+            label: customField.label,
+          };
+        case "singleSelect":
+        case "multiSelect":
+          return {
+            kind: "custom",
+            key,
+            type: customField.type,
+            label: customField.label,
+            items: customField.items,
+          };
+      }
+    }
+    throw new Error(`Invalid field kind "${kind}": ${field}`);
   }
 
   toString(): string {
@@ -51,8 +116,7 @@ export class Config {
   }
 
   /** validate if `fillField` element refers existing field */
-  private validateFillField(config: ConfigSchema): void {
-    const stdFieldNames = Object.keys(config.stdField);
+  private validateFillField(config: ConfigSchema) {
     const customFieldNames = Object.keys(config.customField);
 
     const validate = (elem: FillFieldElement) => {
@@ -64,37 +128,57 @@ export class Config {
         throw new Error(`Invalid field": ${elem.field}`);
       }
       if (kind === "std") {
-        if (!stdFieldNames.includes(key)) {
+        if (!isStdFieldKey(key)) {
           throw new Error(
-            `Std field "${elem.field}" not found. Available std fields: ${stdFieldNames.join(
-              ", ",
-            )}`,
+            `Std field "${elem.field}" not found. Available fields: ${Object.keys(StdFieldKeys).join(", ")}`,
           );
         }
       } else if (kind === "custom") {
         if (!customFieldNames.includes(key)) {
           throw new Error(
-            `Custom field "${elem.field}" not found. Available custom fields: ${customFieldNames.join(
-              ", ",
-            )}`,
+            `Custom field "${elem.field}" not found. Available fields: ${customFieldNames.join(", ")}`,
           );
         }
       }
-
-      return {
-        ...elem,
-        kind,
-        key,
-      };
     };
-
-    const fillFieldRefInFn = (fn: Step) => {
-      // For now, only "inc/createIncident" step has fillField elements
-      if (fn.action === "inc/createIncident") {
-        fn.modal.elements
-          .filter((elem): elem is FillFieldElement => elem.type === "fillField")
-          .forEach(validate);
-      }
-    };
+    config.createIncident.modal.elements
+      .filter(isFillFieldElement)
+      .forEach(validate);
   }
 }
+
+type StdFieldKey = [keyof StdFieldType][number];
+const StdFieldKeys = StdField.keyof();
+
+export function isStdFieldKey(key: string): key is StdFieldKey {
+  return StdFieldKeys.safeParse(key).success;
+}
+
+function isFillFieldElement(
+  elem: ModalConfigElement,
+): elem is FillFieldElement {
+  return elem.type === "fillField";
+}
+
+type StdFillFieldSchema = {
+  kind: "std";
+  key: StdFieldKey;
+  label: string;
+} & (
+  | { type: "text" }
+  | { type: "singleSelect"; items: { code: string; label: string }[] }
+);
+
+type CustomFillFieldSchema = {
+  kind: "custom";
+  key: string;
+  label: string;
+} & (
+  | { type: "text" | "number" | "user" }
+  | {
+      type: "singleSelect" | "multiSelect";
+      items: { code: string; label: string }[];
+    }
+);
+
+export type FillFiledSchema = StdFillFieldSchema | CustomFillFieldSchema;

@@ -1,38 +1,38 @@
 import { z } from "zod";
 
+const StdDescriptionField = z.object({
+  type: z.literal("stdDescription").default("stdDescription"),
+  label: z.string(),
+  placeholder: z.string().optional(),
+});
+
+const StdStatusField = z.object({
+  type: z.literal("stdStatus").default("stdStatus"),
+  label: z.string(),
+  items: z.array(
+    z.object({
+      code: z.string(),
+      type: z.literal("open").or(z.literal("closed")),
+      label: z.string(),
+    }),
+  ),
+});
+
+const StdSeverityField = z.object({
+  type: z.literal("stdSeverity").default("stdSeverity"),
+  label: z.string(),
+  items: z.array(
+    z.object({
+      code: z.string(),
+      label: z.string(),
+    }),
+  ),
+});
+
 export const StdField = z.object({
-  description: z.object({
-    label: z.string(),
-    placeholder: z.string().optional(),
-  }),
-  status: z.object({
-    label: z.string(),
-    items: z.array(
-      z.object({
-        code: z.string(),
-        type: z.literal("open").or(z.literal("closed")),
-        label: z.string(),
-      }),
-    ),
-  }),
-  severity: z.object({
-    label: z.string(),
-    items: z.array(
-      z.object({
-        code: z.string(),
-        label: z.string(),
-      }),
-    ),
-  }),
-  role: z.object({
-    label: z.string(),
-    items: z.array(
-      z.object({
-        code: z.string(),
-        label: z.string(),
-      }),
-    ),
-  }),
+  description: StdDescriptionField,
+  status: StdStatusField,
+  severity: StdSeverityField,
 });
 
 export type StdField = z.infer<typeof StdField>;
@@ -69,6 +69,11 @@ const TextField = z.object({
   label: z.string(),
 });
 
+const UserField = z.object({
+  type: z.literal("user"),
+  label: z.string(),
+});
+
 export const CustomField = z.record(
   z.string(),
   z.discriminatedUnion("type", [
@@ -76,6 +81,7 @@ export const CustomField = z.record(
     MultiSelectField,
     NumberField,
     TextField,
+    UserField,
   ]),
 );
 

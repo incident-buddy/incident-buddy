@@ -3,6 +3,7 @@ dotenv: [".env"]
 tasks:
   deploy-config-layer:
     cmds:
+      - rm ./config-layer.zip
       - zip -Dj ./config-layer.zip ./config.yaml
       - >
         aws lambda publish-layer-version
@@ -13,16 +14,18 @@ tasks:
         --zip-file fileb://./config-layer.zip
         --compatible-runtimes nodejs20.x
         --compatible-architectures x86_64 arm64
-  build-bot:
+  run-bot:
     dir: ./bot-function
     cmds:
+      - rm -rf ./dist/*
       - npm run build
-      - zip -Dj ./dist/bot-function.zip ./dist/main.mjs
+      - npm start
   deploy-bot:
     dir: ./bot-function
     cmds:
-      - task deploy-config-layer
-      - task build-bot
+      - rm -rf ./dist/*
+      - npm run build
+      - zip -Dj ./dist/bot-function.zip ./dist/main.mjs
       - >
         aws lambda update-function-code
         --profile $AWS_PROFILE

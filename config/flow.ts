@@ -1,8 +1,8 @@
-import { ModalElement, PostElement } from "model/ui-element.ts";
+import { ModalConfigElement, PostElement } from "model/ui-element.ts";
 import { z } from "zod";
 export const CreateIncidentModalConfig = z.object({
   title: z.string(),
-  elements: z.array(ModalElement),
+  elements: z.array(ModalConfigElement),
   submit: z.object({
     label: z.string(),
   }),

@@ -35,15 +35,6 @@ stdField:
         label: ":man-facepalming: SEV4"
       - code: sev5
         label: ":eyes: SEV5"
-  role:
-    label: ロール
-    items:
-      - code: commander
-        label: インシデントコマンダー
-      - code: effectInvestigator
-        label: 影響調査担当
-      - code: causeInvestigator
-        label: 原因調査担当
 customField:
   service:
     type: multiSelect
@@ -71,6 +62,15 @@ customField:
   cause:
     type: text
     label: 障害の原因
+  commanderRole:
+    type: user
+    label: インシデントコマンダー
+  effectInvestigatorRole:
+    type: user
+    label: 影響調査担当
+  causeInvestigatorRole:
+    type: user
+    label: 障害原因調査担当
 notificationGroups:
   executive: &executive
     label: 事業部長
@@ -111,7 +111,7 @@ createIncident:
       - type: text
         text: インシデントの疑いを報告します。
       - type: fillField
-        field: custom.services
+        field: custom.service
         label: 影響サービス
       - type: fillField
         field: custom.triage

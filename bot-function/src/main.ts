@@ -13,6 +13,7 @@ const app = new App({ token, receiver });
 const config = await Config.load(configPath);
 setupBot(app, config);
 
+export const setupApp = app;
 export const lambdaHandler = async (
   event: AwsEvent,
   context: unknown,

@@ -1,13 +1,17 @@
 import esbuild from "esbuild";
 
+const env = process.argv[2] === "local" ? "local" : "prod";
+const entrypoint = env === "local" ? "./src/local.ts" : "./src/main.ts";
+console.log(`Building ${entrypoint} for ${env}`);
+
 await esbuild.build({
   bundle: true,
-  entryPoints: ["./src/main.ts"],
+  entryPoints: [entrypoint],
   outdir: "./dist",
   outExtension: {
     ".js": ".mjs",
   },
-  minify: true,
+  minify: env === "prod",
   platform: "node",
   format: "esm",
   banner: {

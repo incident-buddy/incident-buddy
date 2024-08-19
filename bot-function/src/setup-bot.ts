@@ -135,3 +135,23 @@ function mapElement(
       });
   }
 }
+
+export function loadEnv(): {
+  signingSecret: string;
+  token: string;
+  configPath: string;
+} {
+  const signingSecret = process.env.SLACK_SIGNING_SECRET;
+  if (!signingSecret) {
+    throw new Error("SLACK_SIGNING_SECRET is not defined");
+  }
+
+  const token = process.env.SLACK_BOT_TOKEN;
+  if (!token) {
+    throw new Error("SLACK_BOT_TOKEN is not defined");
+  }
+
+  const configPath = process.env.CONFIG_PATH ?? "/opt/config.yaml";
+
+  return { signingSecret, token, configPath };
+}

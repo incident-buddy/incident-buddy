@@ -8,6 +8,7 @@
     "start": "npm run build:local && node dist/local.mjs"
   },
   "dependencies": {
+    "@aws-sdk/client-lambda": "3.637.0",
     "@aws-sdk/client-sqs": "3.621.0",
     "@slack/bolt": "3.19.0"
   },

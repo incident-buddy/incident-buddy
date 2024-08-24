@@ -1,5 +1,12 @@
 {
   "name": "async-function",
+  "type": "module",
+  "main": "src/main.ts",
+  "scripts": {
+    "build": "npx tsc --noEmit && tsx build.ts",
+    "build:local": "npx tsc --noEmit && tsx build.ts local",
+    "start": "npm run build:local && node dist/local.mjs"
+  },
   "devDependencies": {
     "@tsconfig/node20": "20.1.4",
     "@types/node": "20.14.14",
@@ -7,5 +14,9 @@
     "glob": "11.0.0",
     "tsx": "4.17.0",
     "typescript-language-server": "4.3.3"
+  },
+  "dependencies": {
+    "@hono/node-server": "1.12.1",
+    "hono": "4.5.8"
   }
 }

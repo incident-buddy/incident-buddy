@@ -3,3 +3,10 @@ node_modules
 **/*.zip
 /.env
 /.envrc
+
+bot-function/dist
+async-function/dist
+
+app-manifest.*
+localstack/volume
+

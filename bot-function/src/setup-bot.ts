@@ -12,17 +12,18 @@ export function setupBot(app: App, config: Config): void {
         text: `Error: ${modal.error}`,
       });
     } else {
-      console.log(JSON.stringify(modal.view));
       await client.views.open({
         trigger_id: body.trigger_id,
         view: modal.view,
       });
     }
   });
+
   app.view(/\s*/, async ({ ack, body, client }) => {
     await ack();
+
+    // TODO Enqueue body to the queue
     const text = JSON.stringify(body.view.state.values);
-    console.log(text);
     await client.chat.postMessage({
       channel: config.baseChannelId,
       text,

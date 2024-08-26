@@ -34,20 +34,24 @@ const ConfigSchema = z.object({
 type ConfigSchema = z.infer<typeof ConfigSchema>;
 
 export class Config {
-  private _config: ConfigSchema;
+  underlying: ConfigSchema;
 
   private constructor(private input: unknown) {
     const parsed = ConfigSchema.parse(input);
     this.validateFillField(parsed);
-    this._config = parsed;
+    this.underlying = parsed;
   }
 
   get baseChannelId(): string {
-    return this._config.integration.slack.baseChannelId;
+    return this.underlying.integration.slack.baseChannelId;
   }
 
   get createIncidentModal(): CreateIncidentModalConfig {
-    return this._config.createIncident.modal;
+    return this.underlying.createIncident.modal;
+  }
+
+  get datastoreConfig() {
+    return this.underlying.integration.datastore;
   }
 
   /** get field's metadata specified in config */
@@ -58,7 +62,7 @@ export class Config {
     }
 
     if (isStdFieldKey(key)) {
-      const field = this._config.stdField[key];
+      const field = this.underlying.stdField[key];
       switch (field.type) {
         case "stdDescription":
           return {
@@ -79,7 +83,7 @@ export class Config {
       }
     }
 
-    const customField = this._config.customField[key];
+    const customField = this.underlying.customField[key];
     if (customField) {
       switch (customField.type) {
         case "text":
@@ -106,7 +110,7 @@ export class Config {
   }
 
   toString(): string {
-    return JSON.stringify(this._config, null, 2);
+    return JSON.stringify(this.underlying, null, 2);
   }
 
   static async load(path: string): Promise<Config> {

@@ -16,6 +16,7 @@
     "typescript-language-server": "4.3.3"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.637.0",
     "@hono/node-server": "1.12.1",
     "hono": "4.5.8"
   }

@@ -1,12 +1,14 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 
-import { Incident } from "model/incident.ts";
+import { handle } from "./handler.ts";
 
 const app = new Hono();
 
 app.post("/*", async (c) => {
-  console.log(await c.req.json());
+  const payload = await c.req.json();
+  console.log("payload: ", payload);
+  await handle(payload);
   return c.text("ok");
 });
 

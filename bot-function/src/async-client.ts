@@ -1,15 +1,9 @@
 import process from "node:process";
 import { InvokeCommand, LambdaClient } from "@aws-sdk/client-lambda";
-import type { ViewOutput } from "@slack/bolt";
-
-type ModalSubmission = {
-  type: "modal_submission";
-  payload: ViewOutput;
-};
-type AsyncTaskPayload = ModalSubmission;
+import type { AsyncTask } from "model/async-task.ts";
 
 interface AsyncClient {
-  exec(payload: AsyncTaskPayload): Promise<void>;
+  exec(payload: AsyncTask): Promise<void>;
 }
 
 class LambdaAsyncClient implements AsyncClient {
@@ -24,7 +18,7 @@ class LambdaAsyncClient implements AsyncClient {
     }
     this.executorFunctionName = functionName;
   }
-  async exec(payload: AsyncTaskPayload): Promise<void> {
+  async exec(payload: AsyncTask): Promise<void> {
     const command = new InvokeCommand({
       InvocationType: "Event",
       FunctionName: this.executorFunctionName,
@@ -45,7 +39,7 @@ class LocalAsyncClient implements AsyncClient {
     this.executorUrl = url;
   }
 
-  async exec(payload: AsyncTaskPayload): Promise<void> {
+  async exec(payload: AsyncTask): Promise<void> {
     console.log("executing: ", payload);
     await fetch(this.executorUrl, {
       headers: { "Content-Type": "application/json" },

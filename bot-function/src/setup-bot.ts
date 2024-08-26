@@ -41,7 +41,7 @@ function createInitialModal(
     const modalContent = modalConfig.elements.map((elem) => {
       switch (elem.type) {
         case "fillField": {
-          const elementId = `fillField_${elem.field}`;
+          const elementId = `fillField.${elem.field}`;
           const filedSchema = config.getFieldSchema(elem.field);
           return mapElement({ elementId, label: elem.label }, filedSchema);
         }

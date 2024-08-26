@@ -105,7 +105,10 @@ export const ButtonElement = z.object({
   elementId: z.string(),
   type: z.literal("button"),
   label: z.string(),
-  invoke: z.string(),
+  action: z.string(), // TODO: define action type
+  params: z.object({
+    field: z.string(),
+  }),
 });
 export type ButtonElement = z.infer<typeof ButtonElement>;
 

@@ -126,10 +126,63 @@ createIncident:
     cancel:
       label: キャンセル
 actionListener:
+  # Report to the base channel
+  - listen: inc/createIncident
+    exec:
+      action: inc/post
+      channelIds: 
+        - *baseChannelId
+      elements:
+        - type: header
+          text: ":rotating_light: ${{std.description.value}} (${{custom.triage.value}})"
+        - type: text
+          text: <!here>
+        - type: text
+          text: ":fire: ${{custom.triage.value}}"
+        - type: divider
+        - type: dl
+          items:
+            "サービス": ${{std.services.value}}
+            "事象": ${{std.description.value}}
+            "報告者": <@${{input.user.id}}>
+        - type: text
+          text: "<#${{std.responseChannel.id}}>で対応を行います"
+  # Report to the warroom channel
+  - listen: inc/createIncident
+    exec:
+      action: inc/post
+      channelIds: 
+        - ${{std.responseChannel.id}}
+      elements:
+        - type: header
+          text: ":rotating_light: ${{std.description.value}} (${{custom.triage.value}})"
+        - type: text
+          text: <!here>
+        - type: text
+          text: ":fire: ${{custom.triage.value}}"
+        - type: divider
+        - type: dl
+          items:
+            "サービス": ${{std.services.value}}
+            "事象": ${{std.description.value}}
+            "報告者": <@${{input.user.id}}>
+        - type: divider
+        - type: header
+          text: "インシデントレスポンスフロー"
+        - type: note
+          text: 1. インシデントレベルを判定
+        - type: button
+          label: インシデントレベル設定
+          action: inc/updateIncident
+          elementId: setSeverity
+          params:
+            field: std.severity
   - listen: inc/createIncident
     condition: "std.status.type == 'open'"
     exec:
       action: inc/cyclicPost
+      channelIds: 
+        - ${{std.responseChannel.id}}
       interval: 15m
       elements:
         - type: text

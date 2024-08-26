@@ -17,8 +17,15 @@ export const CreateIncident = z.object({
   modal: CreateIncidentModalConfig,
 });
 
+const PostAction = z.object({
+  action: z.literal("inc/post"),
+  channelIds: z.array(z.string()),
+  elements: z.array(PostElement),
+});
+
 const CyclicPostAction = z.object({
   action: z.literal("inc/cyclicPost"),
+  channelIds: z.array(z.string()),
   interval: z.string(),
   elements: z.array(PostElement),
 });
@@ -26,7 +33,7 @@ const CyclicPostAction = z.object({
 export const ActionListener = z.array(
   z.object({
     listen: z.string(),
-    condition: z.string(),
-    exec: z.discriminatedUnion("action", [CyclicPostAction]),
+    condition: z.string().optional(),
+    exec: z.discriminatedUnion("action", [PostAction, CyclicPostAction]),
   }),
 );

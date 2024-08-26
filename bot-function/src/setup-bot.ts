@@ -1,5 +1,6 @@
 import type { App, KnownBlock, ModalView } from "@slack/bolt";
 import type { Config, FillFiledSchema } from "config";
+import { asyncClient } from "./async-client.ts";
 import * as block from "./block.ts";
 
 export function setupBot(app: App, config: Config): void {
@@ -19,15 +20,16 @@ export function setupBot(app: App, config: Config): void {
     }
   });
 
-  app.view(/\s*/, async ({ ack, body, client }) => {
+  app.view(/\s*/, async ({ ack, body }) => {
     await ack();
-
-    // TODO Enqueue body to the queue
-    const text = JSON.stringify(body.view.state.values);
-    await client.chat.postMessage({
-      channel: config.baseChannelId,
-      text,
+    await asyncClient.exec({
+      type: "modal_submission",
+      payload: body.view,
     });
+  });
+
+  app.event(/\s*/, async ({ event }) => {
+    console.log("event received: ", event);
   });
 }
 

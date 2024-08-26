@@ -1,15 +1,18 @@
 import process from "node:process";
 import { InvokeCommand, LambdaClient } from "@aws-sdk/client-lambda";
+import type { ViewOutput } from "@slack/bolt";
 
-type AsyncTaskPayload = {
-  test: string;
+type ModalSubmission = {
+  type: "modal_submission";
+  payload: ViewOutput;
 };
+type AsyncTaskPayload = ModalSubmission;
 
 interface AsyncClient {
   exec(payload: AsyncTaskPayload): Promise<void>;
 }
 
-class LabmdaAsyncClient implements AsyncClient {
+class LambdaAsyncClient implements AsyncClient {
   private lambdaClient: LambdaClient;
   private executorFunctionName: string;
 
@@ -35,7 +38,7 @@ class LabmdaAsyncClient implements AsyncClient {
 class LocalAsyncClient implements AsyncClient {
   private executorUrl: string;
   constructor() {
-    const url = process.env.EXECUTOR_URL;
+    const url = process.env.LOCAL_EXECUTOR_URL;
     if (!url) {
       throw new Error("EXECUTOR_URL is not set");
     }
@@ -45,8 +48,13 @@ class LocalAsyncClient implements AsyncClient {
   async exec(payload: AsyncTaskPayload): Promise<void> {
     console.log("executing: ", payload);
     await fetch(this.executorUrl, {
+      headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify(payload),
     });
   }
 }
+
+export const asyncClient = process.env.LOCAL_EXECUTOR_URL
+  ? new LocalAsyncClient()
+  : new LambdaAsyncClient();

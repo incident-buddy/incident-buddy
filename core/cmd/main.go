@@ -5,11 +5,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"connectrpc.com/connect"
 	"github.com/rs/cors"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/joho/godotenv"
 
 	incidentv1 "incident-buddy/internal/gen/incidentbuddy/incident/v1"
 	"incident-buddy/internal/gen/incidentbuddy/incident/v1/incidentv1connect"
@@ -49,7 +53,32 @@ func (s *Server) CreateIncident(
 }
 
 func main() {
-	fmt.Println("hello")
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	connStr := os.Getenv("DATABASE_URL")
+	conn, err := pgx.Connect(context.Background(), connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer conn.Close(context.Background())
+
+	rows, err := conn.Query(context.Background(), "SELECT * FROM playing_with_neon")
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id int32
+		var name string
+		var value float32
+		if err := rows.Scan(&id, &name, &value); err != nil {
+			panic(err)
+		}
+		fmt.Printf("%d | %s | %f\n", id, name, value)
+	}
+
 	server := &Server{}
 	mux := http.NewServeMux()
 	path, handler := incidentv1connect.NewIncidentServiceHandler(server)

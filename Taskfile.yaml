@@ -1,8 +1,14 @@
 version: '3'
 
+dotenv:
+  - .env
+  - core/.env
+
 tasks:
   gen:
     dir: ./web
     cmd: pnpm gen
     silent: true
-    
+  db:migrate:
+    dir: ./db
+    cmd: PGPASSWORD=$DB_PASS psqldef -h $DB_HOST -U $DB_USER $DB_NAME < schema.sql

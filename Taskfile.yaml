@@ -1,0 +1,8 @@
+version: '3'
+
+tasks:
+  gen:
+    dir: ./web
+    cmd: pnpm gen
+    silent: true
+    

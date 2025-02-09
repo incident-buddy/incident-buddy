@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package incidentbuddy.incident.v1;
+
+option go_package = "incidentbuddy.incident.v1;incidentv1";
+
+enum StatusType {
+  STATUS_TYPE_UNSPECIFIED = 0;
+  STATUS_TYPE_OPEN = 1;
+  STATUS_TYPE_IN_PROGRESS = 2;
+  STATUS_TYPE_RESOLVED = 3;
+  STATUS_TYPE_CLOSED = 4;
+}
+
+message Status {
+  string id = 1;
+  string name = 2;
+  StatusType status_type = 3;
+}
+
+message IncidentOverview {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  Status status = 4;
+}
+
+message CreateIncidentRequest {
+  string title = 1;
+  string description = 2;
+}
+
+message CreateIncidentResponse {
+  string id = 1;
+}
+
+message ListIncidentsRequest {
+  int32 page = 1;
+}
+
+message ListIncidentsResponse {
+  repeated IncidentOverview incidents = 1;
+}
+
+service IncidentService {
+  rpc CreateIncident(CreateIncidentRequest) returns (CreateIncidentResponse);
+  rpc ListIncidents(ListIncidentsRequest) returns (ListIncidentsResponse);
+}

@@ -5,10 +5,20 @@ dotenv:
   - core/.env
 
 tasks:
-  gen:
+  run:core:
+    dir: ./core
+    cmd: go run ./main.go
+  gen:connect:
     dir: ./web
     cmd: pnpm gen
     silent: true
+  gen:sqlc:
+    dir: .
+    cmd: sqlc generate
+  gen:
+    deps:
+      - gen:connect
+      - gen:sqlc
   db:migrate:
     dir: ./db
-    cmd: PGPASSWORD=$DB_PASS psqldef -h $DB_HOST -U $DB_USER $DB_NAME < schema.sql
+    cmd: PGPASSWORD=$DB_PASS psqldef -h $DB_HOST -U $DB_USER $DB_NAME --enable-drop-table < schema.sql

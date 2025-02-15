@@ -3,16 +3,15 @@ managed:
   enabled: true
   override:
     - file_option: go_package_prefix
-      value: incident-buddy/internal/gen
+      value: incident-buddy/core/gen/proto
 plugins:
   - local: protoc-gen-go
-    out: ../core/internal/gen
+    out: ../core/gen/proto
     opt: paths=source_relative
   - local: protoc-gen-connect-go
-    out: ../core/internal/gen
+    out: ../core/gen/proto
     opt: paths=source_relative
   - local: protoc-gen-es
-    out: ../web/gen
+    out: ../web/gen/proto
     include_imports: true
-    # Add more plugin options here
     opt: target=ts

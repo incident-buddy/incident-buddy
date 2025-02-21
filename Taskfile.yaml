@@ -5,6 +5,9 @@ dotenv:
   - core/.env
 
 tasks:
+  setup:
+    cmds:
+      - go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
   run:core:
     dir: ./core
     cmd: go run ./main.go

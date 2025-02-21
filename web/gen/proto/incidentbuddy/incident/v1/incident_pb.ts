@@ -2,227 +2,204 @@
 // @generated from file incidentbuddy/incident/v1/incident.proto (package incidentbuddy.incident.v1, syntax proto3)
 /* eslint-disable */
 
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
-import type {
-	GenEnum,
-	GenFile,
-	GenMessage,
-	GenService,
-} from "@bufbuild/protobuf/codegenv1";
-import {
-	enumDesc,
-	fileDesc,
-	messageDesc,
-	serviceDesc,
-} from "@bufbuild/protobuf/codegenv1";
 
 /**
  * Describes the file incidentbuddy/incident/v1/incident.proto.
  */
-export const file_incidentbuddy_incident_v1_incident: GenFile =
-	/*@__PURE__*/
-	fileDesc(
-		"CihpbmNpZGVudGJ1ZGR5L2luY2lkZW50L3YxL2luY2lkZW50LnByb3RvEhlpbmNpZGVudGJ1ZGR5LmluY2lkZW50LnYxImEKBlN0YXR1cxIMCgRuYW1lGAEgASgJEg0KBWNvbG9yGAIgASgJEjoKC3N0YXR1c190eXBlGAMgASgOMiUuaW5jaWRlbnRidWRkeS5pbmNpZGVudC52MS5TdGF0dXNUeXBlIm4KEEluY2lkZW50T3ZlcnZpZXcSCgoCaWQYASABKAkSDQoFdGl0bGUYAiABKAkSDAoEY29kZRgDIAEoCRIxCgZzdGF0dXMYBCABKAsyIS5pbmNpZGVudGJ1ZGR5LmluY2lkZW50LnYxLlN0YXR1cyI7ChVDcmVhdGVJbmNpZGVudFJlcXVlc3QSDQoFdGl0bGUYASABKAkSEwoLZGVzY3JpcHRpb24YAiABKAkiJAoWQ3JlYXRlSW5jaWRlbnRSZXNwb25zZRIKCgJpZBgBIAEoCSIkChRMaXN0SW5jaWRlbnRzUmVxdWVzdBIMCgRwYWdlGAEgASgFIlcKFUxpc3RJbmNpZGVudHNSZXNwb25zZRI+CglpbmNpZGVudHMYASADKAsyKy5pbmNpZGVudGJ1ZGR5LmluY2lkZW50LnYxLkluY2lkZW50T3ZlcnZpZXcqjgEKClN0YXR1c1R5cGUSGwoXU1RBVFVTX1RZUEVfVU5TUEVDSUZJRUQQABIUChBTVEFUVVNfVFlQRV9PUEVOEAESGwoXU1RBVFVTX1RZUEVfSU5fUFJPR1JFU1MQAhIYChRTVEFUVVNfVFlQRV9SRVNPTFZFRBADEhYKElNUQVRVU19UWVBFX0NMT1NFRBAEMvwBCg9JbmNpZGVudFNlcnZpY2USdQoOQ3JlYXRlSW5jaWRlbnQSMC5pbmNpZGVudGJ1ZGR5LmluY2lkZW50LnYxLkNyZWF0ZUluY2lkZW50UmVxdWVzdBoxLmluY2lkZW50YnVkZHkuaW5jaWRlbnQudjEuQ3JlYXRlSW5jaWRlbnRSZXNwb25zZRJyCg1MaXN0SW5jaWRlbnRzEi8uaW5jaWRlbnRidWRkeS5pbmNpZGVudC52MS5MaXN0SW5jaWRlbnRzUmVxdWVzdBowLmluY2lkZW50YnVkZHkuaW5jaWRlbnQudjEuTGlzdEluY2lkZW50c1Jlc3BvbnNlQvgBCh1jb20uaW5jaWRlbnRidWRkeS5pbmNpZGVudC52MUINSW5jaWRlbnRQcm90b1ABWkJpbmNpZGVudC1idWRkeS9jb3JlL2dlbi9wcm90by9pbmNpZGVudGJ1ZGR5L2luY2lkZW50L3YxO2luY2lkZW50djGiAgNJSViqAhlJbmNpZGVudGJ1ZGR5LkluY2lkZW50LlYxygIZSW5jaWRlbnRidWRkeVxJbmNpZGVudFxWMeICJUluY2lkZW50YnVkZHlcSW5jaWRlbnRcVjFcR1BCTWV0YWRhdGHqAhtJbmNpZGVudGJ1ZGR5OjpJbmNpZGVudDo6VjFiBnByb3RvMw",
-	);
+export const file_incidentbuddy_incident_v1_incident: GenFile = /*@__PURE__*/
+  fileDesc("CihpbmNpZGVudGJ1ZGR5L2luY2lkZW50L3YxL2luY2lkZW50LnByb3RvEhlpbmNpZGVudGJ1ZGR5LmluY2lkZW50LnYxImEKBlN0YXR1cxIMCgRuYW1lGAEgASgJEg0KBWNvbG9yGAIgASgJEjoKC3N0YXR1c190eXBlGAMgASgOMiUuaW5jaWRlbnRidWRkeS5pbmNpZGVudC52MS5TdGF0dXNUeXBlIm4KEEluY2lkZW50T3ZlcnZpZXcSCgoCaWQYASABKAkSDQoFdGl0bGUYAiABKAkSDAoEY29kZRgDIAEoCRIxCgZzdGF0dXMYBCABKAsyIS5pbmNpZGVudGJ1ZGR5LmluY2lkZW50LnYxLlN0YXR1cyI7ChVDcmVhdGVJbmNpZGVudFJlcXVlc3QSDQoFdGl0bGUYASABKAkSEwoLZGVzY3JpcHRpb24YAiABKAkiJAoWQ3JlYXRlSW5jaWRlbnRSZXNwb25zZRIKCgJpZBgBIAEoCSIkChRMaXN0SW5jaWRlbnRzUmVxdWVzdBIMCgRwYWdlGAEgASgFIlcKFUxpc3RJbmNpZGVudHNSZXNwb25zZRI+CglpbmNpZGVudHMYASADKAsyKy5pbmNpZGVudGJ1ZGR5LmluY2lkZW50LnYxLkluY2lkZW50T3ZlcnZpZXcqjgEKClN0YXR1c1R5cGUSGwoXU1RBVFVTX1RZUEVfVU5TUEVDSUZJRUQQABIUChBTVEFUVVNfVFlQRV9PUEVOEAESGwoXU1RBVFVTX1RZUEVfSU5fUFJPR1JFU1MQAhIYChRTVEFUVVNfVFlQRV9SRVNPTFZFRBADEhYKElNUQVRVU19UWVBFX0NMT1NFRBAEMvwBCg9JbmNpZGVudFNlcnZpY2USdQoOQ3JlYXRlSW5jaWRlbnQSMC5pbmNpZGVudGJ1ZGR5LmluY2lkZW50LnYxLkNyZWF0ZUluY2lkZW50UmVxdWVzdBoxLmluY2lkZW50YnVkZHkuaW5jaWRlbnQudjEuQ3JlYXRlSW5jaWRlbnRSZXNwb25zZRJyCg1MaXN0SW5jaWRlbnRzEi8uaW5jaWRlbnRidWRkeS5pbmNpZGVudC52MS5MaXN0SW5jaWRlbnRzUmVxdWVzdBowLmluY2lkZW50YnVkZHkuaW5jaWRlbnQudjEuTGlzdEluY2lkZW50c1Jlc3BvbnNlQvgBCh1jb20uaW5jaWRlbnRidWRkeS5pbmNpZGVudC52MUINSW5jaWRlbnRQcm90b1ABWkJpbmNpZGVudC1idWRkeS9jb3JlL2dlbi9wcm90by9pbmNpZGVudGJ1ZGR5L2luY2lkZW50L3YxO2luY2lkZW50djGiAgNJSViqAhlJbmNpZGVudGJ1ZGR5LkluY2lkZW50LlYxygIZSW5jaWRlbnRidWRkeVxJbmNpZGVudFxWMeICJUluY2lkZW50YnVkZHlcSW5jaWRlbnRcVjFcR1BCTWV0YWRhdGHqAhtJbmNpZGVudGJ1ZGR5OjpJbmNpZGVudDo6VjFiBnByb3RvMw");
 
 /**
  * @generated from message incidentbuddy.incident.v1.Status
  */
 export type Status = Message<"incidentbuddy.incident.v1.Status"> & {
-	/**
-	 * @generated from field: string name = 1;
-	 */
-	name: string;
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
 
-	/**
-	 * @generated from field: string color = 2;
-	 */
-	color: string;
+  /**
+   * @generated from field: string color = 2;
+   */
+  color: string;
 
-	/**
-	 * @generated from field: incidentbuddy.incident.v1.StatusType status_type = 3;
-	 */
-	statusType: StatusType;
+  /**
+   * @generated from field: incidentbuddy.incident.v1.StatusType status_type = 3;
+   */
+  statusType: StatusType;
 };
 
 /**
  * Describes the message incidentbuddy.incident.v1.Status.
  * Use `create(StatusSchema)` to create a new message.
  */
-export const StatusSchema: GenMessage<Status> =
-	/*@__PURE__*/
-	messageDesc(file_incidentbuddy_incident_v1_incident, 0);
+export const StatusSchema: GenMessage<Status> = /*@__PURE__*/
+  messageDesc(file_incidentbuddy_incident_v1_incident, 0);
 
 /**
  * @generated from message incidentbuddy.incident.v1.IncidentOverview
  */
-export type IncidentOverview =
-	Message<"incidentbuddy.incident.v1.IncidentOverview"> & {
-		/**
-		 * @generated from field: string id = 1;
-		 */
-		id: string;
+export type IncidentOverview = Message<"incidentbuddy.incident.v1.IncidentOverview"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
 
-		/**
-		 * @generated from field: string title = 2;
-		 */
-		title: string;
+  /**
+   * @generated from field: string title = 2;
+   */
+  title: string;
 
-		/**
-		 * @generated from field: string code = 3;
-		 */
-		code: string;
+  /**
+   * @generated from field: string code = 3;
+   */
+  code: string;
 
-		/**
-		 * @generated from field: incidentbuddy.incident.v1.Status status = 4;
-		 */
-		status?: Status;
-	};
+  /**
+   * @generated from field: incidentbuddy.incident.v1.Status status = 4;
+   */
+  status?: Status;
+};
 
 /**
  * Describes the message incidentbuddy.incident.v1.IncidentOverview.
  * Use `create(IncidentOverviewSchema)` to create a new message.
  */
-export const IncidentOverviewSchema: GenMessage<IncidentOverview> =
-	/*@__PURE__*/
-	messageDesc(file_incidentbuddy_incident_v1_incident, 1);
+export const IncidentOverviewSchema: GenMessage<IncidentOverview> = /*@__PURE__*/
+  messageDesc(file_incidentbuddy_incident_v1_incident, 1);
 
 /**
  * @generated from message incidentbuddy.incident.v1.CreateIncidentRequest
  */
-export type CreateIncidentRequest =
-	Message<"incidentbuddy.incident.v1.CreateIncidentRequest"> & {
-		/**
-		 * @generated from field: string title = 1;
-		 */
-		title: string;
+export type CreateIncidentRequest = Message<"incidentbuddy.incident.v1.CreateIncidentRequest"> & {
+  /**
+   * @generated from field: string title = 1;
+   */
+  title: string;
 
-		/**
-		 * @generated from field: string description = 2;
-		 */
-		description: string;
-	};
+  /**
+   * @generated from field: string description = 2;
+   */
+  description: string;
+};
 
 /**
  * Describes the message incidentbuddy.incident.v1.CreateIncidentRequest.
  * Use `create(CreateIncidentRequestSchema)` to create a new message.
  */
-export const CreateIncidentRequestSchema: GenMessage<CreateIncidentRequest> =
-	/*@__PURE__*/
-	messageDesc(file_incidentbuddy_incident_v1_incident, 2);
+export const CreateIncidentRequestSchema: GenMessage<CreateIncidentRequest> = /*@__PURE__*/
+  messageDesc(file_incidentbuddy_incident_v1_incident, 2);
 
 /**
  * @generated from message incidentbuddy.incident.v1.CreateIncidentResponse
  */
-export type CreateIncidentResponse =
-	Message<"incidentbuddy.incident.v1.CreateIncidentResponse"> & {
-		/**
-		 * @generated from field: string id = 1;
-		 */
-		id: string;
-	};
+export type CreateIncidentResponse = Message<"incidentbuddy.incident.v1.CreateIncidentResponse"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+};
 
 /**
  * Describes the message incidentbuddy.incident.v1.CreateIncidentResponse.
  * Use `create(CreateIncidentResponseSchema)` to create a new message.
  */
-export const CreateIncidentResponseSchema: GenMessage<CreateIncidentResponse> =
-	/*@__PURE__*/
-	messageDesc(file_incidentbuddy_incident_v1_incident, 3);
+export const CreateIncidentResponseSchema: GenMessage<CreateIncidentResponse> = /*@__PURE__*/
+  messageDesc(file_incidentbuddy_incident_v1_incident, 3);
 
 /**
  * @generated from message incidentbuddy.incident.v1.ListIncidentsRequest
  */
-export type ListIncidentsRequest =
-	Message<"incidentbuddy.incident.v1.ListIncidentsRequest"> & {
-		/**
-		 * @generated from field: int32 page = 1;
-		 */
-		page: number;
-	};
+export type ListIncidentsRequest = Message<"incidentbuddy.incident.v1.ListIncidentsRequest"> & {
+  /**
+   * @generated from field: int32 page = 1;
+   */
+  page: number;
+};
 
 /**
  * Describes the message incidentbuddy.incident.v1.ListIncidentsRequest.
  * Use `create(ListIncidentsRequestSchema)` to create a new message.
  */
-export const ListIncidentsRequestSchema: GenMessage<ListIncidentsRequest> =
-	/*@__PURE__*/
-	messageDesc(file_incidentbuddy_incident_v1_incident, 4);
+export const ListIncidentsRequestSchema: GenMessage<ListIncidentsRequest> = /*@__PURE__*/
+  messageDesc(file_incidentbuddy_incident_v1_incident, 4);
 
 /**
  * @generated from message incidentbuddy.incident.v1.ListIncidentsResponse
  */
-export type ListIncidentsResponse =
-	Message<"incidentbuddy.incident.v1.ListIncidentsResponse"> & {
-		/**
-		 * @generated from field: repeated incidentbuddy.incident.v1.IncidentOverview incidents = 1;
-		 */
-		incidents: IncidentOverview[];
-	};
+export type ListIncidentsResponse = Message<"incidentbuddy.incident.v1.ListIncidentsResponse"> & {
+  /**
+   * @generated from field: repeated incidentbuddy.incident.v1.IncidentOverview incidents = 1;
+   */
+  incidents: IncidentOverview[];
+};
 
 /**
  * Describes the message incidentbuddy.incident.v1.ListIncidentsResponse.
  * Use `create(ListIncidentsResponseSchema)` to create a new message.
  */
-export const ListIncidentsResponseSchema: GenMessage<ListIncidentsResponse> =
-	/*@__PURE__*/
-	messageDesc(file_incidentbuddy_incident_v1_incident, 5);
+export const ListIncidentsResponseSchema: GenMessage<ListIncidentsResponse> = /*@__PURE__*/
+  messageDesc(file_incidentbuddy_incident_v1_incident, 5);
 
 /**
  * @generated from enum incidentbuddy.incident.v1.StatusType
  */
 export enum StatusType {
-	/**
-	 * @generated from enum value: STATUS_TYPE_UNSPECIFIED = 0;
-	 */
-	UNSPECIFIED = 0,
+  /**
+   * @generated from enum value: STATUS_TYPE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
 
-	/**
-	 * @generated from enum value: STATUS_TYPE_OPEN = 1;
-	 */
-	OPEN = 1,
+  /**
+   * @generated from enum value: STATUS_TYPE_OPEN = 1;
+   */
+  OPEN = 1,
 
-	/**
-	 * @generated from enum value: STATUS_TYPE_IN_PROGRESS = 2;
-	 */
-	IN_PROGRESS = 2,
+  /**
+   * @generated from enum value: STATUS_TYPE_IN_PROGRESS = 2;
+   */
+  IN_PROGRESS = 2,
 
-	/**
-	 * @generated from enum value: STATUS_TYPE_RESOLVED = 3;
-	 */
-	RESOLVED = 3,
+  /**
+   * @generated from enum value: STATUS_TYPE_RESOLVED = 3;
+   */
+  RESOLVED = 3,
 
-	/**
-	 * @generated from enum value: STATUS_TYPE_CLOSED = 4;
-	 */
-	CLOSED = 4,
+  /**
+   * @generated from enum value: STATUS_TYPE_CLOSED = 4;
+   */
+  CLOSED = 4,
 }
 
 /**
  * Describes the enum incidentbuddy.incident.v1.StatusType.
  */
-export const StatusTypeSchema: GenEnum<StatusType> =
-	/*@__PURE__*/
-	enumDesc(file_incidentbuddy_incident_v1_incident, 0);
+export const StatusTypeSchema: GenEnum<StatusType> = /*@__PURE__*/
+  enumDesc(file_incidentbuddy_incident_v1_incident, 0);
 
 /**
  * @generated from service incidentbuddy.incident.v1.IncidentService
  */
 export const IncidentService: GenService<{
-	/**
-	 * @generated from rpc incidentbuddy.incident.v1.IncidentService.CreateIncident
-	 */
-	createIncident: {
-		methodKind: "unary";
-		input: typeof CreateIncidentRequestSchema;
-		output: typeof CreateIncidentResponseSchema;
-	};
-	/**
-	 * @generated from rpc incidentbuddy.incident.v1.IncidentService.ListIncidents
-	 */
-	listIncidents: {
-		methodKind: "unary";
-		input: typeof ListIncidentsRequestSchema;
-		output: typeof ListIncidentsResponseSchema;
-	};
-}> = /*@__PURE__*/ serviceDesc(file_incidentbuddy_incident_v1_incident, 0);
+  /**
+   * @generated from rpc incidentbuddy.incident.v1.IncidentService.CreateIncident
+   */
+  createIncident: {
+    methodKind: "unary";
+    input: typeof CreateIncidentRequestSchema;
+    output: typeof CreateIncidentResponseSchema;
+  },
+  /**
+   * @generated from rpc incidentbuddy.incident.v1.IncidentService.ListIncidents
+   */
+  listIncidents: {
+    methodKind: "unary";
+    input: typeof ListIncidentsRequestSchema;
+    output: typeof ListIncidentsResponseSchema;
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_incidentbuddy_incident_v1_incident, 0);
+

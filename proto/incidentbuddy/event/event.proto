@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option go_package = "incident-buddy/event";
+
+message IncidentUpdated {
+  string incident_id = 1;
+  string incident_name = 2;
+}

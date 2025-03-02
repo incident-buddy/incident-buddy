@@ -23,7 +23,7 @@ func (r ResourceText) FormFieldConfig() FormFieldConfig {
 	}
 }
 
-func (r ResourceText) Build(ctx context.Context, db *dbaccess.Queries, tenant *domain.Tenant, registry Registry, value *string) (Resource, error) {
+func (r ResourceText) BuildFromValue(ctx context.Context, db *dbaccess.Queries, tenant *domain.Tenant, registry Registry, value *string) (Resource, error) {
 	r.value = value
 	return r, nil
 }

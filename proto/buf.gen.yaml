@@ -8,6 +8,9 @@ plugins:
   - local: protoc-gen-go
     out: ../core/gen/proto
     opt: paths=source_relative
+  - local: protoc-gen-go
+    out: ../scripts/gen/proto
+    opt: paths=source_relative
   - local: protoc-gen-connect-go
     out: ../core/gen/proto
     opt: paths=source_relative

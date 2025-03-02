@@ -10,6 +10,8 @@ import (
 	"log/slog"
 )
 
+var _ Step = StepPhoneSMS{}
+
 type StepPhoneSMS struct{}
 
 func (s StepPhoneSMS) Name() string {

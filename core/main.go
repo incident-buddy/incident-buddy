@@ -3,6 +3,7 @@ package main
 import (
 	"connectrpc.com/connect"
 	"context"
+	"flag"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
@@ -15,20 +16,45 @@ import (
 	"incident-buddy/core/shared/clock"
 	"incident-buddy/core/shared/id"
 	"incident-buddy/core/wire"
+	"incident-buddy/core/worker"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 const (
-	webOrigin  = "http://localhost:5173"
-	serverPort = "8080"
+	webOrigin = "http://localhost:5173"
 )
 
 func main() {
-	err := godotenv.Load()
+	emu := os.Getenv("PUBSUB_EMULATOR_HOST")
+	if emu == "" {
+		panic("PUBSUB_EMULATOR_HOST is not set")
+	}
+	log.Printf("emulator host: %s", emu)
+
+	// parse cli option
+	var mode = flag.String("mode", "", "api | worker")
+	var rawPort = flag.String("port", "", "port to listen on")
+	flag.Parse()
+	if !(*mode == "api" || *mode == "worker") {
+		flag.PrintDefaults()
+		log.Panicf("Invalid mode: %s", *mode)
+	}
+	if *rawPort == "" {
+		flag.PrintDefaults()
+		log.Panicf("Port is required")
+	}
+	port, err := strconv.ParseInt(*rawPort, 10, 32)
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		flag.PrintDefaults()
+		log.Panicf("Invalid port: %s", *rawPort)
+	}
+
+	if err := godotenv.Load(); err != nil {
+		log.Panicf("Error loading .env file")
 	}
 
 	// data access
@@ -47,6 +73,15 @@ func main() {
 		db,
 	)
 
+	switch *mode {
+	case "api":
+		startApiServer(wirer, port)
+	case "worker":
+		startWorker(wirer, port)
+	}
+}
+
+func startApiServer(wirer *wire.Wirer, port int64) {
 	// server
 	mux := http.NewServeMux()
 
@@ -60,9 +95,19 @@ func main() {
 		Debug:            true,
 	})
 	corsHandler := c.Handler(h2c.NewHandler(mux, &http2.Server{}))
-	fmt.Printf("Starting server at %s\n", serverPort)
-	_ = http.ListenAndServe(
-		fmt.Sprintf(":%s", serverPort),
+	slog.Info(fmt.Sprintf("Starting API server at %d\n", port))
+	if err := http.ListenAndServe(
+		fmt.Sprintf(":%d", port),
 		corsHandler,
-	)
+	); err != nil {
+		log.Fatalf("Error starting API server: %v", err)
+	}
+}
+
+func startWorker(wirer *wire.Wirer, port int64) {
+	slog.Info(fmt.Sprintf("Starting worker at %d\n", port))
+	http.HandleFunc("/", worker.HandleMessage)
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
+		log.Fatalf("Error starting worker: %v", err)
+	}
 }

@@ -5,12 +5,39 @@ dotenv:
   - core/.env
 
 tasks:
+  setup:sqlc:
+    cmd: go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+  setup:pubsub-emulator:
+    cmd: gcloud components install pubsub-emulator
   setup:
     cmds:
-      - go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
-  run:core:
+      - task setup:sqlc
+      - task setup:pubsub-emulator
+  init:pubsub:
+    dir: ./scripts
+    cmd: echo && {{.EMULATOR_HOST}} go run ./init_pubsub.go
+  run:pubsub:
+
+    cmd: gcloud beta emulators pubsub start --project=$GCLOUD_PROJECT_ID
+  run:api:
     dir: ./core
-    cmd: go run ./main.go
+    cmds:
+      - go run ./main.go --mode api --port 8080
+  run:worker:
+    dir: ./core
+    vars:
+      EMULATOR_HOST:
+        sh: gcloud beta emulators pubsub env-init --project=$GCLOUD_PROJECT_ID | sed -e 's/export //'
+    # cmd: {{.EMULATOR_HOST}}
+    cmds:
+        - echo "starting worker" && {{.EMULATOR_HOST}} go run ./main.go --mode worker --port 8081
+  test:publish:
+    dir: ./scripts
+    vars:
+      WORKER_PORT: 8081
+      EMULATOR_HOST:
+        sh: gcloud beta emulators pubsub env-init | sed -e 's/export //'
+    cmd: echo "publishing message" && {{.EMULATOR_HOST}} go run ./publish.go --evType=incident --workerPort={{.WORKER_PORT}}
   gen:connect:
     dir: ./web
     cmd: pnpm gen

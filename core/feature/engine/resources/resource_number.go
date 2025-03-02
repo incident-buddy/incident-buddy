@@ -14,7 +14,7 @@ type ResourceNumber struct {
 	value *float64
 }
 
-func (r ResourceNumber) Type() string {
+func (r ResourceNumber) Type() ResourceType {
 	return "Number"
 }
 
@@ -27,7 +27,7 @@ func (r ResourceNumber) FormFieldConfig() FormFieldConfig {
 	}
 }
 
-func (r ResourceNumber) Build(ctx context.Context, db *dbaccess.Queries, tenant *domain.Tenant, registry Registry, value *string) (Resource, error) {
+func (r ResourceNumber) BuildFromValue(ctx context.Context, db *dbaccess.Queries, tenant *domain.Tenant, registry Registry, value *string) (Resource, error) {
 	if value != nil {
 		valueNumber, err := strconv.ParseFloat(*value, 64)
 		if err != nil {

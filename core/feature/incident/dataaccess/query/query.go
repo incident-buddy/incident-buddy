@@ -4,7 +4,7 @@ import (
 	"context"
 	"incident-buddy/core/feature/incident/dataaccess/transform"
 	"incident-buddy/core/gen/dbaccess"
-	incidentv1 "incident-buddy/core/gen/proto/incidentbuddy/incident/v1"
+	incidentv1 "incident-buddy/core/gen/proto/incident/v1"
 	"incident-buddy/core/shared/id"
 )
 

@@ -6,7 +6,7 @@ import (
 	"incident-buddy/core/auth"
 	"incident-buddy/core/feature/incident/dataaccess/query"
 	"incident-buddy/core/feature/incident/usecase"
-	"incident-buddy/core/gen/proto/incidentbuddy/incident/v1"
+	"incident-buddy/core/gen/proto/incident/v1"
 	"log"
 )
 

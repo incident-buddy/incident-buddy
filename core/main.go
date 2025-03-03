@@ -12,7 +12,7 @@ import (
 	"golang.org/x/net/http2/h2c"
 	"incident-buddy/core/auth"
 	"incident-buddy/core/gen/dbaccess"
-	incidentv1 "incident-buddy/core/gen/proto/incidentbuddy/incident/v1/incidentv1connect"
+	incidentv1 "incident-buddy/core/gen/proto/incident/v1/incidentv1connect"
 	"incident-buddy/core/shared/clock"
 	"incident-buddy/core/shared/id"
 	"incident-buddy/core/wire"
@@ -29,12 +29,6 @@ const (
 )
 
 func main() {
-	emu := os.Getenv("PUBSUB_EMULATOR_HOST")
-	if emu == "" {
-		panic("PUBSUB_EMULATOR_HOST is not set")
-	}
-	log.Printf("emulator host: %s", emu)
-
 	// parse cli option
 	var mode = flag.String("mode", "", "api | worker")
 	var rawPort = flag.String("port", "", "port to listen on")

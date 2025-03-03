@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package incidentbuddy.event;
+
 option go_package = "incident-buddy/event";
 
 message IncidentUpdated {

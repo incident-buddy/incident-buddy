@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "engine/engine.proto";
+
+package incidentbuddy.workflow;
+
+option go_package = "incidentbuddy.workflow;workflow";
+
+message Trigger {
+  string name = 1;
+  string label = 2;
+  string description = 3;
+  repeated string default_once_for = 4;
+  repeated engine.Resource resources = 5;
+  repeated engine.Scope scopes = 6;
+}

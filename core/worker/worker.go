@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"google.golang.org/protobuf/encoding/protojson"
-	"incident-buddy/core/gen/proto/incidentbuddy/event"
+	"incident-buddy/core/gen/proto/event"
 
 	"io"
 	"log/slog"

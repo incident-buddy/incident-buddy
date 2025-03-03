@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package incidentbuddy.engine;
+
+option go_package = "incidentbuddy.engine;engine";
+
+message Resource {
+  string type = 1; // String, Incident
+  repeated Operation operations = 2;
+  FormField form_field = 3;
+}
+
+message Operation {
+  string name = 1; // contains, severity_greater_than
+  repeated OperationParam params = 5;
+}
+
+message OperationParam {
+  string type = 1;   // String, Severity
+  bool array = 2;    // false
+  bool optional = 3; // false
+}
+
+message FormField {
+  string type = 1;       // text_input, select
+  string array_type = 2; // none, string, number
+  string icon = 3;       // message
+  bool optional = 4;
+}
+
+message Scope {
+  string key = 1; // incident, incident.name
+  string type = 2; // Incident, String
+}

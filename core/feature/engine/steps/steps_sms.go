@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"incident-buddy/core/domain"
-	"incident-buddy/core/feature/engine/integrations/sms"
+	"incident-buddy/core/feature/engine/integrations"
 	"incident-buddy/core/feature/engine/resources"
 	"incident-buddy/core/gen/dbaccess"
 	"log/slog"
@@ -49,7 +49,7 @@ func (s StepPhoneSMS) Runner(ctx context.Context, queries *dbaccess.Queries, ten
 		interpolatedMessage := resources.Interpolate(message)
 		for _, recipient := range recipients {
 			slog.Info(fmt.Sprintf("Sending SMS to %s", *recipient.Value()))
-			err := sms.SendMessage(sms.Message{
+			err := integrations.SendMessage(integrations.Message{
 				To:   *recipient.Value(),
 				Body: interpolatedMessage,
 			})

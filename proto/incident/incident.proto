@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package incidentbuddy.incident.v1;
+package incidentbuddy.incident;
 
-option go_package = "incidentbuddy.incident.v1;incidentv1";
+option go_package = "incidentbuddy.incident;incident";
 
 enum StatusType {
   STATUS_TYPE_UNSPECIFIED = 0;

@@ -2,10 +2,9 @@ package wire
 
 import (
 	"incident-buddy/core/auth"
-	"incident-buddy/core/feature/incident/dataaccess"
-	query2 "incident-buddy/core/feature/incident/dataaccess/query"
-	"incident-buddy/core/feature/incident/handler"
-	"incident-buddy/core/feature/incident/usecase"
+	. "incident-buddy/core/feature/engine"
+	"incident-buddy/core/feature/engine/resources"
+	. "incident-buddy/core/feature/incident"
 	"incident-buddy/core/gen/dbaccess"
 	"incident-buddy/core/shared/clock"
 	"incident-buddy/core/shared/id"
@@ -27,9 +26,14 @@ func NewWirer(
 	return &Wirer{clock, idGen, ctxReader, db}
 }
 
-func (w *Wirer) WireIncidentHandler() *handler.IncidentHandler {
-	repo := dataaccess.NewIncidentRepository(w.DB)
-	query := query2.NewIncidentQuery(w.DB)
-	uc := usecase.NewCreateIncidentUsecase(w.Clock, w.IdGenerator, repo)
-	return handler.NewIncidentHandler(w.AuthCtxReader, uc, query)
+func (w *Wirer) WireIncidentHandler() *IncidentHandler {
+	repo := NewIncidentRepository(w.DB)
+	query := NewIncidentQuery(w.DB)
+	uc := NewCreateIncidentUsecase(w.Clock, w.IdGenerator, repo)
+	return NewIncidentHandler(w.AuthCtxReader, uc, query)
+}
+
+func (w *Wirer) WireResourceHandler() *ResourceHandler {
+	registry := resources.RegistryInstance()
+	return NewResourceHandler(w.AuthCtxReader, registry)
 }

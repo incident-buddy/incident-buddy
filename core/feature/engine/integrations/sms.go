@@ -1,4 +1,4 @@
-package sms
+package integrations
 
 import (
 	"fmt"

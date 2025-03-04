@@ -12,7 +12,10 @@ import (
 	"golang.org/x/net/http2/h2c"
 	"incident-buddy/core/auth"
 	"incident-buddy/core/gen/dbaccess"
-	incidentv1 "incident-buddy/core/gen/proto/incident/v1/incidentv1connect"
+	"incident-buddy/core/gen/proto/engine/engineconnect"
+
+	// "incident-buddy/core/gen/proto/engine/engineconnect"
+	"incident-buddy/core/gen/proto/incident/incidentconnect"
 	"incident-buddy/core/shared/clock"
 	"incident-buddy/core/shared/id"
 	"incident-buddy/core/wire"
@@ -80,7 +83,8 @@ func startApiServer(wirer *wire.Wirer, port int64) {
 	mux := http.NewServeMux()
 
 	interceptor := connect.WithInterceptors(auth.NewAuthInterceptor())
-	mux.Handle(incidentv1.NewIncidentServiceHandler(wirer.WireIncidentHandler(), interceptor))
+	mux.Handle(incidentconnect.NewIncidentServiceHandler(wirer.WireIncidentHandler(), interceptor))
+	mux.Handle(engineconnect.NewResourceServiceHandler(wirer.WireResourceHandler(), interceptor))
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{webOrigin},

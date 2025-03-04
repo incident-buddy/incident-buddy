@@ -4,6 +4,10 @@ package incidentbuddy.engine;
 
 option go_package = "incidentbuddy.engine;engine";
 
+message ResourceOverview {
+  string type = 1;
+}
+
 message Resource {
   string type = 1; // String, Incident
   repeated Operation operations = 2;
@@ -31,4 +35,21 @@ message FormField {
 message Scope {
   string key = 1; // incident, incident.name
   string type = 2; // Incident, String
+}
+
+message ListResourceRequest {}
+message ListResourceResponse {
+  repeated ResourceOverview resources = 1;
+}
+
+message GetResourceRequest {
+  string type = 1;
+}
+message GetResourceResponse {
+  Resource resource = 1;
+}
+
+service ResourceService {
+  rpc ListResource(ListResourceRequest) returns (ListResourceResponse);
+  rpc GetResource(GetResourceRequest) returns (GetResourceResponse);
 }

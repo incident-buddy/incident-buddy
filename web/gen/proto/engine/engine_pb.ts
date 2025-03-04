@@ -2,15 +2,32 @@
 // @generated from file engine/engine.proto (package incidentbuddy.engine, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv1";
-import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv1";
+import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
+import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file engine/engine.proto.
  */
 export const file_engine_engine: GenFile = /*@__PURE__*/
-  fileDesc("ChNlbmdpbmUvZW5naW5lLnByb3RvEhRpbmNpZGVudGJ1ZGR5LmVuZ2luZSKCAQoIUmVzb3VyY2USDAoEdHlwZRgBIAEoCRIzCgpvcGVyYXRpb25zGAIgAygLMh8uaW5jaWRlbnRidWRkeS5lbmdpbmUuT3BlcmF0aW9uEjMKCmZvcm1fZmllbGQYAyABKAsyHy5pbmNpZGVudGJ1ZGR5LmVuZ2luZS5Gb3JtRmllbGQiTwoJT3BlcmF0aW9uEgwKBG5hbWUYASABKAkSNAoGcGFyYW1zGAUgAygLMiQuaW5jaWRlbnRidWRkeS5lbmdpbmUuT3BlcmF0aW9uUGFyYW0iPwoOT3BlcmF0aW9uUGFyYW0SDAoEdHlwZRgBIAEoCRINCgVhcnJheRgCIAEoCBIQCghvcHRpb25hbBgDIAEoCCJNCglGb3JtRmllbGQSDAoEdHlwZRgBIAEoCRISCgphcnJheV90eXBlGAIgASgJEgwKBGljb24YAyABKAkSEAoIb3B0aW9uYWwYBCABKAgiIgoFU2NvcGUSCwoDa2V5GAEgASgJEgwKBHR5cGUYAiABKAlCvgEKGGNvbS5pbmNpZGVudGJ1ZGR5LmVuZ2luZUILRW5naW5lUHJvdG9QAVokaW5jaWRlbnQtYnVkZHkvY29yZS9nZW4vcHJvdG8vZW5naW5logIDSUVYqgIUSW5jaWRlbnRidWRkeS5FbmdpbmXKAhRJbmNpZGVudGJ1ZGR5XEVuZ2luZeICIEluY2lkZW50YnVkZHlcRW5naW5lXEdQQk1ldGFkYXRh6gIVSW5jaWRlbnRidWRkeTo6RW5naW5lYgZwcm90bzM");
+  fileDesc("ChNlbmdpbmUvZW5naW5lLnByb3RvEhRpbmNpZGVudGJ1ZGR5LmVuZ2luZSIgChBSZXNvdXJjZU92ZXJ2aWV3EgwKBHR5cGUYASABKAkiggEKCFJlc291cmNlEgwKBHR5cGUYASABKAkSMwoKb3BlcmF0aW9ucxgCIAMoCzIfLmluY2lkZW50YnVkZHkuZW5naW5lLk9wZXJhdGlvbhIzCgpmb3JtX2ZpZWxkGAMgASgLMh8uaW5jaWRlbnRidWRkeS5lbmdpbmUuRm9ybUZpZWxkIk8KCU9wZXJhdGlvbhIMCgRuYW1lGAEgASgJEjQKBnBhcmFtcxgFIAMoCzIkLmluY2lkZW50YnVkZHkuZW5naW5lLk9wZXJhdGlvblBhcmFtIj8KDk9wZXJhdGlvblBhcmFtEgwKBHR5cGUYASABKAkSDQoFYXJyYXkYAiABKAgSEAoIb3B0aW9uYWwYAyABKAgiTQoJRm9ybUZpZWxkEgwKBHR5cGUYASABKAkSEgoKYXJyYXlfdHlwZRgCIAEoCRIMCgRpY29uGAMgASgJEhAKCG9wdGlvbmFsGAQgASgIIiIKBVNjb3BlEgsKA2tleRgBIAEoCRIMCgR0eXBlGAIgASgJIhUKE0xpc3RSZXNvdXJjZVJlcXVlc3QiUQoUTGlzdFJlc291cmNlUmVzcG9uc2USOQoJcmVzb3VyY2VzGAEgAygLMiYuaW5jaWRlbnRidWRkeS5lbmdpbmUuUmVzb3VyY2VPdmVydmlldyIiChJHZXRSZXNvdXJjZVJlcXVlc3QSDAoEdHlwZRgBIAEoCSJHChNHZXRSZXNvdXJjZVJlc3BvbnNlEjAKCHJlc291cmNlGAEgASgLMh4uaW5jaWRlbnRidWRkeS5lbmdpbmUuUmVzb3VyY2Uy3AEKD1Jlc291cmNlU2VydmljZRJlCgxMaXN0UmVzb3VyY2USKS5pbmNpZGVudGJ1ZGR5LmVuZ2luZS5MaXN0UmVzb3VyY2VSZXF1ZXN0GiouaW5jaWRlbnRidWRkeS5lbmdpbmUuTGlzdFJlc291cmNlUmVzcG9uc2USYgoLR2V0UmVzb3VyY2USKC5pbmNpZGVudGJ1ZGR5LmVuZ2luZS5HZXRSZXNvdXJjZVJlcXVlc3QaKS5pbmNpZGVudGJ1ZGR5LmVuZ2luZS5HZXRSZXNvdXJjZVJlc3BvbnNlQr4BChhjb20uaW5jaWRlbnRidWRkeS5lbmdpbmVCC0VuZ2luZVByb3RvUAFaJGluY2lkZW50LWJ1ZGR5L2NvcmUvZ2VuL3Byb3RvL2VuZ2luZaICA0lFWKoCFEluY2lkZW50YnVkZHkuRW5naW5lygIUSW5jaWRlbnRidWRkeVxFbmdpbmXiAiBJbmNpZGVudGJ1ZGR5XEVuZ2luZVxHUEJNZXRhZGF0YeoCFUluY2lkZW50YnVkZHk6OkVuZ2luZWIGcHJvdG8z");
+
+/**
+ * @generated from message incidentbuddy.engine.ResourceOverview
+ */
+export type ResourceOverview = Message<"incidentbuddy.engine.ResourceOverview"> & {
+  /**
+   * @generated from field: string type = 1;
+   */
+  type: string;
+};
+
+/**
+ * Describes the message incidentbuddy.engine.ResourceOverview.
+ * Use `create(ResourceOverviewSchema)` to create a new message.
+ */
+export const ResourceOverviewSchema: GenMessage<ResourceOverview> = /*@__PURE__*/
+  messageDesc(file_engine_engine, 0);
 
 /**
  * @generated from message incidentbuddy.engine.Resource
@@ -39,7 +56,7 @@ export type Resource = Message<"incidentbuddy.engine.Resource"> & {
  * Use `create(ResourceSchema)` to create a new message.
  */
 export const ResourceSchema: GenMessage<Resource> = /*@__PURE__*/
-  messageDesc(file_engine_engine, 0);
+  messageDesc(file_engine_engine, 1);
 
 /**
  * @generated from message incidentbuddy.engine.Operation
@@ -63,7 +80,7 @@ export type Operation = Message<"incidentbuddy.engine.Operation"> & {
  * Use `create(OperationSchema)` to create a new message.
  */
 export const OperationSchema: GenMessage<Operation> = /*@__PURE__*/
-  messageDesc(file_engine_engine, 1);
+  messageDesc(file_engine_engine, 2);
 
 /**
  * @generated from message incidentbuddy.engine.OperationParam
@@ -96,7 +113,7 @@ export type OperationParam = Message<"incidentbuddy.engine.OperationParam"> & {
  * Use `create(OperationParamSchema)` to create a new message.
  */
 export const OperationParamSchema: GenMessage<OperationParam> = /*@__PURE__*/
-  messageDesc(file_engine_engine, 2);
+  messageDesc(file_engine_engine, 3);
 
 /**
  * @generated from message incidentbuddy.engine.FormField
@@ -134,7 +151,7 @@ export type FormField = Message<"incidentbuddy.engine.FormField"> & {
  * Use `create(FormFieldSchema)` to create a new message.
  */
 export const FormFieldSchema: GenMessage<FormField> = /*@__PURE__*/
-  messageDesc(file_engine_engine, 3);
+  messageDesc(file_engine_engine, 4);
 
 /**
  * @generated from message incidentbuddy.engine.Scope
@@ -160,5 +177,92 @@ export type Scope = Message<"incidentbuddy.engine.Scope"> & {
  * Use `create(ScopeSchema)` to create a new message.
  */
 export const ScopeSchema: GenMessage<Scope> = /*@__PURE__*/
-  messageDesc(file_engine_engine, 4);
+  messageDesc(file_engine_engine, 5);
+
+/**
+ * @generated from message incidentbuddy.engine.ListResourceRequest
+ */
+export type ListResourceRequest = Message<"incidentbuddy.engine.ListResourceRequest"> & {
+};
+
+/**
+ * Describes the message incidentbuddy.engine.ListResourceRequest.
+ * Use `create(ListResourceRequestSchema)` to create a new message.
+ */
+export const ListResourceRequestSchema: GenMessage<ListResourceRequest> = /*@__PURE__*/
+  messageDesc(file_engine_engine, 6);
+
+/**
+ * @generated from message incidentbuddy.engine.ListResourceResponse
+ */
+export type ListResourceResponse = Message<"incidentbuddy.engine.ListResourceResponse"> & {
+  /**
+   * @generated from field: repeated incidentbuddy.engine.ResourceOverview resources = 1;
+   */
+  resources: ResourceOverview[];
+};
+
+/**
+ * Describes the message incidentbuddy.engine.ListResourceResponse.
+ * Use `create(ListResourceResponseSchema)` to create a new message.
+ */
+export const ListResourceResponseSchema: GenMessage<ListResourceResponse> = /*@__PURE__*/
+  messageDesc(file_engine_engine, 7);
+
+/**
+ * @generated from message incidentbuddy.engine.GetResourceRequest
+ */
+export type GetResourceRequest = Message<"incidentbuddy.engine.GetResourceRequest"> & {
+  /**
+   * @generated from field: string type = 1;
+   */
+  type: string;
+};
+
+/**
+ * Describes the message incidentbuddy.engine.GetResourceRequest.
+ * Use `create(GetResourceRequestSchema)` to create a new message.
+ */
+export const GetResourceRequestSchema: GenMessage<GetResourceRequest> = /*@__PURE__*/
+  messageDesc(file_engine_engine, 8);
+
+/**
+ * @generated from message incidentbuddy.engine.GetResourceResponse
+ */
+export type GetResourceResponse = Message<"incidentbuddy.engine.GetResourceResponse"> & {
+  /**
+   * @generated from field: incidentbuddy.engine.Resource resource = 1;
+   */
+  resource?: Resource;
+};
+
+/**
+ * Describes the message incidentbuddy.engine.GetResourceResponse.
+ * Use `create(GetResourceResponseSchema)` to create a new message.
+ */
+export const GetResourceResponseSchema: GenMessage<GetResourceResponse> = /*@__PURE__*/
+  messageDesc(file_engine_engine, 9);
+
+/**
+ * @generated from service incidentbuddy.engine.ResourceService
+ */
+export const ResourceService: GenService<{
+  /**
+   * @generated from rpc incidentbuddy.engine.ResourceService.ListResource
+   */
+  listResource: {
+    methodKind: "unary";
+    input: typeof ListResourceRequestSchema;
+    output: typeof ListResourceResponseSchema;
+  },
+  /**
+   * @generated from rpc incidentbuddy.engine.ResourceService.GetResource
+   */
+  getResource: {
+    methodKind: "unary";
+    input: typeof GetResourceRequestSchema;
+    output: typeof GetResourceResponseSchema;
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_engine_engine, 0);
 

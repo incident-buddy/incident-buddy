@@ -1,4 +1,4 @@
-package dataaccess
+package incident
 
 import "incident-buddy/core/gen/dbaccess"
 

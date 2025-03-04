@@ -8,6 +8,10 @@ import (
 
 var _ Resource = ResourceString{}
 
+func init() {
+	RegisterResource(ResourceString{})
+}
+
 type ResourceString struct {
 	value *string
 }

@@ -1,7 +1,6 @@
-package usecase
+package incident
 
 import (
-	"incident-buddy/core/feature/incident/dataaccess"
 	"incident-buddy/core/shared/clock"
 	"incident-buddy/core/shared/id"
 )
@@ -9,13 +8,13 @@ import (
 type CreateIncidentUsecase struct {
 	Clock       clock.Clock
 	IdGenerator id.IdGenerator
-	Repo        dataaccess.IncidentRepository
+	Repo        IncidentRepository
 }
 
 func NewCreateIncidentUsecase(
 	clock clock.Clock,
 	idGen id.IdGenerator,
-	repo dataaccess.IncidentRepository,
+	repo IncidentRepository,
 ) CreateIncidentUsecase {
 	return CreateIncidentUsecase{clock, idGen, repo}
 }

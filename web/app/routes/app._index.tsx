@@ -1,7 +1,7 @@
 export const handle = {
-	pageName: "ダッシュボード",
+  pageName: "ダッシュボード",
 };
 
 export default function Page() {
-	return <h1>Dashboard</h1>;
+  return <h1>Dashboard</h1>;
 }

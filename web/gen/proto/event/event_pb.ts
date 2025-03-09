@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file event/event.proto.
  */
 export const file_event_event: GenFile = /*@__PURE__*/
-  fileDesc("ChFldmVudC9ldmVudC5wcm90bxITaW5jaWRlbnRidWRkeS5ldmVudCKkAQoFRXZlbnQSEgoKZXZlbnRfY29kZRgBIAEoCRJAChBpbmNpZGVudF91cGRhdGVkGAIgASgLMiQuaW5jaWRlbnRidWRkeS5ldmVudC5JbmNpZGVudFVwZGF0ZWRIABI6Cg1yb2xlX2Fzc2lnbmVkGAMgASgLMiEuaW5jaWRlbnRidWRkeS5ldmVudC5Sb2xlQXNzaWduZWRIAEIJCgdwYXlsb2FkIlAKD0luY2lkZW50VXBkYXRlZBITCgtpbmNpZGVudF9pZBgBIAEoCRIVCg1pbmNpZGVudF9uYW1lGAIgASgJEhEKCXRlbmFudF9pZBgDIAEoCSJDCgxSb2xlQXNzaWduZWQSDwoHdXNlcl9pZBgBIAEoCRIPCgdyb2xlX2lkGAIgASgJEhEKCXRlbmFudF9pZBgDIAEoCUK3AQoXY29tLmluY2lkZW50YnVkZHkuZXZlbnRCCkV2ZW50UHJvdG9QAVojaW5jaWRlbnQtYnVkZHkvY29yZS9nZW4vcHJvdG8vZXZlbnSiAgNJRViqAhNJbmNpZGVudGJ1ZGR5LkV2ZW50ygITSW5jaWRlbnRidWRkeVxFdmVudOICH0luY2lkZW50YnVkZHlcRXZlbnRcR1BCTWV0YWRhdGHqAhRJbmNpZGVudGJ1ZGR5OjpFdmVudGIGcHJvdG8z");
+  fileDesc("ChFldmVudC9ldmVudC5wcm90bxITaW5jaWRlbnRidWRkeS5ldmVudCK3AQoFRXZlbnQSEgoKZXZlbnRfY29kZRgBIAEoCRIRCgl0ZW5hbnRfaWQYAiABKAkSQAoQaW5jaWRlbnRfdXBkYXRlZBgDIAEoCzIkLmluY2lkZW50YnVkZHkuZXZlbnQuSW5jaWRlbnRVcGRhdGVkSAASOgoNcm9sZV9hc3NpZ25lZBgEIAEoCzIhLmluY2lkZW50YnVkZHkuZXZlbnQuUm9sZUFzc2lnbmVkSABCCQoHcGF5bG9hZCI9Cg9JbmNpZGVudFVwZGF0ZWQSEwoLaW5jaWRlbnRfaWQYASABKAkSFQoNaW5jaWRlbnRfbmFtZRgCIAEoCSIwCgxSb2xlQXNzaWduZWQSDwoHdXNlcl9pZBgBIAEoCRIPCgdyb2xlX2lkGAIgASgJQrcBChdjb20uaW5jaWRlbnRidWRkeS5ldmVudEIKRXZlbnRQcm90b1ABWiNpbmNpZGVudC1idWRkeS9jb3JlL2dlbi9wcm90by9ldmVudKICA0lFWKoCE0luY2lkZW50YnVkZHkuRXZlbnTKAhNJbmNpZGVudGJ1ZGR5XEV2ZW504gIfSW5jaWRlbnRidWRkeVxFdmVudFxHUEJNZXRhZGF0YeoCFEluY2lkZW50YnVkZHk6OkV2ZW50YgZwcm90bzM");
 
 /**
  * @generated from message incidentbuddy.event.Event
@@ -22,17 +22,22 @@ export type Event = Message<"incidentbuddy.event.Event"> & {
   eventCode: string;
 
   /**
+   * @generated from field: string tenant_id = 2;
+   */
+  tenantId: string;
+
+  /**
    * @generated from oneof incidentbuddy.event.Event.payload
    */
   payload: {
     /**
-     * @generated from field: incidentbuddy.event.IncidentUpdated incident_updated = 2;
+     * @generated from field: incidentbuddy.event.IncidentUpdated incident_updated = 3;
      */
     value: IncidentUpdated;
     case: "incidentUpdated";
   } | {
     /**
-     * @generated from field: incidentbuddy.event.RoleAssigned role_assigned = 3;
+     * @generated from field: incidentbuddy.event.RoleAssigned role_assigned = 4;
      */
     value: RoleAssigned;
     case: "roleAssigned";
@@ -59,11 +64,6 @@ export type IncidentUpdated = Message<"incidentbuddy.event.IncidentUpdated"> & {
    * @generated from field: string incident_name = 2;
    */
   incidentName: string;
-
-  /**
-   * @generated from field: string tenant_id = 3;
-   */
-  tenantId: string;
 };
 
 /**
@@ -86,11 +86,6 @@ export type RoleAssigned = Message<"incidentbuddy.event.RoleAssigned"> & {
    * @generated from field: string role_id = 2;
    */
   roleId: string;
-
-  /**
-   * @generated from field: string tenant_id = 3;
-   */
-  tenantId: string;
 };
 
 /**

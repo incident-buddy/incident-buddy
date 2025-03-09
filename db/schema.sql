@@ -150,7 +150,7 @@ create table workflow_versions
     workflow_id text    not null references workflows (id),
     version     text    not null,
     is_latest   boolean not null default false,
-    steps       jsonb   not null,
+    steps       jsonb   not null default '[]'::jsonb,
     tenant_id   text    not null references tenants (id)
 );
 

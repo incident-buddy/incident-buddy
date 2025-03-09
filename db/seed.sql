@@ -398,22 +398,40 @@ values ('1', 'When an incident declared, notify to the team', 'INCIDENT_CREATED'
 ;
 
 insert into workflow_versions (id, workflow_id, version, is_latest, steps, tenant_id)
-values ('1', '1', '1', false, '[
+values ('1', '1', '1', false, '{
+"steps": [
   {
-    "type": "NOTIFY",
-    "to": "resource:dev-team",
-    "message": {
-      "text": "よろしく"
+    "code": "slack:post-message",
+    "params": {
+      "channel": "some-slack-channel",
+      "message": "OOPS"
+    }
+  },
+  {
+    "code": "sms:send",
+    "params": {
+      "phoneNumber": "09012345678",
+      "message": "OOPS"
     }
   }
-]', '1'),
-('2', '1', '2', true, '[
- {
-   "type": "NOTIFY",
-   "to": "resource:dev-team",
-   "message": {
-     "text": "インシデントが発生しました。対応をお願いします。"
-   }
- }
-]', '1')
+]
+}', '1'),
+('2', '1', '2', true, '{
+"steps": [
+  {
+    "code": "slack:post-message",
+    "params": {
+      "channel": "some-slack-channel",
+      "message": "An incident has occurred. Please take action."
+    }
+  },
+  {
+    "code": "sms:send",
+    "params": {
+      "phoneNumber": "09012345678",
+      "message": "EMERGENT. An incident has occurred. Please take action."
+    }
+  }
+]
+}', '1')
 ;

@@ -6,19 +6,18 @@ option go_package = "incident-buddy/event";
 
 message Event {
   string event_code = 1;
+  string tenant_id = 2;
   oneof payload {
-    IncidentUpdated incident_updated = 2;
-    RoleAssigned role_assigned = 3;
+    IncidentUpdated incident_updated = 3;
+    RoleAssigned role_assigned = 4;
   }
 }
 
 message IncidentUpdated {
   string incident_id = 1;
   string incident_name = 2;
-  string tenant_id = 3;
 }
 message RoleAssigned {
   string user_id = 1;
   string role_id = 2;
-  string tenant_id = 3;
 }

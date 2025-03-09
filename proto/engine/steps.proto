@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package engine;
+
+option go_package = "incidentbuddy.engine;engine";
+
+message Steps {
+  repeated Step steps = 1;
+}
+
+message Step {
+  string code = 1;
+  oneof params {
+    PostSlackParams post_slack = 2;
+    SendSmsParams send_sms = 3;
+  }
+}
+
+message PostSlackParams {
+  string channel = 1;
+  string message = 2;
+}
+
+message SendSmsParams {
+  string phoneNumber = 1;
+  string message = 2;
+}

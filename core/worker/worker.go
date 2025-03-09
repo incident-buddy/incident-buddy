@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"google.golang.org/protobuf/encoding/protojson"
 	"incident-buddy/core/gen/dbaccess"
+	"incident-buddy/core/gen/proto/engine"
 	"incident-buddy/core/gen/proto/event"
+	"log"
 
 	"io"
 	"log/slog"
@@ -51,7 +53,7 @@ func (w *Worker) HandleMessage(writer http.ResponseWriter, r *http.Request) {
 	}
 
 	workflow, err := w.db.FindTriggeringWorkflow(ctx, dbaccess.FindTriggeringWorkflowParams{
-		TenantID: "1",
+		TenantID: ev.TenantId,
 		Trigger:  ev.EventCode,
 	})
 	if err != nil {
@@ -59,7 +61,16 @@ func (w *Worker) HandleMessage(writer http.ResponseWriter, r *http.Request) {
 		return
 	}
 	for _, w := range workflow {
-		slog.Info("workflow:", "name", w.Name, "trigger", w.Trigger, "steps", fmt.Sprintf("%+v", w.Steps))
+		var ss engine.Steps
+		log.Println(string(w.Steps))
+		if err := protojson.Unmarshal(w.Steps, &ss); err != nil {
+			http.Error(writer, "Failed to parse workflow steps", http.StatusBadRequest)
+			return
+		}
+		slog.Info("workflow:", "name", w.Name, "trigger", w.Trigger)
+		for _, s := range ss.Steps {
+			slog.Info("step:", "name", s.Code, "params", fmt.Sprintf("%+v", s))
+		}
 	}
 
 	writer.WriteHeader(http.StatusOK)

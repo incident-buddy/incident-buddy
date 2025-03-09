@@ -44,22 +44,22 @@ func main() {
 	case "incident":
 		e = ev.Event{
 			EventCode: "INCIDENT_CREATED",
+			TenantId:  "1",
 			Payload: &ev.Event_IncidentUpdated{
 				IncidentUpdated: &ev.IncidentUpdated{
 					IncidentId:   faker.UUIDDigit(),
 					IncidentName: faker.Word(),
-					TenantId:     "123",
 				},
 			},
 		}
 	case "role":
 		e = ev.Event{
 			EventCode: "ROLE_ASSIGNED",
+			TenantId:  "1",
 			Payload: &ev.Event_RoleAssigned{
 				RoleAssigned: &ev.RoleAssigned{
-					RoleId:   faker.UUIDDigit(),
-					UserId:   faker.UUIDDigit(),
-					TenantId: "123",
+					RoleId: faker.UUIDDigit(),
+					UserId: faker.UUIDDigit(),
 				},
 			},
 		}

@@ -10,7 +10,41 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file event/event.proto.
  */
 export const file_event_event: GenFile = /*@__PURE__*/
-  fileDesc("ChFldmVudC9ldmVudC5wcm90bxITaW5jaWRlbnRidWRkeS5ldmVudCI9Cg9JbmNpZGVudFVwZGF0ZWQSEwoLaW5jaWRlbnRfaWQYASABKAkSFQoNaW5jaWRlbnRfbmFtZRgCIAEoCUK3AQoXY29tLmluY2lkZW50YnVkZHkuZXZlbnRCCkV2ZW50UHJvdG9QAVojaW5jaWRlbnQtYnVkZHkvY29yZS9nZW4vcHJvdG8vZXZlbnSiAgNJRViqAhNJbmNpZGVudGJ1ZGR5LkV2ZW50ygITSW5jaWRlbnRidWRkeVxFdmVudOICH0luY2lkZW50YnVkZHlcRXZlbnRcR1BCTWV0YWRhdGHqAhRJbmNpZGVudGJ1ZGR5OjpFdmVudGIGcHJvdG8z");
+  fileDesc("ChFldmVudC9ldmVudC5wcm90bxITaW5jaWRlbnRidWRkeS5ldmVudCKkAQoFRXZlbnQSEgoKZXZlbnRfY29kZRgBIAEoCRJAChBpbmNpZGVudF91cGRhdGVkGAIgASgLMiQuaW5jaWRlbnRidWRkeS5ldmVudC5JbmNpZGVudFVwZGF0ZWRIABI6Cg1yb2xlX2Fzc2lnbmVkGAMgASgLMiEuaW5jaWRlbnRidWRkeS5ldmVudC5Sb2xlQXNzaWduZWRIAEIJCgdwYXlsb2FkIlAKD0luY2lkZW50VXBkYXRlZBITCgtpbmNpZGVudF9pZBgBIAEoCRIVCg1pbmNpZGVudF9uYW1lGAIgASgJEhEKCXRlbmFudF9pZBgDIAEoCSJDCgxSb2xlQXNzaWduZWQSDwoHdXNlcl9pZBgBIAEoCRIPCgdyb2xlX2lkGAIgASgJEhEKCXRlbmFudF9pZBgDIAEoCUK3AQoXY29tLmluY2lkZW50YnVkZHkuZXZlbnRCCkV2ZW50UHJvdG9QAVojaW5jaWRlbnQtYnVkZHkvY29yZS9nZW4vcHJvdG8vZXZlbnSiAgNJRViqAhNJbmNpZGVudGJ1ZGR5LkV2ZW50ygITSW5jaWRlbnRidWRkeVxFdmVudOICH0luY2lkZW50YnVkZHlcRXZlbnRcR1BCTWV0YWRhdGHqAhRJbmNpZGVudGJ1ZGR5OjpFdmVudGIGcHJvdG8z");
+
+/**
+ * @generated from message incidentbuddy.event.Event
+ */
+export type Event = Message<"incidentbuddy.event.Event"> & {
+  /**
+   * @generated from field: string event_code = 1;
+   */
+  eventCode: string;
+
+  /**
+   * @generated from oneof incidentbuddy.event.Event.payload
+   */
+  payload: {
+    /**
+     * @generated from field: incidentbuddy.event.IncidentUpdated incident_updated = 2;
+     */
+    value: IncidentUpdated;
+    case: "incidentUpdated";
+  } | {
+    /**
+     * @generated from field: incidentbuddy.event.RoleAssigned role_assigned = 3;
+     */
+    value: RoleAssigned;
+    case: "roleAssigned";
+  } | { case: undefined; value?: undefined };
+};
+
+/**
+ * Describes the message incidentbuddy.event.Event.
+ * Use `create(EventSchema)` to create a new message.
+ */
+export const EventSchema: GenMessage<Event> = /*@__PURE__*/
+  messageDesc(file_event_event, 0);
 
 /**
  * @generated from message incidentbuddy.event.IncidentUpdated
@@ -25,6 +59,11 @@ export type IncidentUpdated = Message<"incidentbuddy.event.IncidentUpdated"> & {
    * @generated from field: string incident_name = 2;
    */
   incidentName: string;
+
+  /**
+   * @generated from field: string tenant_id = 3;
+   */
+  tenantId: string;
 };
 
 /**
@@ -32,5 +71,32 @@ export type IncidentUpdated = Message<"incidentbuddy.event.IncidentUpdated"> & {
  * Use `create(IncidentUpdatedSchema)` to create a new message.
  */
 export const IncidentUpdatedSchema: GenMessage<IncidentUpdated> = /*@__PURE__*/
-  messageDesc(file_event_event, 0);
+  messageDesc(file_event_event, 1);
+
+/**
+ * @generated from message incidentbuddy.event.RoleAssigned
+ */
+export type RoleAssigned = Message<"incidentbuddy.event.RoleAssigned"> & {
+  /**
+   * @generated from field: string user_id = 1;
+   */
+  userId: string;
+
+  /**
+   * @generated from field: string role_id = 2;
+   */
+  roleId: string;
+
+  /**
+   * @generated from field: string tenant_id = 3;
+   */
+  tenantId: string;
+};
+
+/**
+ * Describes the message incidentbuddy.event.RoleAssigned.
+ * Use `create(RoleAssignedSchema)` to create a new message.
+ */
+export const RoleAssignedSchema: GenMessage<RoleAssigned> = /*@__PURE__*/
+  messageDesc(file_event_event, 2);
 

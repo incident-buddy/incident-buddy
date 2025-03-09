@@ -392,3 +392,28 @@ values ('1',
         '1716355097.537659',
         '1')
 ;
+
+insert into workflows (id, name, trigger, tenant_id)
+values ('1', 'When an incident declared, notify to the team', 'INCIDENT_CREATED', '1')
+;
+
+insert into workflow_versions (id, workflow_id, version, is_latest, steps, tenant_id)
+values ('1', '1', '1', false, '[
+  {
+    "type": "NOTIFY",
+    "to": "resource:dev-team",
+    "message": {
+      "text": "よろしく"
+    }
+  }
+]', '1'),
+('2', '1', '2', true, '[
+ {
+   "type": "NOTIFY",
+   "to": "resource:dev-team",
+   "message": {
+     "text": "インシデントが発生しました。対応をお願いします。"
+   }
+ }
+]', '1')
+;

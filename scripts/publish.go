@@ -1,13 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/go-faker/faker/v4"
 	"google.golang.org/protobuf/encoding/protojson"
-	ev "incident-buddy/scripts/gen/proto/incidentbuddy/event"
+	ev "incident-buddy/scripts/gen/proto/event"
 	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 )
@@ -37,29 +39,53 @@ func main() {
 		log.Panicf("workerPort is required")
 	}
 
+	var e ev.Event
 	switch *evType {
 	case "incident":
-		payload, err := protojson.Marshal(&ev.IncidentUpdated{
-			IncidentId:   faker.UUIDDigit(),
-			IncidentName: faker.Name(),
-		})
-		if err != nil {
-			panic(err)
-		}
-		message := pubSubMessage{
-			Message: message{
-				Data: payload,
-				ID:   faker.UUIDDigit(),
+		e = ev.Event{
+			EventCode: "INCIDENT_CREATED",
+			Payload: &ev.Event_IncidentUpdated{
+				IncidentUpdated: &ev.IncidentUpdated{
+					IncidentId:   faker.UUIDDigit(),
+					IncidentName: faker.Word(),
+					TenantId:     "123",
+				},
 			},
-			Subscription: faker.UUIDDigit(),
 		}
-		c := http.DefaultClient
-		js, _ := json.Marshal(message)
-
-		post, err := c.Post(fmt.Sprintf("http://localhost:%s", *workerPort), "application/json", strings.NewReader(string(js)))
-		if err != nil {
-			panic(err)
+	case "role":
+		e = ev.Event{
+			EventCode: "ROLE_ASSIGNED",
+			Payload: &ev.Event_RoleAssigned{
+				RoleAssigned: &ev.RoleAssigned{
+					RoleId:   faker.UUIDDigit(),
+					UserId:   faker.UUIDDigit(),
+					TenantId: "123",
+				},
+			},
 		}
-		log.Println(post.Status)
 	}
+	data, err := protojson.Marshal(&e)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(data))
+	message := pubSubMessage{
+		Message: message{
+			Data: data,
+			ID:   faker.UUIDDigit(),
+		},
+		Subscription: faker.UUIDDigit(),
+	}
+	c := http.DefaultClient
+	js, _ := json.Marshal(message)
+
+	post, err := c.Post(fmt.Sprintf("http://localhost:%s", *workerPort), "application/json", strings.NewReader(string(js)))
+	if err != nil {
+		panic(err)
+	}
+	buf := new(bytes.Buffer)
+	_, _ = buf.ReadFrom(post.Body)
+	body := buf.String()
+
+	slog.Info("", "status", post.Status, "body", body)
 }

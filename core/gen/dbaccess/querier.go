@@ -50,6 +50,19 @@ type Querier interface {
 	//  where rm.id = $1
 	//    and rm.tenant_id = $2
 	FetchResourceMaster(ctx context.Context, arg FetchResourceMasterParams) (ResourceMasters, error)
+	//FindTriggeringWorkflow
+	//
+	//  select
+	//      w.id,
+	//      w.name,
+	//      w.trigger,
+	//      wv.id as "version_id",
+	//      wv.version,
+	//      wv.steps
+	//  from workflows w
+	//  inner join workflow_versions wv on w.id = wv.workflow_id and wv.is_latest
+	//  where w.tenant_id = $1 and w.trigger = $2
+	FindTriggeringWorkflow(ctx context.Context, arg FindTriggeringWorkflowParams) ([]FindTriggeringWorkflowRow, error)
 	//ListIncidents
 	//
 	//  select i.id,

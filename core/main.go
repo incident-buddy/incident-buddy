@@ -19,7 +19,6 @@ import (
 	"incident-buddy/core/shared/clock"
 	"incident-buddy/core/shared/id"
 	"incident-buddy/core/wire"
-	"incident-buddy/core/worker"
 	"log"
 	"log/slog"
 	"net/http"
@@ -104,7 +103,8 @@ func startApiServer(wirer *wire.Wirer, port int64) {
 
 func startWorker(wirer *wire.Wirer, port int64) {
 	slog.Info(fmt.Sprintf("Starting worker at %d\n", port))
-	http.HandleFunc("/", worker.HandleMessage)
+	w := wirer.WireWorker()
+	http.HandleFunc("/", w.HandleMessage)
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
 		log.Fatalf("Error starting worker: %v", err)
 	}

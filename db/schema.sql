@@ -17,15 +17,16 @@ create table users
 
 create index users__ti_s on users (tenant_id, status);
 
-create table user_emails
-(
+create table user_emails (
     id        text primary key,
     user_id   text    not null references users (id),
     email     text    not null,
     verified  boolean not null default false,
-    tenant_id text    not null references tenants (id),
-    unique (user_id, email)
+    tenant_id text    not null references tenants (id)
 );
+
+-- unique(email, tenant_id) はpsqldefではsyntax error
+alter table user_emails add constraint user_emails__unique_email unique (email, tenant_id);
 
 create index user_emails__ui on user_emails (user_id);
 
@@ -133,4 +134,37 @@ comment on column incident_event_histories.external_place is 'eg. #inc-123_cart-
 comment on column incident_event_histories.external_id is 'eg. 1234567890.123456';
 
 
--- 「このインシデントタイプならロールとしてX,Y,Zが必要で、Zが埋まっていない」が管理したくなるかも
+create table workflows
+(
+    id        text primary key,
+    name      text not null,
+    trigger   text not null,
+    tenant_id text not null references tenants (id)
+);
+
+create index workflows__ti_tr on workflows (tenant_id, trigger);
+
+create table workflow_versions
+(
+    id          text primary key,
+    workflow_id text    not null references workflows (id),
+    version     text    not null,
+    is_latest   boolean not null default false,
+    steps       jsonb   not null,
+    tenant_id   text    not null references tenants (id)
+);
+
+create index workflow_versions__ti_wi_il on workflow_versions (tenant_id, workflow_id, is_latest);
+
+create table workflow_executions
+(
+    id                  text primary key,
+    workflow_id         text      not null references workflows (id),
+    workflow_version_id text      not null references workflow_versions (id),
+    status              text      not null,
+    started_at          timestamp not null,
+    finished_at         timestamp,
+    tenant_id           text      not null references tenants (id)
+);
+create index workflow_executions__ti_sa_s on workflow_executions (tenant_id, started_at, status);
+

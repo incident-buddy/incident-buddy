@@ -8,6 +8,7 @@ import (
 	"incident-buddy/core/gen/dbaccess"
 	"incident-buddy/core/shared/clock"
 	"incident-buddy/core/shared/id"
+	"incident-buddy/core/worker"
 )
 
 type Wirer struct {
@@ -36,4 +37,8 @@ func (w *Wirer) WireIncidentHandler() *IncidentHandler {
 func (w *Wirer) WireResourceHandler() *ResourceHandler {
 	registry := resources.RegistryInstance()
 	return NewResourceHandler(w.AuthCtxReader, registry)
+}
+
+func (w *Wirer) WireWorker() *worker.Worker {
+	return worker.NewWorker(w.DB)
 }

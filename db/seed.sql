@@ -402,14 +402,14 @@ values ('1', '1', '1', false, '{
 "steps": [
   {
     "code": "slack:post-message",
-    "params": {
+    "SlackPostParams": {
       "channel": "some-slack-channel",
       "message": "OOPS"
     }
   },
   {
     "code": "sms:send",
-    "params": {
+    "smsSendParams": {
       "phoneNumber": "09012345678",
       "message": "OOPS"
     }
@@ -420,16 +420,16 @@ values ('1', '1', '1', false, '{
 "steps": [
   {
     "code": "slack:post-message",
-    "params": {
+    "slackPostParams": {
       "channel": "some-slack-channel",
       "message": "An incident has occurred. Please take action."
     }
   },
   {
     "code": "sms:send",
-    "params": {
+    "smsSendParams": {
       "phoneNumber": "09012345678",
-      "message": "EMERGENT. An incident has occurred. Please take action."
+      "message": "OOPS! An incident has occurred. Please take action."
     }
   }
 ]

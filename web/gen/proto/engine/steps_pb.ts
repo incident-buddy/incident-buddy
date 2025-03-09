@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file engine/steps.proto.
  */
 export const file_engine_steps: GenFile = /*@__PURE__*/
-  fileDesc("ChJlbmdpbmUvc3RlcHMucHJvdG8SBmVuZ2luZSIkCgVTdGVwcxIbCgVzdGVwcxgBIAMoCzIMLmVuZ2luZS5TdGVwIngKBFN0ZXASDAoEY29kZRgBIAEoCRItCgpwb3N0X3NsYWNrGAIgASgLMhcuZW5naW5lLlBvc3RTbGFja1BhcmFtc0gAEikKCHNlbmRfc21zGAMgASgLMhUuZW5naW5lLlNlbmRTbXNQYXJhbXNIAEIICgZwYXJhbXMiMwoPUG9zdFNsYWNrUGFyYW1zEg8KB2NoYW5uZWwYASABKAkSDwoHbWVzc2FnZRgCIAEoCSI1Cg1TZW5kU21zUGFyYW1zEhMKC3Bob25lTnVtYmVyGAEgASgJEg8KB21lc3NhZ2UYAiABKAlCdgoKY29tLmVuZ2luZUIKU3RlcHNQcm90b1ABWiRpbmNpZGVudC1idWRkeS9jb3JlL2dlbi9wcm90by9lbmdpbmWiAgNFWFiqAgZFbmdpbmXKAgZFbmdpbmXiAhJFbmdpbmVcR1BCTWV0YWRhdGHqAgZFbmdpbmViBnByb3RvMw");
+  fileDesc("ChJlbmdpbmUvc3RlcHMucHJvdG8SBmVuZ2luZSIkCgVTdGVwcxIbCgVzdGVwcxgBIAMoCzIMLmVuZ2luZS5TdGVwIooBCgRTdGVwEgwKBGNvZGUYASABKAkSNAoRc2xhY2tfcG9zdF9wYXJhbXMYAiABKAsyFy5lbmdpbmUuU2xhY2tQb3N0UGFyYW1zSAASMAoPc21zX3NlbmRfcGFyYW1zGAMgASgLMhUuZW5naW5lLlNtc1NlbmRQYXJhbXNIAEIMCgpzdGVwUGFyYW1zIjMKD1NsYWNrUG9zdFBhcmFtcxIPCgdjaGFubmVsGAEgASgJEg8KB21lc3NhZ2UYAiABKAkiNgoNU21zU2VuZFBhcmFtcxIUCgxwaG9uZV9udW1iZXIYASABKAkSDwoHbWVzc2FnZRgCIAEoCUJ2Cgpjb20uZW5naW5lQgpTdGVwc1Byb3RvUAFaJGluY2lkZW50LWJ1ZGR5L2NvcmUvZ2VuL3Byb3RvL2VuZ2luZaICA0VYWKoCBkVuZ2luZcoCBkVuZ2luZeICEkVuZ2luZVxHUEJNZXRhZGF0YeoCBkVuZ2luZWIGcHJvdG8z");
 
 /**
  * @generated from message engine.Steps
@@ -39,20 +39,20 @@ export type Step = Message<"engine.Step"> & {
   code: string;
 
   /**
-   * @generated from oneof engine.Step.params
+   * @generated from oneof engine.Step.stepParams
    */
-  params: {
+  stepParams: {
     /**
-     * @generated from field: engine.PostSlackParams post_slack = 2;
+     * @generated from field: engine.SlackPostParams slack_post_params = 2;
      */
-    value: PostSlackParams;
-    case: "postSlack";
+    value: SlackPostParams;
+    case: "slackPostParams";
   } | {
     /**
-     * @generated from field: engine.SendSmsParams send_sms = 3;
+     * @generated from field: engine.SmsSendParams sms_send_params = 3;
      */
-    value: SendSmsParams;
-    case: "sendSms";
+    value: SmsSendParams;
+    case: "smsSendParams";
   } | { case: undefined; value?: undefined };
 };
 
@@ -64,9 +64,9 @@ export const StepSchema: GenMessage<Step> = /*@__PURE__*/
   messageDesc(file_engine_steps, 1);
 
 /**
- * @generated from message engine.PostSlackParams
+ * @generated from message engine.SlackPostParams
  */
-export type PostSlackParams = Message<"engine.PostSlackParams"> & {
+export type SlackPostParams = Message<"engine.SlackPostParams"> & {
   /**
    * @generated from field: string channel = 1;
    */
@@ -79,18 +79,18 @@ export type PostSlackParams = Message<"engine.PostSlackParams"> & {
 };
 
 /**
- * Describes the message engine.PostSlackParams.
- * Use `create(PostSlackParamsSchema)` to create a new message.
+ * Describes the message engine.SlackPostParams.
+ * Use `create(SlackPostParamsSchema)` to create a new message.
  */
-export const PostSlackParamsSchema: GenMessage<PostSlackParams> = /*@__PURE__*/
+export const SlackPostParamsSchema: GenMessage<SlackPostParams> = /*@__PURE__*/
   messageDesc(file_engine_steps, 2);
 
 /**
- * @generated from message engine.SendSmsParams
+ * @generated from message engine.SmsSendParams
  */
-export type SendSmsParams = Message<"engine.SendSmsParams"> & {
+export type SmsSendParams = Message<"engine.SmsSendParams"> & {
   /**
-   * @generated from field: string phoneNumber = 1;
+   * @generated from field: string phone_number = 1;
    */
   phoneNumber: string;
 
@@ -101,9 +101,9 @@ export type SendSmsParams = Message<"engine.SendSmsParams"> & {
 };
 
 /**
- * Describes the message engine.SendSmsParams.
- * Use `create(SendSmsParamsSchema)` to create a new message.
+ * Describes the message engine.SmsSendParams.
+ * Use `create(SmsSendParamsSchema)` to create a new message.
  */
-export const SendSmsParamsSchema: GenMessage<SendSmsParams> = /*@__PURE__*/
+export const SmsSendParamsSchema: GenMessage<SmsSendParams> = /*@__PURE__*/
   messageDesc(file_engine_steps, 3);
 

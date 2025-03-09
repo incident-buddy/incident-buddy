@@ -61,15 +61,21 @@ func (w *Worker) HandleMessage(writer http.ResponseWriter, r *http.Request) {
 		return
 	}
 	for _, w := range workflow {
-		var ss engine.Steps
-		log.Println(string(w.Steps))
-		if err := protojson.Unmarshal(w.Steps, &ss); err != nil {
+		var s engine.Steps
+		if err := protojson.Unmarshal(w.Steps, &s); err != nil {
+			log.Println(err)
 			http.Error(writer, "Failed to parse workflow steps", http.StatusBadRequest)
 			return
 		}
 		slog.Info("workflow:", "name", w.Name, "trigger", w.Trigger)
-		for _, s := range ss.Steps {
-			slog.Info("step:", "name", s.Code, "params", fmt.Sprintf("%+v", s))
+		for _, s := range s.Steps {
+			log.Println(s.Code)
+			switch p := s.StepParams.(type) {
+			case *engine.Step_SlackPostParams:
+				slog.Info("params", "channel", p.SlackPostParams.Channel, "msg", p.SlackPostParams.Message)
+			case *engine.Step_SmsSendParams:
+				slog.Info("params", "phone", p.SmsSendParams.PhoneNumber, "msg", p.SmsSendParams.Message)
+			}
 		}
 	}
 

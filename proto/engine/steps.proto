@@ -10,18 +10,18 @@ message Steps {
 
 message Step {
   string code = 1;
-  oneof params {
-    PostSlackParams post_slack = 2;
-    SendSmsParams send_sms = 3;
+  oneof stepParams {
+    SlackPostParams slack_post_params = 2;
+    SmsSendParams sms_send_params = 3;
   }
 }
 
-message PostSlackParams {
+message SlackPostParams {
   string channel = 1;
   string message = 2;
 }
 
-message SendSmsParams {
-  string phoneNumber = 1;
+message SmsSendParams {
+  string phone_number = 1;
   string message = 2;
 }

@@ -133,7 +133,6 @@ comment on column incident_event_histories.external_platform is 'eg. SLACK';
 comment on column incident_event_histories.external_place is 'eg. #inc-123_cart-outage';
 comment on column incident_event_histories.external_id is 'eg. 1234567890.123456';
 
-
 create table workflows
 (
     id        text primary key,
@@ -168,3 +167,12 @@ create table workflow_executions
 );
 create index workflow_executions__ti_sa_s on workflow_executions (tenant_id, started_at, status);
 
+create table slack_workspaces
+(
+    id        text primary key,
+    code      text not null,
+    token     text not null,
+    tenant_id text not null references tenants (id)
+);
+
+create index slack_tokens__ti on slack_workspaces (tenant_id);

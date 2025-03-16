@@ -12,7 +12,10 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file workflow.proto.
  */
 export const file_workflow: GenFile = /*@__PURE__*/
-  fileDesc("Cg53b3JrZmxvdy5wcm90bxINaW5jaWRlbnRidWRkeSJ6CgdUcmlnZ2VyEgwKBG5hbWUYASABKAkSDQoFbGFiZWwYAiABKAkSEwoLZGVzY3JpcHRpb24YAyABKAkSGAoQZGVmYXVsdF9vbmNlX2ZvchgEIAMoCRIjCgVzY29wZRgFIAEoCzIULmluY2lkZW50YnVkZHkuU2NvcGVClQEKEWNvbS5pbmNpZGVudGJ1ZGR5Qg1Xb3JrZmxvd1Byb3RvUAFaHWluY2lkZW50LWJ1ZGR5L2NvcmUvZ2VuL3Byb3RvogIDSVhYqgINSW5jaWRlbnRidWRkecoCDUluY2lkZW50YnVkZHniAhlJbmNpZGVudGJ1ZGR5XEdQQk1ldGFkYXRh6gINSW5jaWRlbnRidWRkeWIGcHJvdG8z", [file_engine]);
+  fileDesc(
+    "Cg53b3JrZmxvdy5wcm90bxINaW5jaWRlbnRidWRkeSJ6CgdUcmlnZ2VyEgwKBG5hbWUYASABKAkSDQoFbGFiZWwYAiABKAkSEwoLZGVzY3JpcHRpb24YAyABKAkSGAoQZGVmYXVsdF9vbmNlX2ZvchgEIAMoCRIjCgVzY29wZRgFIAEoCzIULmluY2lkZW50YnVkZHkuU2NvcGVClQEKEWNvbS5pbmNpZGVudGJ1ZGR5Qg1Xb3JrZmxvd1Byb3RvUAFaHWluY2lkZW50LWJ1ZGR5L2NvcmUvZ2VuL3Byb3RvogIDSVhYqgINSW5jaWRlbnRidWRkecoCDUluY2lkZW50YnVkZHniAhlJbmNpZGVudGJ1ZGR5XEdQQk1ldGFkYXRh6gINSW5jaWRlbnRidWRkeWIGcHJvdG8z",
+    [file_engine],
+  );
 
 /**
  * @generated from message incidentbuddy.Trigger
@@ -50,4 +53,3 @@ export type Trigger = Message<"incidentbuddy.Trigger"> & {
  */
 export const TriggerSchema: GenMessage<Trigger> = /*@__PURE__*/
   messageDesc(file_workflow, 0);
-

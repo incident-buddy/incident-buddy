@@ -10,7 +10,9 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file engine/steps.proto.
  */
 export const file_engine_step: GenFile = /*@__PURE__*/
-  fileDesc("ChFlbmdpbmUvc3RlcC5wcm90bxIGZW5naW5lIngKBFN0ZXASDAoEY29kZRgBIAEoCRItCgpwb3N0X3NsYWNrGAIgASgLMhcuZW5naW5lLlBvc3RTbGFja1BhcmFtc0gAEikKCHNlbmRfc21zGAMgASgLMhUuZW5naW5lLlNlbmRTbXNQYXJhbXNIAEIICgZwYXJhbXMiMwoPUG9zdFNsYWNrUGFyYW1zEg8KB2NoYW5uZWwYASABKAkSDwoHbWVzc2FnZRgCIAEoCSI1Cg1TZW5kU21zUGFyYW1zEhMKC3Bob25lTnVtYmVyGAEgASgJEg8KB21lc3NhZ2UYAiABKAlCdQoKY29tLmVuZ2luZUIJU3RlcFByb3RvUAFaJGluY2lkZW50LWJ1ZGR5L2NvcmUvZ2VuL3Byb3RvL2VuZ2luZaICA0VYWKoCBkVuZ2luZcoCBkVuZ2luZeICEkVuZ2luZVxHUEJNZXRhZGF0YeoCBkVuZ2luZWIGcHJvdG8z");
+  fileDesc(
+    "ChFlbmdpbmUvc3RlcC5wcm90bxIGZW5naW5lIngKBFN0ZXASDAoEY29kZRgBIAEoCRItCgpwb3N0X3NsYWNrGAIgASgLMhcuZW5naW5lLlBvc3RTbGFja1BhcmFtc0gAEikKCHNlbmRfc21zGAMgASgLMhUuZW5naW5lLlNlbmRTbXNQYXJhbXNIAEIICgZwYXJhbXMiMwoPUG9zdFNsYWNrUGFyYW1zEg8KB2NoYW5uZWwYASABKAkSDwoHbWVzc2FnZRgCIAEoCSI1Cg1TZW5kU21zUGFyYW1zEhMKC3Bob25lTnVtYmVyGAEgASgJEg8KB21lc3NhZ2UYAiABKAlCdQoKY29tLmVuZ2luZUIJU3RlcFByb3RvUAFaJGluY2lkZW50LWJ1ZGR5L2NvcmUvZ2VuL3Byb3RvL2VuZ2luZaICA0VYWKoCBkVuZ2luZcoCBkVuZ2luZeICEkVuZ2luZVxHUEJNZXRhZGF0YeoCBkVuZ2luZWIGcHJvdG8z",
+  );
 
 /**
  * @generated from message engine.Step
@@ -89,4 +91,3 @@ export type SendSmsParams = Message<"engine.SendSmsParams"> & {
  */
 export const SendSmsParamsSchema: GenMessage<SendSmsParams> = /*@__PURE__*/
   messageDesc(file_engine_step, 2);
-

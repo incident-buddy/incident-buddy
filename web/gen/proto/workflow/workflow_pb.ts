@@ -12,7 +12,10 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file workflow/workflow.proto.
  */
 export const file_workflow_workflow: GenFile = /*@__PURE__*/
-  fileDesc("Chd3b3JrZmxvdy93b3JrZmxvdy5wcm90bxIWaW5jaWRlbnRidWRkeS53b3JrZmxvdyK1AQoHVHJpZ2dlchIMCgRuYW1lGAEgASgJEg0KBWxhYmVsGAIgASgJEhMKC2Rlc2NyaXB0aW9uGAMgASgJEhgKEGRlZmF1bHRfb25jZV9mb3IYBCADKAkSMQoJcmVzb3VyY2VzGAUgAygLMh4uaW5jaWRlbnRidWRkeS5lbmdpbmUuUmVzb3VyY2USKwoGc2NvcGVzGAYgAygLMhsuaW5jaWRlbnRidWRkeS5lbmdpbmUuU2NvcGVCzAEKGmNvbS5pbmNpZGVudGJ1ZGR5LndvcmtmbG93Qg1Xb3JrZmxvd1Byb3RvUAFaJmluY2lkZW50LWJ1ZGR5L2NvcmUvZ2VuL3Byb3RvL3dvcmtmbG93ogIDSVdYqgIWSW5jaWRlbnRidWRkeS5Xb3JrZmxvd8oCFkluY2lkZW50YnVkZHlcV29ya2Zsb3fiAiJJbmNpZGVudGJ1ZGR5XFdvcmtmbG93XEdQQk1ldGFkYXRh6gIXSW5jaWRlbnRidWRkeTo6V29ya2Zsb3diBnByb3RvMw", [file_engine_engine]);
+  fileDesc(
+    "Chd3b3JrZmxvdy93b3JrZmxvdy5wcm90bxIWaW5jaWRlbnRidWRkeS53b3JrZmxvdyK1AQoHVHJpZ2dlchIMCgRuYW1lGAEgASgJEg0KBWxhYmVsGAIgASgJEhMKC2Rlc2NyaXB0aW9uGAMgASgJEhgKEGRlZmF1bHRfb25jZV9mb3IYBCADKAkSMQoJcmVzb3VyY2VzGAUgAygLMh4uaW5jaWRlbnRidWRkeS5lbmdpbmUuUmVzb3VyY2USKwoGc2NvcGVzGAYgAygLMhsuaW5jaWRlbnRidWRkeS5lbmdpbmUuU2NvcGVCzAEKGmNvbS5pbmNpZGVudGJ1ZGR5LndvcmtmbG93Qg1Xb3JrZmxvd1Byb3RvUAFaJmluY2lkZW50LWJ1ZGR5L2NvcmUvZ2VuL3Byb3RvL3dvcmtmbG93ogIDSVdYqgIWSW5jaWRlbnRidWRkeS5Xb3JrZmxvd8oCFkluY2lkZW50YnVkZHlcV29ya2Zsb3fiAiJJbmNpZGVudGJ1ZGR5XFdvcmtmbG93XEdQQk1ldGFkYXRh6gIXSW5jaWRlbnRidWRkeTo6V29ya2Zsb3diBnByb3RvMw",
+    [file_engine_engine],
+  );
 
 /**
  * @generated from message incidentbuddy.workflow.Trigger
@@ -55,4 +58,3 @@ export type Trigger = Message<"incidentbuddy.workflow.Trigger"> & {
  */
 export const TriggerSchema: GenMessage<Trigger> = /*@__PURE__*/
   messageDesc(file_workflow_workflow, 0);
-

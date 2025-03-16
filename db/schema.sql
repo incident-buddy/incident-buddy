@@ -30,6 +30,7 @@ alter table user_emails add constraint user_emails__unique_email unique (email, 
 
 create index user_emails__ui on user_emails (user_id);
 
+-- e.g. チーム
 create table resource_masters
 (
     id          text primary key,
@@ -42,31 +43,33 @@ create table resource_masters
 
 create index resource_masters__ti_ca_co on resource_masters (tenant_id, category, code);
 
-create table resource_attributes
+-- e.g. チームのSlackチャンネル
+create table resource_master_attributes
 (
     id                 text primary key,
     name               text    not null,
     code               text    not null,
     value_type         text    not null,
     is_array           boolean not null default false,
+    order_no          integer not null,
     resource_master_id text    not null references resource_masters (id),
     tenant_id          text    not null references tenants (id)
 );
 
-create index resource_attributes__rm_co on resource_attributes (resource_master_id, code);
+create index resource_master_attributes__rm_on on resource_master_attributes (resource_master_id, order_no);
 
-create table resource_entries
+-- e.g. Team A, its Slack channel is #team-a
+create table resources
 (
     id                 text primary key,
     name               text  not null,
     code               text  not null,
-    attribute_values   jsonb not null,
+    attribute_values   jsonb not null, -- complies with resource_master_attributes
     resource_master_id text  not null references resource_masters (id),
     tenant_id          text  not null references tenants (id)
 );
 
-create index resource_entries__rm_co on resource_entries (resource_master_id, code);
-create index resource_entries__ti on resource_entries (tenant_id);
+create index resources__ti_rm_co on resources (tenant_id, resource_master_id, code);
 
 create table incident_statuses
 (

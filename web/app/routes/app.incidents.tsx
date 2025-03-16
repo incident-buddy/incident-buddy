@@ -22,7 +22,8 @@ export default function Page() {
           key={incident.id}
           className="flex items-center gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700"
         >
-          <div className="flex-shrink-0 w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+          <div className="flex-shrink-0 w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full">
+          </div>
           <div className="flex flex-col gap-1">
             {/* incident code and title with Link */}
             <Link

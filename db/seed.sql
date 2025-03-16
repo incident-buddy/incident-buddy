@@ -1,40 +1,32 @@
 insert into tenants (id, name)
-values ('1', 'Zarafa');
+values ('0000000000000000TENANT_001', 'Zarafa');
 
 insert into users (id, family_name, given_name, tenant_id, status)
-values ('101', 'Eコマース', '開発者1', '1', 'ACTIVE')
-     , ('102', 'Eコマース', '開発者2', '1', 'ACTIVE')
-     , ('103', 'Eコマース', '開発者3', '1', 'DISABLED')
-     , ('201', '決済', '開発者1', '1', 'ACTIVE')
-     , ('202', '決済', '開発者2', '1', 'ACTIVE')
-     , ('301', '請求', '開発者1', '1', 'ACTIVE')
-     , ('302', '請求', '開発者2', '1', 'ACTIVE')
-     , ('401', '顧客A', 'セールス1', '1', 'ACTIVE')
-     , ('402', '顧客A', 'セールス2', '1', 'ACTIVE')
-     , ('501', 'SRE', 'エンジニア1', '1', 'ACTIVE')
-     , ('502', 'SRE', 'エンジニア2', '1', 'ACTIVE')
-     , ('601', '事業', '責任者1', '1', 'ACTIVE')
-     , ('602', '事業', '責任者2', '1', 'ACTIVE')
+values ('00000000TEAM_ECOM_USER_001', 'Eコマース', '開発者1', '0000000000000000TENANT_001', 'ACTIVE')
+     , ('00000000TEAM_ECOM_USER_002', 'Eコマース', '開発者2', '0000000000000000TENANT_001', 'ACTIVE')
+     , ('00000000TEAM_ECOM_USER_003', 'Eコマース', '開発者3', '0000000000000000TENANT_001', 'DISABLED')
+     , ('000000TEAM_KESSAI_USER_001', '決済', '開発者1', '0000000000000000TENANT_001', 'ACTIVE')
+     , ('000000TEAM_KESSAI_USER_002', '決済', '開発者2', '0000000000000000TENANT_001', 'ACTIVE')
 ;
 
 insert into resource_masters (id, name, description, code, category, tenant_id)
-values ('1', '開発チーム', null, 'dev-team', 'team', '1')
-     , ('2', '機能', '影響機能', 'affected-feature', 'feature', '1')
-     , ('3', 'インフラ', null, 'infra', 'service', '1')
-     , ('4', '顧客', '影響顧客', 'affected-customer', 'customer', '1')
+values ('00RESOURCE_MASTER_DEV_TEAM', '開発チーム', null, 'dev-team', 'team', '0000000000000000TENANT_001')
+     , ('RESOURCE_MASTER_AFCTD_FEAT', '機能', '影響機能', 'affected-feature', 'feature', '0000000000000000TENANT_001')
+     , ('00000RESOURCE_MASTER_INFRA', 'インフラ', null, 'infra', 'service', '0000000000000000TENANT_001')
+     , ('00RESOURCE_MASTER_CUSTOMER', '顧客', '影響顧客', 'affected-customer', 'customer', '0000000000000000TENANT_001')
 ;
 
-insert into resource_attributes (id, name, code, value_type, is_array, resource_master_id, tenant_id)
-values ('101', 'Slackチャンネル', 'team-slack-channel', 'slack:channel', false, '1', '1')
-     , ('102', '開発者', 'developer', 'std:user', true, '1', '1')
-     , ('201', '機能概要', 'feature-description', 'std:text', false, '2', '1')
-     , ('202', '担当チーム', 'feature-team', 'resource:dev-team', true, '2', '1')
-     , ('301', '担当チーム', 'infra-team', 'resoure:dev-team', true, '3', '1')
-     , ('401', '担当セールス', 'customer-sales', 'std:user', true, '4', '1')
+insert into resource_master_attributes (id, name, code, value_type, is_array, order_no, resource_master_id, tenant_id)
+values ('00000000RMA_DEV_TEAM_SLACK', 'Slackチャンネル', 'team-slack-channel', 'slack:channel', false, '1', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
+     , ('0000000000000RMA_DEVELOPER', '開発者', 'developer', 'std:user', true, '2', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
+     , ('0000000000RMA_FEATURE_DESC', '機能概要', 'feature-description', 'std:text', false, '1', 'RESOURCE_MASTER_AFCTD_FEAT', '0000000000000000TENANT_001')
+     , ('0000000000RMA_FEATURE_TEAM', '担当チーム', 'feature-team', 'resource:dev-team', true, '2', 'RESOURCE_MASTER_AFCTD_FEAT', '0000000000000000TENANT_001')
+     , ('000000000000RMA_INFRA_TEAM', '担当チーム', 'infra-team', 'resoure:dev-team', true, '1', '00000RESOURCE_MASTER_INFRA', '0000000000000000TENANT_001')
+     , ('00000RMA_CUSTOMER_CP_SALES', '担当セールス', 'customer-sales', 'std:user', true, '1', '00RESOURCE_MASTER_CUSTOMER', '0000000000000000TENANT_001')
 ;
 
-insert into resource_entries (id, name, code, attribute_values, resource_master_id, tenant_id)
-values ('101', 'Eコマースチーム', 'ecom-team', '{
+insert into resources (id, name, code, attribute_values, resource_master_id, tenant_id)
+values ('0000000000000RES_ECOM_TEAM', 'Eコマースチーム', 'ecom-team', '{
   "team-slack-channel": {
     "value-type": "slack:channel",
     "value": "#ecom-dev-team"
@@ -42,13 +34,13 @@ values ('101', 'Eコマースチーム', 'ecom-team', '{
   "developer": {
     "value-type": "std:user",
     "value": [
-      "101",
-      "102",
-      "103"
+      "00000000TEAM_ECOM_USER_001",
+      "00000000TEAM_ECOM_USER_002",
+      "00000000TEAM_ECOM_USER_001"
     ]
   }
-}', '1', '1')
-     , ('102', '決済チーム', 'payment-team', '{
+}', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
+, ('00000000000RES_KESSAI_TEAM', '決済チーム', 'payment-team', '{
   "team-slack-channel": {
     "value-type": "slack:channel",
     "value": "#payment-dev-team"
@@ -56,144 +48,32 @@ values ('101', 'Eコマースチーム', 'ecom-team', '{
   "developer": {
     "value-type": "std:user",
     "value": [
-      "201",
-      "202"
+      "000000TEAM_KESSAI_USER_001",
+      "000000TEAM_KESSAI_USER_001"
     ]
   }
-}', '1', '1')
-     , ('103', '請求チーム', 'billing-team', '{
-  "team-slack-channel": {
-    "value-type": "slack:channel",
-    "value": "#billing-dev-team"
-  },
-  "developer": {
-    "value-type": "std:user",
-    "value": [
-      "301",
-      "302"
-    ]
-  }
-}', '1', '1')
-     , ('104', '顧客Aセールス', 'customer-a-sales', '{
-  "team-slack-channel": {
-    "value-type": "slack:channel",
-    "value": "#customer-a-sales"
-  },
-  "developer": {
-    "value-type": "std:user",
-    "value": [
-      "401",
-      "402"
-    ]
-  }
-}', '1', '1')
-     , ('105', 'SREチーム', 'sre-team', '{
-  "team-slack-channel": {
-    "value-type": "slack:channel",
-    "value": "#sre-team"
-  },
-  "developer": {
-    "value-type": "std:user",
-    "value": [
-      "501",
-      "502"
-    ]
-  }
-}', '1', '1')
-     , ('201', 'カート機能', 'cart-feature', '{
-  "feature-description": {
-    "value-type": "std:text",
-    "value": "商品をカートに入れて購入する機能。\n大事だよ。"
-  },
-  "feature-team": {
-    "value-type": "resource:dev-team",
-    "value": [
-      "101"
-    ]
-  }
-}', '2', '1')
-     , ('202', '決済機能', 'payment-feature', '{
-  "feature-description": {
-    "value-type": "std:text",
-    "value": "商品を購入する機能。\n大事だよ。"
-  },
-  "feature-team": {
-    "value-type": "resource:dev-team",
-    "value": [
-      "102"
-    ]
-  }
-}', '2', '1')
-     , ('203', '請求機能', 'billing-feature', '{
-  "feature-description": {
-    "value-type": "std:text",
-    "value": "商品を購入した代金を請求する機能。\n大事だよ。"
-  },
-  "feature-team": {
-    "value-type": "resource:dev-team",
-    "value": [
-      "103"
-    ]
-  }
-}', '2', '1')
-     , ('301', 'Kafka', 'kafka', '{
-  "infra-team": {
-    "value-type": "resource:dev-team",
-    "value": [
-      "105"
-    ]
-  }
-}', '3', '1')
-     , ('302', 'MySQL', 'mysql', '{
-  "infra-team": {
-    "value-type": "resource:dev-team",
-    "value": [
-      "101",
-      "102",
-      "103"
-    ]
-  }
-}', '3', '1')
-     , ('303', 'Redis', 'redis', '{
-  "infra-team": {
-    "value-type": "resource:dev-team",
-    "value": [
-      "101",
-      "102",
-      "103"
-    ]
-  }
-}', '3', '1')
-     , ('401', '顧客A', 'customer-a', '{
-  "customer-sales": {
-    "value-type": "std:user",
-    "value": [
-      "401",
-      "402"
-    ]
-  }
-}', '4', '1')
+}', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
 ;
 
 insert into incident_statuses (id, name, status_type, color, tenant_id)
-values ('1', 'インシデント検知', 'OPEN', 'RED', '1')
-     , ('2', '対応開始', 'ONGOING', 'ORANGE', '1')
-     , ('3', '緩和済', 'ONGOING', 'PURPLE', '1')
-     , ('4', '解決', 'RESOLVED', 'GRAY', '1')
+values ('1', 'インシデント検知', 'OPEN', 'RED', '0000000000000000TENANT_001')
+     , ('2', '対応開始', 'ONGOING', 'ORANGE', '0000000000000000TENANT_001')
+     , ('3', '緩和済', 'ONGOING', 'PURPLE', '0000000000000000TENANT_001')
+     , ('4', '解決', 'RESOLVED', 'GRAY', '0000000000000000TENANT_001')
 ;
 
 insert into incident_roles (id, name, code, tenant_id)
-values ('1', 'インシデントコマンダー', 'incident-commander', '1')
-     , ('2', 'コミュニケーションリード', 'communication-lead', '1')
-     , ('3', 'オペレーター', 'operator', '1')
+values ('1', 'インシデントコマンダー', 'incident-commander', '0000000000000000TENANT_001')
+     , ('2', 'コミュニケーションリード', 'communication-lead', '0000000000000000TENANT_001')
+     , ('3', 'オペレーター', 'operator', '0000000000000000TENANT_001')
 ;
 
 insert into incidents (id, title, code, description, tenant_id, created_at, latest_status_id)
-values ('1', 'カート機能が動かない', 'INC-1', 'カート機能が動かない', '1', '2025-01-01 09:00:00', '4')
-     , ('2', '決済機能が動かない', 'INC-2', '決済機能が動かない', '1', '2025-01-02 10:00:00', '3')
-     , ('3', '請求機能が動かない', 'INC-3', '請求機能が動かない', '1', '2025-01-03 11:00:00', '2')
+values ('1', 'カート機能が動かない', 'INC-1', 'カート機能が動かない', '0000000000000000TENANT_001', '2025-01-01 09:00:00', '4')
+     , ('2', '決済機能が動かない', 'INC-2', '決済機能が動かない', '0000000000000000TENANT_001', '2025-01-02 10:00:00', '3')
+     , ('3', '請求機能が動かない', 'INC-3', '請求機能が動かない', '0000000000000000TENANT_001', '2025-01-03 11:00:00', '2')
 ;
-
+/*
 insert into incident_event_histories (id, incident_id, event_type, event_body, placed_at, placed_by, external_platform,
                                       external_place, external_id, tenant_id)
 values ('1',
@@ -213,7 +93,7 @@ values ('1',
         'SLACK',
         'C05EXVALLDU',
         '1716355097.537659',
-        '1'),
+        '0000000000000000TENANT_001'),
        ('2',
         '1',
         'COMMENT',
@@ -225,7 +105,7 @@ values ('1',
         'SLACK',
         'C05EXVALLDU',
         '1716355097.537659',
-        '1'),
+        '0000000000000000TENANT_001'),
        ('3',
         '1',
         'STATUS_UPDATE',
@@ -244,7 +124,7 @@ values ('1',
         'SLACK',
         'C05EXVALLDU',
         '1716355097.537659',
-        '1'),
+        '0000000000000000TENANT_001'),
        ('4',
         '1',
         'ROLE_ASSIGN',
@@ -266,7 +146,7 @@ values ('1',
         'SLACK',
         'C05EXVALLDU',
         '1716355097.537659',
-        '1'),
+        '0000000000000000TENANT_001'),
        ('5',
         '1',
         'ROLE_ASSIGN',
@@ -288,7 +168,7 @@ values ('1',
         'SLACK',
         'C05EXVALLDU',
         '1716355097.537659',
-        '1'),
+        '0000000000000000TENANT_001'),
        ('6',
         '1',
         'ROLE_ASSIGN',
@@ -310,7 +190,7 @@ values ('1',
         'SLACK',
         'C05EXVALLDU',
         '1716355097.537659',
-        '1'),
+        '0000000000000000TENANT_001'),
        ('7',
         '1',
         'COMMENT',
@@ -322,7 +202,7 @@ values ('1',
         'SLACK',
         'C05EXVALLDU',
         '1716355097.537659',
-        '1'),
+        '0000000000000000TENANT_001'),
        ('8',
         '1',
         'COMMENT',
@@ -342,7 +222,7 @@ values ('1',
         '1716355097.537659',
         '1'),
        ('9',
-        '1',
+        '0000000000000000TENANT_001',
         'STATUS_UPDATE',
         '{
             "before": {
@@ -359,7 +239,7 @@ values ('1',
         'SLACK',
         'C05EXVALLDU',
         '1716355097.537659',
-        '1'),
+        '0000000000000000TENANT_001'),
        ('10',
         '1',
         'COMMENT',
@@ -371,7 +251,7 @@ values ('1',
         'SLACK',
         'C05EXVALLDU',
         '1716355097.537659',
-        '1'),
+        '0000000000000000TENANT_001'),
        ('11',
         '1',
         'STATUS_UPDATE',
@@ -390,11 +270,11 @@ values ('1',
         'SLACK',
         'C05EXVALLDU',
         '1716355097.537659',
-        '1')
+        '0000000000000000TENANT_001')
 ;
 
 insert into workflows (id, name, trigger, tenant_id)
-values ('1', 'When an incident declared, notify to the team', 'INCIDENT_CREATED', '1')
+values ('1', 'When an incident declared, notify to the team', 'INCIDENT_CREATED', '0000000000000000TENANT_001')
 ;
 
 insert into workflow_versions (id, workflow_id, version, is_latest, steps, tenant_id)
@@ -415,7 +295,7 @@ values ('1', '1', '1', false, '{
     }
   }
 ]
-}', '1'),
+}', '0000000000000000TENANT_001'),
 ('2', '1', '2', true, '{
 "steps": [
   {
@@ -433,5 +313,6 @@ values ('1', '1', '1', false, '{
     }
   }
 ]
-}', '1')
+}', '0000000000000000TENANT_001')
 ;
+*/

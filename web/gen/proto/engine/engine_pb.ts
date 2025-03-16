@@ -2,31 +2,45 @@
 // @generated from file engine/engine.proto (package incidentbuddy.engine, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
+import type {
+  GenFile,
+  GenMessage,
+  GenService,
+} from "@bufbuild/protobuf/codegenv1";
+import {
+  fileDesc,
+  messageDesc,
+  serviceDesc,
+} from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file engine/engine.proto.
  */
 export const file_engine_engine: GenFile = /*@__PURE__*/
-  fileDesc("ChNlbmdpbmUvZW5naW5lLnByb3RvEhRpbmNpZGVudGJ1ZGR5LmVuZ2luZSIgChBSZXNvdXJjZU92ZXJ2aWV3EgwKBHR5cGUYASABKAkiggEKCFJlc291cmNlEgwKBHR5cGUYASABKAkSMwoKb3BlcmF0aW9ucxgCIAMoCzIfLmluY2lkZW50YnVkZHkuZW5naW5lLk9wZXJhdGlvbhIzCgpmb3JtX2ZpZWxkGAMgASgLMh8uaW5jaWRlbnRidWRkeS5lbmdpbmUuRm9ybUZpZWxkIk8KCU9wZXJhdGlvbhIMCgRuYW1lGAEgASgJEjQKBnBhcmFtcxgFIAMoCzIkLmluY2lkZW50YnVkZHkuZW5naW5lLk9wZXJhdGlvblBhcmFtIj8KDk9wZXJhdGlvblBhcmFtEgwKBHR5cGUYASABKAkSDQoFYXJyYXkYAiABKAgSEAoIb3B0aW9uYWwYAyABKAgiTQoJRm9ybUZpZWxkEgwKBHR5cGUYASABKAkSEgoKYXJyYXlfdHlwZRgCIAEoCRIMCgRpY29uGAMgASgJEhAKCG9wdGlvbmFsGAQgASgIIiIKBVNjb3BlEgsKA2tleRgBIAEoCRIMCgR0eXBlGAIgASgJIhUKE0xpc3RSZXNvdXJjZVJlcXVlc3QiUQoUTGlzdFJlc291cmNlUmVzcG9uc2USOQoJcmVzb3VyY2VzGAEgAygLMiYuaW5jaWRlbnRidWRkeS5lbmdpbmUuUmVzb3VyY2VPdmVydmlldyIiChJHZXRSZXNvdXJjZVJlcXVlc3QSDAoEdHlwZRgBIAEoCSJHChNHZXRSZXNvdXJjZVJlc3BvbnNlEjAKCHJlc291cmNlGAEgASgLMh4uaW5jaWRlbnRidWRkeS5lbmdpbmUuUmVzb3VyY2Uy3AEKD1Jlc291cmNlU2VydmljZRJlCgxMaXN0UmVzb3VyY2USKS5pbmNpZGVudGJ1ZGR5LmVuZ2luZS5MaXN0UmVzb3VyY2VSZXF1ZXN0GiouaW5jaWRlbnRidWRkeS5lbmdpbmUuTGlzdFJlc291cmNlUmVzcG9uc2USYgoLR2V0UmVzb3VyY2USKC5pbmNpZGVudGJ1ZGR5LmVuZ2luZS5HZXRSZXNvdXJjZVJlcXVlc3QaKS5pbmNpZGVudGJ1ZGR5LmVuZ2luZS5HZXRSZXNvdXJjZVJlc3BvbnNlQr4BChhjb20uaW5jaWRlbnRidWRkeS5lbmdpbmVCC0VuZ2luZVByb3RvUAFaJGluY2lkZW50LWJ1ZGR5L2NvcmUvZ2VuL3Byb3RvL2VuZ2luZaICA0lFWKoCFEluY2lkZW50YnVkZHkuRW5naW5lygIUSW5jaWRlbnRidWRkeVxFbmdpbmXiAiBJbmNpZGVudGJ1ZGR5XEVuZ2luZVxHUEJNZXRhZGF0YeoCFUluY2lkZW50YnVkZHk6OkVuZ2luZWIGcHJvdG8z");
+  fileDesc(
+    "ChNlbmdpbmUvZW5naW5lLnByb3RvEhRpbmNpZGVudGJ1ZGR5LmVuZ2luZSIgChBSZXNvdXJjZU92ZXJ2aWV3EgwKBHR5cGUYASABKAkiggEKCFJlc291cmNlEgwKBHR5cGUYASABKAkSMwoKb3BlcmF0aW9ucxgCIAMoCzIfLmluY2lkZW50YnVkZHkuZW5naW5lLk9wZXJhdGlvbhIzCgpmb3JtX2ZpZWxkGAMgASgLMh8uaW5jaWRlbnRidWRkeS5lbmdpbmUuRm9ybUZpZWxkIk8KCU9wZXJhdGlvbhIMCgRuYW1lGAEgASgJEjQKBnBhcmFtcxgFIAMoCzIkLmluY2lkZW50YnVkZHkuZW5naW5lLk9wZXJhdGlvblBhcmFtIj8KDk9wZXJhdGlvblBhcmFtEgwKBHR5cGUYASABKAkSDQoFYXJyYXkYAiABKAgSEAoIb3B0aW9uYWwYAyABKAgiTQoJRm9ybUZpZWxkEgwKBHR5cGUYASABKAkSEgoKYXJyYXlfdHlwZRgCIAEoCRIMCgRpY29uGAMgASgJEhAKCG9wdGlvbmFsGAQgASgIIiIKBVNjb3BlEgsKA2tleRgBIAEoCRIMCgR0eXBlGAIgASgJIhUKE0xpc3RSZXNvdXJjZVJlcXVlc3QiUQoUTGlzdFJlc291cmNlUmVzcG9uc2USOQoJcmVzb3VyY2VzGAEgAygLMiYuaW5jaWRlbnRidWRkeS5lbmdpbmUuUmVzb3VyY2VPdmVydmlldyIiChJHZXRSZXNvdXJjZVJlcXVlc3QSDAoEdHlwZRgBIAEoCSJHChNHZXRSZXNvdXJjZVJlc3BvbnNlEjAKCHJlc291cmNlGAEgASgLMh4uaW5jaWRlbnRidWRkeS5lbmdpbmUuUmVzb3VyY2Uy3AEKD1Jlc291cmNlU2VydmljZRJlCgxMaXN0UmVzb3VyY2USKS5pbmNpZGVudGJ1ZGR5LmVuZ2luZS5MaXN0UmVzb3VyY2VSZXF1ZXN0GiouaW5jaWRlbnRidWRkeS5lbmdpbmUuTGlzdFJlc291cmNlUmVzcG9uc2USYgoLR2V0UmVzb3VyY2USKC5pbmNpZGVudGJ1ZGR5LmVuZ2luZS5HZXRSZXNvdXJjZVJlcXVlc3QaKS5pbmNpZGVudGJ1ZGR5LmVuZ2luZS5HZXRSZXNvdXJjZVJlc3BvbnNlQr4BChhjb20uaW5jaWRlbnRidWRkeS5lbmdpbmVCC0VuZ2luZVByb3RvUAFaJGluY2lkZW50LWJ1ZGR5L2NvcmUvZ2VuL3Byb3RvL2VuZ2luZaICA0lFWKoCFEluY2lkZW50YnVkZHkuRW5naW5lygIUSW5jaWRlbnRidWRkeVxFbmdpbmXiAiBJbmNpZGVudGJ1ZGR5XEVuZ2luZVxHUEJNZXRhZGF0YeoCFUluY2lkZW50YnVkZHk6OkVuZ2luZWIGcHJvdG8z",
+  );
 
 /**
  * @generated from message incidentbuddy.engine.ResourceOverview
  */
-export type ResourceOverview = Message<"incidentbuddy.engine.ResourceOverview"> & {
-  /**
-   * @generated from field: string type = 1;
-   */
-  type: string;
-};
+export type ResourceOverview =
+  & Message<"incidentbuddy.engine.ResourceOverview">
+  & {
+    /**
+     * @generated from field: string type = 1;
+     */
+    type: string;
+  };
 
 /**
  * Describes the message incidentbuddy.engine.ResourceOverview.
  * Use `create(ResourceOverviewSchema)` to create a new message.
  */
-export const ResourceOverviewSchema: GenMessage<ResourceOverview> = /*@__PURE__*/
+export const ResourceOverviewSchema: GenMessage<
+  ResourceOverview
+> = /*@__PURE__*/
   messageDesc(file_engine_engine, 0);
 
 /**
@@ -182,65 +196,80 @@ export const ScopeSchema: GenMessage<Scope> = /*@__PURE__*/
 /**
  * @generated from message incidentbuddy.engine.ListResourceRequest
  */
-export type ListResourceRequest = Message<"incidentbuddy.engine.ListResourceRequest"> & {
-};
+export type ListResourceRequest =
+  & Message<"incidentbuddy.engine.ListResourceRequest">
+  & {};
 
 /**
  * Describes the message incidentbuddy.engine.ListResourceRequest.
  * Use `create(ListResourceRequestSchema)` to create a new message.
  */
-export const ListResourceRequestSchema: GenMessage<ListResourceRequest> = /*@__PURE__*/
+export const ListResourceRequestSchema: GenMessage<
+  ListResourceRequest
+> = /*@__PURE__*/
   messageDesc(file_engine_engine, 6);
 
 /**
  * @generated from message incidentbuddy.engine.ListResourceResponse
  */
-export type ListResourceResponse = Message<"incidentbuddy.engine.ListResourceResponse"> & {
-  /**
-   * @generated from field: repeated incidentbuddy.engine.ResourceOverview resources = 1;
-   */
-  resources: ResourceOverview[];
-};
+export type ListResourceResponse =
+  & Message<"incidentbuddy.engine.ListResourceResponse">
+  & {
+    /**
+     * @generated from field: repeated incidentbuddy.engine.ResourceOverview resources = 1;
+     */
+    resources: ResourceOverview[];
+  };
 
 /**
  * Describes the message incidentbuddy.engine.ListResourceResponse.
  * Use `create(ListResourceResponseSchema)` to create a new message.
  */
-export const ListResourceResponseSchema: GenMessage<ListResourceResponse> = /*@__PURE__*/
+export const ListResourceResponseSchema: GenMessage<
+  ListResourceResponse
+> = /*@__PURE__*/
   messageDesc(file_engine_engine, 7);
 
 /**
  * @generated from message incidentbuddy.engine.GetResourceRequest
  */
-export type GetResourceRequest = Message<"incidentbuddy.engine.GetResourceRequest"> & {
-  /**
-   * @generated from field: string type = 1;
-   */
-  type: string;
-};
+export type GetResourceRequest =
+  & Message<"incidentbuddy.engine.GetResourceRequest">
+  & {
+    /**
+     * @generated from field: string type = 1;
+     */
+    type: string;
+  };
 
 /**
  * Describes the message incidentbuddy.engine.GetResourceRequest.
  * Use `create(GetResourceRequestSchema)` to create a new message.
  */
-export const GetResourceRequestSchema: GenMessage<GetResourceRequest> = /*@__PURE__*/
+export const GetResourceRequestSchema: GenMessage<
+  GetResourceRequest
+> = /*@__PURE__*/
   messageDesc(file_engine_engine, 8);
 
 /**
  * @generated from message incidentbuddy.engine.GetResourceResponse
  */
-export type GetResourceResponse = Message<"incidentbuddy.engine.GetResourceResponse"> & {
-  /**
-   * @generated from field: incidentbuddy.engine.Resource resource = 1;
-   */
-  resource?: Resource;
-};
+export type GetResourceResponse =
+  & Message<"incidentbuddy.engine.GetResourceResponse">
+  & {
+    /**
+     * @generated from field: incidentbuddy.engine.Resource resource = 1;
+     */
+    resource?: Resource;
+  };
 
 /**
  * Describes the message incidentbuddy.engine.GetResourceResponse.
  * Use `create(GetResourceResponseSchema)` to create a new message.
  */
-export const GetResourceResponseSchema: GenMessage<GetResourceResponse> = /*@__PURE__*/
+export const GetResourceResponseSchema: GenMessage<
+  GetResourceResponse
+> = /*@__PURE__*/
   messageDesc(file_engine_engine, 9);
 
 /**
@@ -254,7 +283,7 @@ export const ResourceService: GenService<{
     methodKind: "unary";
     input: typeof ListResourceRequestSchema;
     output: typeof ListResourceResponseSchema;
-  },
+  };
   /**
    * @generated from rpc incidentbuddy.engine.ResourceService.GetResource
    */
@@ -262,7 +291,6 @@ export const ResourceService: GenService<{
     methodKind: "unary";
     input: typeof GetResourceRequestSchema;
     output: typeof GetResourceResponseSchema;
-  },
+  };
 }> = /*@__PURE__*/
   serviceDesc(file_engine_engine, 0);
-

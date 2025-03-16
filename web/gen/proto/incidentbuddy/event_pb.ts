@@ -10,7 +10,9 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file incidentbuddy/event.proto.
  */
 export const file_incidentbuddy_event: GenFile = /*@__PURE__*/
-  fileDesc("ChlpbmNpZGVudGJ1ZGR5L2V2ZW50LnByb3RvIj0KD0luY2lkZW50VXBkYXRlZBITCgtpbmNpZGVudF9pZBgBIAEoCRIVCg1pbmNpZGVudF9uYW1lGAIgASgJQjtCCkV2ZW50UHJvdG9QAVoraW5jaWRlbnQtYnVkZHkvY29yZS9nZW4vcHJvdG8vaW5jaWRlbnRidWRkeWIGcHJvdG8z");
+  fileDesc(
+    "ChlpbmNpZGVudGJ1ZGR5L2V2ZW50LnByb3RvIj0KD0luY2lkZW50VXBkYXRlZBITCgtpbmNpZGVudF9pZBgBIAEoCRIVCg1pbmNpZGVudF9uYW1lGAIgASgJQjtCCkV2ZW50UHJvdG9QAVoraW5jaWRlbnQtYnVkZHkvY29yZS9nZW4vcHJvdG8vaW5jaWRlbnRidWRkeWIGcHJvdG8z",
+  );
 
 /**
  * @generated from message IncidentUpdated
@@ -33,4 +35,3 @@ export type IncidentUpdated = Message<"IncidentUpdated"> & {
  */
 export const IncidentUpdatedSchema: GenMessage<IncidentUpdated> = /*@__PURE__*/
   messageDesc(file_incidentbuddy_event, 0);
-

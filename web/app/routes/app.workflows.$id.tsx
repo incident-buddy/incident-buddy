@@ -8,7 +8,7 @@ export const handle = {
 
 export default function Page() {
   return (
-    <div className="overflow-x-auto flex flex-col gap-y-4">
+    <div className="overflow-x-auto flex flex-col gap-y-5">
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
         D2以上で担当チームにSlack通知
       </h3>

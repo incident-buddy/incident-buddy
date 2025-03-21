@@ -68,8 +68,8 @@ const nav = [
     icon: Flame,
   },
   {
-    title: "オートメーション",
-    path: "/app/automation",
+    title: "ワークフロー",
+    path: "/app/workflows",
     icon: Workflow,
   },
   {

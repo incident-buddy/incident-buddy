@@ -11,35 +11,20 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  MoreHorizontal,
-} from "lucide-react";
+import {MoreHorizontal,} from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import {Button} from "@/components/ui/button";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { PaginationPrevious } from "~/components/ui/pagination";
+import {Input} from "@/components/ui/input";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
+import {Link} from "@remix-run/react";
 
 const data: Workflows[] = [
   {
@@ -97,7 +82,7 @@ export const columns: ColumnDef<Workflows>[] = [
   {
     accessorKey: "name",
     header: () => <div>ワークフロー</div>,
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    cell: ({ row }) => <Link to={`/app/workflows/${row.id}`}><div>{row.getValue("name")}</div></Link>,
   },
   {
     accessorKey: "status",

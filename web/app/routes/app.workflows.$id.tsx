@@ -1,34 +1,22 @@
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {Trigger} from "~/components/workflow/trigger";
-import {Condition} from "~/components/workflow/condition";
-
-export const handle = {
-  pageName: "D2以上で担当チームにSlack通知",
-};
+import {Trigger} from "@/components/workflow/trigger";
+import {Condition} from "@/components/workflow/condition";
+import {Steps} from "~/components/workflow/step";
+import {Input} from "~/components/ui/input";
 
 export default function Page() {
   return (
-    <div className="overflow-x-auto flex flex-col gap-y-5">
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-        D2以上で担当チームにSlack通知
-      </h3>
+    <div className="flex flex-col gap-y-5">
       <div className="container max-w-xl">
+        <h3 className="scroll-m-20 font-semibold tracking-tight mb-4">
+          <Input className="w-full md:text-xl h-12" placeholder="ワークフロー名" value="D2以上で担当チームにSlack通知" />
+        </h3>
         <Trigger />
         <div className="w-1 h-8 bg-slate-100 mx-auto"></div>
         <Condition />
         <div className="w-1 h-8 bg-slate-100 mx-auto"></div>
-        <Card>
-          <CardHeader>
-            <CardTitle>ステップ</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul>
-              <li><code>サービス</code>の<code>担当チーム</code>の<code>Slackチャンネル</code>にメッセージを送信する</li>
-              <li><code>サービス</code>の<code>担当チーム</code>の<code>Slackチャンネル</code>にメッセージを送信する</li>
-              <li><code>サービス</code>の<code>担当チーム</code>の<code>Slackチャンネル</code>にメッセージを送信する</li>
-            </ul>
-          </CardContent>
-        </Card>
+        <Steps />
+
+
       </div>
     </div>
   );

@@ -1,9 +1,9 @@
 export function Hr(props: { text: string}) {
   return (
-    <div className="inline-flex items-center justify-center w-full">
-      <hr className="w-64 h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"/>
+    <div className="inline-flex items-center justify-start w-full relative">
+      <hr className="w-2/5 h-px bg-gray-200 border-0 dark:bg-gray-700"/>
       <span
-        className="absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-gray-900">
+        className="text-sm text-slate-600 absolute left-6 px-3 bg-white">
         {props.text}
       </span>
     </div>

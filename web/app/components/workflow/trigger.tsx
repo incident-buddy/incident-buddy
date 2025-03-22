@@ -23,7 +23,7 @@ export function Trigger() {
           <TriggerItem icon="incident" name="インシデントの作成・更新" />
         </div>
       </div>
-      <SheetContent className="w-[600px]">
+      <SheetContent className="sm:max-w-[640px] md:max-w-[768px]">
         <SheetHeader className="mb-4">
           <SheetTitle>トリガーの設定</SheetTitle>
         </SheetHeader>
@@ -31,7 +31,7 @@ export function Trigger() {
           <div className="flex flex-col justify-between gap-y-4">
             <div className="flex flex-col gap-y-2">
               <h3 className="font-bold text-sm text-muted-foreground">インシデント</h3>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <TriggerItem icon="incident" name="インシデントの作成・更新" />
                 <TriggerItem icon="incident" name="インシデントの作成・更新" />
                 <TriggerItem icon="incident" name="インシデントの作成・更新やインシデントの作成・更新" />

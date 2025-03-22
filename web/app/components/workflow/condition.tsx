@@ -1,6 +1,6 @@
 import React from "react";
 import {Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger} from "~/components/ui/sheet";
-import {SquarePen} from "lucide-react";
+import {SquarePen, Plus, Trash} from "lucide-react";
 import {Button} from "~/components/ui/button";
 import {Input} from "~/components/ui/input";
 import {IconType, ResourceIcon} from "~/components/workflow/resource-icon";
@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge"
+import {Hr} from "~/components/hr";
 
 export function Condition() {
   const [open, setOpen] = React.useState(false);
@@ -34,19 +35,20 @@ export function Condition() {
           <Outline />
         </div>
       </div>
-      <SheetContent className="w-[600px]">
+      <SheetContent className="sm:max-w-[640px] md:max-w-[768px]">
         <SheetHeader className="mb-4">
           <SheetTitle>条件の設定</SheetTitle>
         </SheetHeader>
         <div className="flex flex-col justify-between gap-y-6">
 
           <div className="flex flex-col justify-between gap-y-4">
-            <dl>
-              <dt className="text-sm font-medium text-gray-900">アイテム</dt>
-              <dd className="mt-1">
-                <ConditionInput />
-              </dd>
-            </dl>
+            <ConditionInput deletable={false} />
+            <Hr text="かつ" />
+            <ConditionInput deletable={true} />
+            <div className="add-item flex flex-col items-center">
+              <Button variant="secondary" className="h-8 w-8 p-0 rounded-full"><Plus /></Button>
+            </div>
+
           </div>
           <div className="footer">
             <div className="flex justify-end gap-x-2">
@@ -59,9 +61,29 @@ export function Condition() {
   )
 }
 
-function ResourceItem({
-                        icon, name
-                      }: { icon: IconType, name: string }) {
+function Outline() {
+  return (
+    <div className="flex flex-col gap-y-2 border rounded p-4 bg-white ">
+      <div className="flex flex-row gap-x-2 items-center after:content-['かつ'] last-of-type:after:content-['で実行']">
+        <Badge variant="secondary">インシデント - 重大度</Badge>
+        <span>が</span>
+        <Badge variant="secondary">D2</Badge>
+        <Badge variant="secondary">以上</Badge>
+      </div>
+      <div className="flex flex-row gap-x-2 items-center after:content-['かつ'] last-of-type:after:content-['で実行']">
+        <Badge variant="secondary">インシデント - 重大度</Badge>
+        <span>が</span>
+        <Badge variant="secondary">D2</Badge>
+        <Badge variant="secondary">以上</Badge>
+      </div>
+    </div>
+
+  )
+}
+
+function ResourceItem(
+  {icon, name}: { icon: IconType, name: string }
+) {
   return (
     <div className="flex flex-row items-center gap-x-2">
       <ResourceIcon icon={icon}/>
@@ -70,25 +92,17 @@ function ResourceItem({
   )
 }
 
-function Outline() {
-  return (
-    <div className="flex flex-row min-h-14items-center gap-x-2 border rounded p-4 bg-white">
-      <Badge variant="secondary">インシデント - 重大度</Badge>
-      <span>が</span>
-      <Badge variant="secondary">D2</Badge>
-      <Badge variant="secondary">以上</Badge>
-      <span>で実行</span>
-    </div>
-  )
-}
-
 /** Combo input of resource, operator and value */
-function ConditionInput() {
+function ConditionInput(props: {deletable: boolean}) {
+  const hidden = props.deletable ? "": "invisible";
   return (
-    <div className="grid grid-cols-2 rounded border">
-      <div className="col-span-2 border-b"><ResourceSelect /></div>
-      <div className="border-r"><OpSelect /></div>
-      <ValueInput />
+    <div className="flex flex-row gap-x-2">
+      <ResourceSelect />
+      <OpSelect />
+      <ValueInput type="select" />
+      <div className={`w-12 h-[52px] flex items-center ${hidden}`}>
+        <Button variant="ghost" className="h-8 w-8 p-0 rounded-full"><Trash /></Button>
+      </div>
     </div>
   )
 }
@@ -96,7 +110,7 @@ function ConditionInput() {
 function ResourceSelect() {
   return (
     <Select defaultValue="severity">
-      <SelectTrigger className="w-full h-[52px] border-none shadow-none rounded-none">
+      <SelectTrigger className="w-full h-[52px]">
         <SelectValue placeholder=""/>
       </SelectTrigger>
       <SelectContent>
@@ -117,7 +131,7 @@ function ResourceSelect() {
 function OpSelect() {
   return (
     <Select defaultValue="eq">
-      <SelectTrigger className="w-full h-[52px] border-none shadow-none rounded-none">
+      <SelectTrigger className="w-full h-[52px]">
         <SelectValue placeholder=""/>
       </SelectTrigger>
       <SelectContent>
@@ -135,8 +149,28 @@ function OpSelect() {
   )
 }
 
-function ValueInput() {
-  return (
-    <Input type="text" className="w-full h-[52px] border-none shadow-none rounded-none"/>
-  )
+type ValueInputType = "select" | "text-input";
+function ValueInput(props: { type: ValueInputType }) {
+  switch (props.type) {
+    case "select":
+      return (
+        <Select defaultValue="severity">
+          <SelectTrigger className="w-full h-[52px]">
+            <SelectValue placeholder=""/>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="severity">
+              <span>D2</span>
+            </SelectItem>
+            <SelectItem value="affected-service">
+              <span>サービスA</span>
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      )
+    case "text-input":
+      return (
+        <Input placeholder="値を入力"/>
+      )
+  }
 }

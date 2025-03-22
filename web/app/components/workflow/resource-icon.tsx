@@ -3,7 +3,7 @@ import {Flame} from "lucide-react";
 export type IconType = "incident"
 
 export function ResourceIcon(props: { icon: IconType }) {
-  const cls = "border p-1 rounded"
+  const cls = "border p-1 rounded flex items-center justify-center w-8 h-8"
   switch (props.icon) {
     case "incident":
       return (

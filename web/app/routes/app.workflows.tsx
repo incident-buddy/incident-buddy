@@ -1,4 +1,4 @@
-import {Outlet} from "@remix-run/react";
+import { Outlet } from "@remix-run/react";
 
 export const handle = {
   pageName: "ワークフロー",

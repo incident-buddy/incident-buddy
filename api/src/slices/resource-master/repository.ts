@@ -6,7 +6,6 @@ import { jsonArrayFrom } from "kysely/helpers/postgres";
 import { ResourceMaster, toValueType } from "./model.ts";
 
 export interface ResourceMasterRepository {
-
   /** List all resource masters */
   list(c: UserContext): Promise<ResourceMaster[]>;
 }

@@ -9,24 +9,27 @@ type Props = {
 type MessageContextType = {
   lang: Language;
   setLang: (lang: Language) => void;
+  dict: Messages;
 };
 
 export const MessageContext = createContext<MessageContextType>({
   lang: "notSet",
   setLang: (lang: Language) => {},
+  dict: EnMessages,
 });
 
 export const MessageProvider = ({ children }: Props) => {
   const [lang, setLang] = useState<Language>("notSet");
+  const dict = Dictionary[lang];
 
   return (
-    <MessageContext.Provider value={{ lang, setLang }}>
+    <MessageContext.Provider value={{ lang, setLang, dict }}>
       {children}
     </MessageContext.Provider>
   );
 };
 
-type Messages = {
+export type Messages = {
   page: {
     incident: {
       pageTitle: string;
@@ -41,12 +44,18 @@ type Messages = {
     status: string;
     searchPlaceholder: string;
   };
+
+  trigger: {
+    trigger: string;
+    triggerName(code: string): string;
+    categoryName(category: string): string;
+  };
 };
 
 type Language = "notSet" | "ja" | "en";
 
 const Dictionary: { [key in Language]: Messages } = {
-  notSet: EnMessages,
+  notSet: JaMessages,
   en: EnMessages,
   ja: JaMessages,
 };

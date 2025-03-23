@@ -12,8 +12,8 @@ export type Cause = { cause: string };
 /** util for creating cause object */
 export const cause: (_: unknown) => Cause = (e) => {
   if (e instanceof Error) {
-    return { cause: e.message }
+    return { cause: e.message };
   } else {
-    return { cause: JSON.stringify(e)}
+    return { cause: JSON.stringify(e) };
   }
 };

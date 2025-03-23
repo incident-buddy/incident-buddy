@@ -6,7 +6,6 @@ import "zod-openapi/extend";
 
 import type { App } from "@/app.ts";
 import { factory } from "@/app-env.ts";
-import { trasing } from "@/tracing.ts";
 import { authentication } from "@/authn.ts";
 import { toSchema } from "@/misc/schema-for-type.ts";
 import { ResourceMaster } from "@/slices/resource-master/model.ts";
@@ -74,15 +73,15 @@ const list = (db: Kysely<DB>) => {
           content: {
             "application/json": { schema: resolver(responseSchema) },
           },
-        }
+        },
       },
     }),
     (c) => {
-      const ctx = { user: c.get("loginUser")}
+      const ctx = { user: c.get("loginUser") };
       return service.list(ctx).match(
-          (res) => c.json({resourceMasters: res}, 200),
-          (err) => c.json(err, 500) // TODO
-        )
+        (res) => c.json({ resourceMasters: res }, 200),
+        (err) => c.json(err, 500), // TODO
+      );
     },
   );
 };

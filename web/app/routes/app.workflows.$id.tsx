@@ -3,6 +3,7 @@ import { Condition } from "@/components/workflow/condition";
 import { Steps } from "@/components/workflow/step";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import React from "react";
 
 export default function Page() {
   const ActionArea = () => {
@@ -15,6 +16,11 @@ export default function Page() {
       </div>
     );
   };
+
+  const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
+  };
+
   return (
     <>
       <div className="flex flex-col gap-y-5">
@@ -24,6 +30,7 @@ export default function Page() {
               className="w-full md:text-xl h-12"
               placeholder="ワークフロー名"
               value="D2以上で担当チームにSlack通知"
+              onChange={onTitleChange}
             />
           </h3>
           <Trigger />

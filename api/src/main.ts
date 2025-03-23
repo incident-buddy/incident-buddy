@@ -1,5 +1,7 @@
 import { resourceMasterApi } from "@/routes/resource_master.ts";
+import { triggerApi } from "@/routes/trigger.ts";
 import { newApp } from "@/app.ts";
+import { openapi } from "@/openapi.ts";
 // @ts-types="npm:@types/pg-pool@^2.0.6"
 import Pool from "pg-pool";
 import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely";
@@ -20,6 +22,8 @@ const db = new Kysely<DB>({ dialect, plugins: [new CamelCasePlugin()] });
 
 const app = newApp();
 resourceMasterApi(app, db);
+triggerApi(app, db);
+openapi(app)
 
 // Learn more at https://docs.deno.com/runtime/manual/examples/module_metadata#concepts
 if (import.meta.main) {

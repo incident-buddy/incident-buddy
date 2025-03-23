@@ -14,4 +14,27 @@ export const EnMessages: Messages = {
     status: "Status",
     searchPlaceholder: "Search",
   },
+  trigger: {
+    trigger: "Trigger",
+    triggerName: (code: string) => {
+      switch (code) {
+        case "incident.updated":
+          return "Incident updated";
+        case "slack.channel.joined":
+          return "Slack channel joined";
+        default:
+          return code;
+      }
+    },
+    categoryName(category: string): string {
+      switch (category) {
+        case "incident":
+          return "Incident";
+        case "slack":
+          return "Slack";
+        default:
+          return category;
+      }
+    },
+  },
 };

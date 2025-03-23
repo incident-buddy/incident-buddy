@@ -25,7 +25,7 @@ tasks:
   dev:api:
     dir: ./api
     cmds:
-      - OTEL_DENO=true OTEL_SERVICE_NAME=api deno run --unstable-otel -A src/main.ts
+      - deno run -A src/main.ts
   gen:kysely:
     dir: ./api
     cmd: |
@@ -33,6 +33,9 @@ tasks:
       deno run -A npm:kysely-codegen@^0.11.0 - \
       kysely-codegen --dialect=postgres --out-file ./src/dbtype.ts --camel-case
     silent: true
+  gen:openapi:
+    dir: ./web
+    cmd: pnpm dlx openapi-typescript http:localhost:8000/openapi -o ./generated/openapi/schema.d.ts
   ngrok:
     cmd: ngrok http 8001
   dev:slack:

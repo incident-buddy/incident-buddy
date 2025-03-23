@@ -1,4 +1,4 @@
-import { Messages } from "~/translation/index";
+import { Messages } from "@/translation/index";
 
 export const EnMessages: Messages = {
   page: {

@@ -3,7 +3,7 @@ import {
   Link,
   useLoaderData,
 } from "@remix-run/react";
-import { incidentClient } from "~/lib/connect-client";
+import { incidentClient } from "@/lib/connect-client";
 
 export const handle = {
   pageName: "インシデント",

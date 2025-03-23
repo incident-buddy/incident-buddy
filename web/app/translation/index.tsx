@@ -1,5 +1,5 @@
-import { JaMessages } from "~/translation/ja";
-import { EnMessages } from "~/translation/en";
+import { JaMessages } from "@/translation/ja";
+import { EnMessages } from "@/translation/en";
 import { createContext, JSX, useState } from "react";
 
 type Props = {

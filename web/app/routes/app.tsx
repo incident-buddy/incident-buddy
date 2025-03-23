@@ -12,7 +12,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { MessageProvider } from "~/translation";
+import { MessageProvider } from "@/translation";
 
 export default function Page() {
   const matches = useMatches();

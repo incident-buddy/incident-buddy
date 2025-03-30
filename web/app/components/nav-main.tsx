@@ -84,7 +84,7 @@ export function NavMain({ items }: { items: Item[] }) {
         <SidebarMenuButton asChild>
           <Link to={item.path}>
             {item.icon && <item.icon />}
-            <span>{item.title}</span>
+            <span className="text-base">{item.title}</span>
           </Link>
         </SidebarMenuButton>
         <DropdownMenu>

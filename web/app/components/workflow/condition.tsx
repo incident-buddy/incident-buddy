@@ -35,7 +35,7 @@ export function Condition() {
     <Sheet open={open} onOpenChange={setOpen}>
       <div className="flex flex-col gap-y-2 rounded-sm border bg-card text-card-foreground p-4 bg-slate-50">
         <div className="flex flex-row items-center justify-between">
-          <h3 className="font-bold text-sm">条件</h3>
+          <h3 className="font-bold text-md">条件</h3>
           <SheetTrigger className="p-1 outline-0">
             <SquarePen size={16} />
           </SheetTrigger>
@@ -84,7 +84,7 @@ function Outline() {
 
 function OutlineItem() {
   return (
-    <div className="flex flex-row gap-x-2 items-center border rounded py-2 px-3 bg-white">
+    <div className="flex flex-row gap-x-2 items-center border rounded py-2 px-3 bg-white text-md">
       <Badge variant="secondary">インシデント - 重大度</Badge>
       <span>が</span>
       <Badge variant="secondary">D2</Badge>

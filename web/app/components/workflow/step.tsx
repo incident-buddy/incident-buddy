@@ -24,9 +24,9 @@ export function Steps() {
   return (
     <div className="flex flex-col gap-y-2 rounded-sm border bg-card text-card-foreground p-4 bg-slate-50">
       <div className="flex flex-row items-center justify-between">
-        <h3 className="font-bold text-sm">ステップ</h3>
+        <h3 className="font-bold text-md">ステップ</h3>
       </div>
-      <div className="flex flex-col gap-y-1">
+      <div className="flex flex-col gap-y-2">
         <Step />
         <Step />
         <Step />
@@ -59,14 +59,14 @@ export function Step() {
         <div className="flex flex-col justify-between gap-y-6">
           <div className="flex flex-col justify-between gap-y-4">
             <div className="flex flex-col gap-y-2">
-              <h3 className="font-bold text-sm text-muted-foreground">Slack</h3>
+              <h3 className="font-bold text-md text-muted-foreground">Slack</h3>
               <div className="grid grid-cols-2 gap-3">
                 <ActionItem icon="slack" name="Slackメッセージの送信" />
                 <ActionItem icon="slack" name="Slackチャンネルの作成" />
               </div>
             </div>
             <div className="flex flex-col gap-y-2">
-              <h3 className="font-bold text-sm text-muted-foreground">
+              <h3 className="font-bold text-md text-muted-foreground">
                 メール
               </h3>
               <div className="grid grid-cols-2 gap-2">
@@ -110,21 +110,21 @@ export function StepCard(props: { icon: IconType; name: string }) {
         >
           <div className="flex flex-col gap-y-2">
             <dl className="grid grid-cols-4 gap-x-4">
-              <dt className="font-semibold text-gray-400 text-sm">
+              <dt className="font-semibold text-gray-400 text-md">
                 送信先アドレス
               </dt>
-              <dd className="col-span-3 text-sm">hello@zarafa-app.com</dd>
+              <dd className="col-span-3 text-md">hello@zarafa-app.com</dd>
             </dl>
             <dl className="grid grid-cols-4 gap-x-4">
-              <dt className="font-semibold text-gray-400 text-sm">件名</dt>
-              <dd className="col-span-3 text-sm">インシデントの作成・更新</dd>
+              <dt className="font-semibold text-gray-400 text-md">件名</dt>
+              <dd className="col-span-3 text-md">インシデントの作成・更新</dd>
             </dl>
             <CollapsibleContent>
               <dl className="grid grid-cols-4 gap-x-4">
-                <dt className="font-semibold text-gray-400 text-sm">
+                <dt className="font-semibold text-gray-400 text-md">
                   メール本文
                 </dt>
-                <dd className="col-span-3 text-sm">
+                <dd className="col-span-3 text-md">
                   <div className="whitespace-pre-wrap">
                     {`インシデントが作成または更新されました。
 インシデント番号: {{incident.number}}
@@ -152,7 +152,7 @@ function ActionTitle(props: { icon: IconType; name: string }) {
     <div className="flex grow gap-x-2 items-center">
       <ActionIcon icon={props.icon} />
       <div className="flex flex-col grow justify-between">
-        <h4 className="text-sm font-semibold leading-tight">{props.name}</h4>
+        <h4 className="text-md font-semibold leading-tight">{props.name}</h4>
       </div>
     </div>
   );

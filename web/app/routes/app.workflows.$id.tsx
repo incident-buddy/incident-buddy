@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 
 export default function Page() {
+  const [trigger, setTrigger] = React.useState<string | undefined>(undefined);
   const ActionArea = () => {
     return (
       <div className="sticky bottom-6 right-8 w-max ml-auto">
@@ -24,7 +25,7 @@ export default function Page() {
   return (
     <>
       <div className="flex flex-col gap-y-5">
-        <div className="container max-w-xl">
+        <div className="container max-w-2xl">
           <h3 className="scroll-m-20 font-semibold tracking-tight mb-4">
             <Input
               className="w-full md:text-xl h-12"
@@ -33,7 +34,7 @@ export default function Page() {
               onChange={onTitleChange}
             />
           </h3>
-          <Trigger />
+          <Trigger selected={trigger} setSelected={setTrigger} />
           <div className="w-1 h-8 bg-slate-100 mx-auto"></div>
           <Condition />
           <div className="w-1 h-8 bg-slate-100 mx-auto"></div>

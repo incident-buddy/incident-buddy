@@ -37,4 +37,12 @@ export const JaMessages: Messages = {
       }
     },
   },
+  generic: {
+    state: {
+      notSelected: "選択されていません",
+    },
+  },
+  error: {
+    generic: "エラーが発生しました",
+  },
 };

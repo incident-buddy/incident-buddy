@@ -37,4 +37,12 @@ export const EnMessages: Messages = {
       }
     },
   },
+  generic: {
+    state: {
+      notSelected: "Not selected",
+    },
+  },
+  error: {
+    generic: "Something went wrong",
+  },
 };

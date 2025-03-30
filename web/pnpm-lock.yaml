@@ -125,9 +125,6 @@ importers:
       openapi-fetch:
         specifier: ^0.13.5
         version: 0.13.5
-      openapi-react-query:
-        specifier: ^0.3.1
-        version: 0.3.1(@tanstack/react-query@5.69.0(react@18.3.1))(openapi-fetch@0.13.5)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -3448,12 +3445,6 @@ packages:
 
   openapi-fetch@0.13.5:
     resolution: {integrity: sha512-AQK8T9GSKFREFlN1DBXTYsLjs7YV2tZcJ7zUWxbjMoQmj8dDSFRrzhLCbHPZWA1TMV3vACqfCxLEZcwf2wxV6Q==}
-
-  openapi-react-query@0.3.1:
-    resolution: {integrity: sha512-1R3NunDpf6koap0pF4AiUO5Asw4o3GmKrer6r8+2kvfLTxgHNm9vm7F0grZUcKG1tfc9qKrGa5NSvoMqa79DMg==}
-    peerDependencies:
-      '@tanstack/react-query': ^5.25.0
-      openapi-fetch: ^0.13.5
 
   openapi-typescript-helpers@0.0.15:
     resolution: {integrity: sha512-opyTPaunsklCBpTK8JGef6mfPhLSnyy5a0IN9vKtx3+4aExf+KxEqYwIy3hqkedXIB97u357uLMJsOnm3GVjsw==}
@@ -6863,7 +6854,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0)(eslint@8.57.1):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -6885,7 +6876,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0)(eslint@8.57.1)
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.7.0(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -8229,12 +8220,6 @@ snapshots:
 
   openapi-fetch@0.13.5:
     dependencies:
-      openapi-typescript-helpers: 0.0.15
-
-  openapi-react-query@0.3.1(@tanstack/react-query@5.69.0(react@18.3.1))(openapi-fetch@0.13.5):
-    dependencies:
-      '@tanstack/react-query': 5.69.0(react@18.3.1)
-      openapi-fetch: 0.13.5
       openapi-typescript-helpers: 0.0.15
 
   openapi-typescript-helpers@0.0.15: {}

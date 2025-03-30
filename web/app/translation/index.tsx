@@ -50,6 +50,16 @@ export type Messages = {
     triggerName(code: string): string;
     categoryName(category: string): string;
   };
+
+  generic: {
+    state: {
+      notSelected: string;
+    }
+  }
+
+  error: {
+    generic: string;
+  };
 };
 
 type Language = "notSet" | "ja" | "en";

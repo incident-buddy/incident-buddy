@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Link } from "@remix-run/react";
+import { Link } from "react-router";
 import {
   Collapsible,
   CollapsibleContent,

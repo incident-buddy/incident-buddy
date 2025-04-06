@@ -1,8 +1,4 @@
-import {
-  ClientLoaderFunctionArgs,
-  Link,
-  useLoaderData,
-} from "@remix-run/react";
+import { ClientLoaderFunctionArgs, Link, useLoaderData } from "react-router";
 import { incidentClient } from "@/lib/connect-client";
 
 export const handle = {

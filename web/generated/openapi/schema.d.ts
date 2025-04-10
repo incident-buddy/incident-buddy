@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+    "/resource": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description List available resources */
+        get: operations["getResource"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/resource-master": {
         parameters: {
             query?: never;
@@ -50,6 +67,37 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    getResource: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of available resources */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        resources: {
+                            /** @example 01JR4R1FS589XW46V1NB4RYPWK */
+                            id: string;
+                            /** @example E-commerce Team */
+                            name: string;
+                            /** @example ecom-team */
+                            code: string;
+                            /** @example team */
+                            category: string;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
     "getResource-master": {
         parameters: {
             query?: never;
@@ -58,7 +106,39 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
-        responses: never;
+        responses: {
+            /** @description List of resource masters */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        resourceMasters: {
+                            /** @example 01JR4R1FS27EY49K72D2XHZZZW */
+                            id: string;
+                            /** @example Dev team */
+                            name: string;
+                            /** @example Development team */
+                            description: string;
+                            /** @example dev-team */
+                            code: string;
+                            /** @example team */
+                            category: string;
+                            attributes: {
+                                /** @example Team Slack Channel */
+                                name: string;
+                                /** @example team-slack-channel */
+                                code: string;
+                                valueType: "std:user" | "slack:channel";
+                                isArray: boolean;
+                                orderNo: number;
+                            }[];
+                        }[];
+                    };
+                };
+            };
+        };
     };
     getTrigger: {
         parameters: {

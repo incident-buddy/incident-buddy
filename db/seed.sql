@@ -10,49 +10,29 @@ values ('00000000TEAM_ECOM_USER_001', 'Eコマース', '開発者1', '0000000000
 ;
 
 insert into resource_masters (id, name, description, code, category, tenant_id)
-values ('00RESOURCE_MASTER_DEV_TEAM', '開発チーム', null, 'dev-team', 'team', '0000000000000000TENANT_001')
-     , ('RESOURCE_MASTER_AFCTD_FEAT', '機能', '影響機能', 'affected-feature', 'feature', '0000000000000000TENANT_001')
-     , ('00000RESOURCE_MASTER_INFRA', 'インフラ', null, 'infra', 'service', '0000000000000000TENANT_001')
-     , ('00RESOURCE_MASTER_CUSTOMER', '顧客', '影響顧客', 'affected-customer', 'customer', '0000000000000000TENANT_001')
+values ('00RESOURCE_MASTER_SLACK_CH', 'Slackチャネル', 'Slackチャネル', 'slack-channel', 'communication', '0000000000000000TENANT_001')
+     , ('00RESOURCE_MASTER_DEV_TEAM', '開発チーム', null, 'dev-team', 'team', '0000000000000000TENANT_001')
+     , ('000000RESOURCE_MASTER_FEAT', '機能', '提供している機能', 'feature', 'feature', '0000000000000000TENANT_001')
 ;
 
-insert into resource_master_attributes (id, name, code, value_type, is_array, order_no, resource_master_id, tenant_id)
-values ('00000000RMA_DEV_TEAM_SLACK', 'Slackチャンネル', 'team-slack-channel', 'slack:channel', false, '1', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
-     , ('0000000000000RMA_DEVELOPER', '開発者', 'developer', 'std:user', true, '2', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
-     , ('0000000000RMA_FEATURE_DESC', '機能概要', 'feature-description', 'std:text', false, '1', 'RESOURCE_MASTER_AFCTD_FEAT', '0000000000000000TENANT_001')
-     , ('0000000000RMA_FEATURE_TEAM', '担当チーム', 'feature-team', 'resource:dev-team', true, '2', 'RESOURCE_MASTER_AFCTD_FEAT', '0000000000000000TENANT_001')
-     , ('000000000000RMA_INFRA_TEAM', '担当チーム', 'infra-team', 'resoure:dev-team', true, '1', '00000RESOURCE_MASTER_INFRA', '0000000000000000TENANT_001')
-     , ('00000RMA_CUSTOMER_CP_SALES', '担当セールス', 'customer-sales', 'std:user', true, '1', '00RESOURCE_MASTER_CUSTOMER', '0000000000000000TENANT_001')
+insert into resource_master_attributes (id, name, code, value_type, resource_reference, is_array, order_no, resource_master_id, tenant_id)
+values ('000000RMA_SLACK_CHANNEL_ID', 'SlackチャネルID', 'slack-channel-id', 'slack:channel:id', null                        , false, '1', '00RESOURCE_MASTER_SLACK_CH', '0000000000000000TENANT_001')
+     , ('00000000000RMA_TEAM_MEMBER', 'メンバー'       , 'member'          , 'std:user'        , null                        , true , '1', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
+     , ('00000000RMA_DEV_TEAM_SLACK', 'Slackチャネル'  , 'slack-channel'   , 'slack:channel'   , '00RESOURCE_MASTER_SLACK_CH', false, '2', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
+     , ('00000000RMA_FEAT_RESP_TEAM', '担当チーム'     , 'responsible-team', 'reference'       , '00RESOURCE_MASTER_DEV_TEAM', false, '2', '000000RESOURCE_MASTER_FEAT', '0000000000000000TENANT_001')
 ;
 
-insert into resources (id, name, code, attribute_values, resource_master_id, tenant_id)
-values ('0000000000000RES_ECOM_TEAM', 'Eコマースチーム', 'ecom-team', '{
-  "team-slack-channel": {
-    "value-type": "slack:channel",
-    "value": "#ecom-dev-team"
-  },
-  "developer": {
-    "value-type": "std:user",
-    "value": [
-      "00000000TEAM_ECOM_USER_001",
-      "00000000TEAM_ECOM_USER_002",
-      "00000000TEAM_ECOM_USER_001"
-    ]
-  }
-}', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
-, ('00000000000RES_KESSAI_TEAM', '決済チーム', 'payment-team', '{
-  "team-slack-channel": {
-    "value-type": "slack:channel",
-    "value": "#payment-dev-team"
-  },
-  "developer": {
-    "value-type": "std:user",
-    "value": [
-      "000000TEAM_KESSAI_USER_001",
-      "000000TEAM_KESSAI_USER_001"
-    ]
-  }
-}', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
+insert into resources (id, name, code, resource_master_id, tenant_id)
+values ('00000000ECOM_TEAM_SLACK_CH', 'EコマースチームのSlackチャネル', 'ecom-team-slack', '00RESOURCE_MASTER_SLACK_CH', '0000000000000000TENANT_001')
+     , ('0000000000000RES_ECOM_TEAM', 'Eコマースチーム', 'ecom-team', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
+     , ('00000000000000ECOM_FEATURE', 'Eコマース機能', 'ecom-feature', '000000RESOURCE_MASTER_FEAT', '0000000000000000TENANT_001')
+;
+
+insert into resource_attribute_values (id, resource_id, resource_master_attribute_id, tenant_id, attribute_value)
+values ('00000ECOM_TEAM_SLACK_CH_ID', '00000000ECOM_TEAM_SLACK_CH', '000000RMA_SLACK_CHANNEL_ID', '0000000000000000TENANT_001', '"G05EXVALLDU"'::jsonb)
+     , ('0000000000ECOM_TEAM_MEMBER', '0000000000000RES_ECOM_TEAM', '00000000000RMA_TEAM_MEMBER', '0000000000000000TENANT_001', '["00000000TEAM_ECOM_USER_001", "00000000TEAM_ECOM_USER_002", "00000000TEAM_ECOM_USER_003"]'::jsonb)
+     , ('00000000000ECOM_TEAM_SLACK', '0000000000000RES_ECOM_TEAM', '00000000RMA_DEV_TEAM_SLACK', '0000000000000000TENANT_001', '{"reference": "00000000ECOM_TEAM_SLACK_CH"}'::jsonb)
+     , ('000000000000ECOM_RESP_TEAM', '00000000000000ECOM_FEATURE', '00000000RMA_DEV_TEAM_SLACK', '0000000000000000TENANT_001', '{"reference": "0000000000000RES_ECOM_TEAM"}'::jsonb)
 ;
 
 insert into incident_statuses (id, name, status_type, color, tenant_id)

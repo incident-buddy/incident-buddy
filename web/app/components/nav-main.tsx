@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Link } from "react-router";
+import { NavLink } from "react-router";
 import {
   Collapsible,
   CollapsibleContent,
@@ -67,9 +67,9 @@ export function NavMain({ items }: { items: Item[] }) {
                 {item.items?.map((subItem) => (
                   <SidebarMenuSubItem key={subItem.title}>
                     <SidebarMenuSubButton asChild>
-                      <Link to={subItem.path}>
+                      <NavLink to={subItem.path}>
                         <span>{subItem.title}</span>
-                      </Link>
+                      </NavLink>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                 ))}
@@ -82,10 +82,13 @@ export function NavMain({ items }: { items: Item[] }) {
     return (
       <SidebarMenuItem key={item.title}>
         <SidebarMenuButton asChild>
-          <Link to={item.path}>
+          <NavLink
+            to={item.path}
+            /* className={({isActive) => isActive ? "text-..." : ""} */
+          >
             {item.icon && <item.icon />}
             <span className="text-base">{item.title}</span>
-          </Link>
+          </NavLink>
         </SidebarMenuButton>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

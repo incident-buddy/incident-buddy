@@ -1,11 +1,11 @@
-import { ClientLoaderFunctionArgs, Link, useLoaderData } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { incidentClient } from "@/lib/connect-client";
 
 export const handle = {
   pageName: "インシデント",
 };
 
-export async function clientLoader({ request }: ClientLoaderFunctionArgs) {
+export async function clientLoader() {
   return await incidentClient.listIncidents({ page: 1 });
 }
 

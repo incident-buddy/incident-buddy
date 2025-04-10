@@ -90,9 +90,7 @@ export const columns: ColumnDef<Workflows>[] = [
     accessorKey: "name",
     header: () => <div>ワークフロー</div>,
     cell: ({ row }) => (
-      <Link to={`/app/workflows/${row.id}`}>
-        <div>{row.getValue("name")}</div>
-      </Link>
+      <div>{row.getValue("name")}</div>
     ),
   },
   {
@@ -209,12 +207,16 @@ export default function WorkflowTable() {
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      <Link to={`/workflows/${row.id}`}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </Link>
+
                     </TableCell>
                   ))}
+
                 </TableRow>
               ))
             ) : (

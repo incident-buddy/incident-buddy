@@ -6,7 +6,7 @@ import {
   TriggerCategory,
   TriggerCode,
   TriggerIcon,
-} from "@/slices/trigger/model.ts";
+} from "@/slice/trigger/model.ts";
 import { App } from "@/app.ts";
 import { Kysely } from "kysely";
 import { DB } from "@/dbtype.ts";

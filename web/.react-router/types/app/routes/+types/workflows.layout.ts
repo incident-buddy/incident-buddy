@@ -1,17 +1,17 @@
 // React Router generated types for route:
-// routes/app._index.tsx
+// routes/workflows.layout.tsx
 
 import type * as T from "react-router/route-module"
 
 import type { Info as Parent0 } from "../../+types/root.js"
-import type { Info as Parent1 } from "./app.js"
+import type { Info as Parent1 } from "./base.layout.js"
 
-type Module = typeof import("../app._index.js")
+type Module = typeof import("../workflows.layout.js")
 
 export type Info = {
   parents: [Parent0, Parent1],
-  id: "routes/app._index"
-  file: "routes/app._index.tsx"
+  id: "routes/workflows.layout"
+  file: "routes/workflows.layout.tsx"
   path: "undefined"
   params: {} & { [key: string]: string | undefined }
   module: Module

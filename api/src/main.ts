@@ -1,11 +1,12 @@
-import { resourceMasterApi } from "@/routes/resource_master.ts";
-import { triggerApi } from "@/routes/trigger.ts";
+import { resourceMasterApi } from "@/handler/resource-master.ts";
+import { triggerApi } from "@/handler/trigger.ts";
 import { newApp } from "@/app.ts";
 import { openapi } from "@/openapi.ts";
 // @ts-types="npm:@types/pg-pool@^2.0.6"
 import Pool from "pg-pool";
 import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely";
 import { DB } from "@/dbtype.ts";
+import {resourceApi} from "./handler/resource.ts";
 
 const dialect = new PostgresDialect({
   pool: new Pool({
@@ -21,6 +22,7 @@ const dialect = new PostgresDialect({
 const db = new Kysely<DB>({ dialect, plugins: [new CamelCasePlugin()] });
 
 const app = newApp();
+resourceApi(app, db);
 resourceMasterApi(app, db);
 triggerApi(app, db);
 openapi(app)

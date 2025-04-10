@@ -50,26 +50,35 @@ create table resource_master_attributes
     name               text    not null,
     code               text    not null,
     value_type         text    not null,
+    resource_reference text    null references resource_masters (id),
     is_array           boolean not null default false,
-    order_no          integer not null,
+    order_no           integer not null,
     resource_master_id text    not null references resource_masters (id),
     tenant_id          text    not null references tenants (id)
 );
 
 create index resource_master_attributes__rm_on on resource_master_attributes (resource_master_id, order_no);
 
--- e.g. Team A, its Slack channel is #team-a
+-- e.g. Team A
 create table resources
 (
     id                 text primary key,
     name               text  not null,
     code               text  not null,
-    attribute_values   jsonb not null, -- complies with resource_master_attributes
     resource_master_id text  not null references resource_masters (id),
     tenant_id          text  not null references tenants (id)
 );
 
 create index resources__ti_rm_co on resources (tenant_id, resource_master_id, code);
+
+create table resource_attribute_values
+(
+    id                           text primary key,
+    resource_id                  text not null references resources (id),
+    resource_master_attribute_id text not null references resource_master_attributes (id),
+    attribute_value              jsonb not null, -- referenceの場合は '{"reference": "resource_id"}'
+    tenant_id                    text not null references tenants (id)
+);
 
 create table incident_statuses
 (

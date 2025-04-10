@@ -12,6 +12,7 @@
     "@hono/zod-validator": "npm:@hono/zod-validator@^0.4.3",
     "@scalar/hono-api-reference": "npm:@scalar/hono-api-reference@^0.6.0",
     "@std/ulid": "jsr:@std/ulid@^1.0.0",
+    "@std/collections": "jsr:@std/collections@^1.0.0",
     "hono-openapi": "npm:hono-openapi@^0.4.6",
     "kysely": "npm:kysely@^0.27.6",
     "pg-pool": "npm:pg-pool@^3.8.0",

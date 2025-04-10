@@ -6,6 +6,7 @@ import {
   PanelsTopLeft,
   Settings2,
   Workflow,
+  Database
 } from "lucide-react";
 import type * as React from "react";
 
@@ -59,37 +60,42 @@ const data: Data = {
 const nav = [
   {
     title: "ダッシュボード",
-    path: "/app",
+    path: "/",
     icon: LayoutGrid,
   },
   {
     title: "インシデント",
-    path: "/app/incidents",
+    path: "/incidents",
     icon: Flame,
   },
   {
     title: "ワークフロー",
-    path: "/app/workflows",
+    path: "/workflows",
     icon: Workflow,
   },
   {
     title: "レポート",
-    path: "/app/reports",
+    path: "/reports",
     icon: FileCheck,
   },
   {
     title: "ステータスページ",
-    path: "/app/status-pages",
+    path: "/status-pages",
     icon: PanelsTopLeft,
   },
   {
+    title: "リソース",
+    path: "/resources",
+    icon: Database,
+  },
+  {
     title: "外部連携",
-    path: "/app/integrations",
+    path: "/integrations",
     icon: Blocks,
   },
   {
     title: "入れ子メニュー",
-    path: "/app/settings",
+    path: "/settings",
     icon: Settings2,
     items: [
       {

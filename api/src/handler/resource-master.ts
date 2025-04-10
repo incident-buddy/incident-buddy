@@ -8,45 +8,25 @@ import type { App } from "@/app.ts";
 import { factory } from "@/app-env.ts";
 import { authentication } from "@/authn.ts";
 import { toSchema } from "@/misc/schema-for-type.ts";
-import { ResourceMaster } from "@/slices/resource-master/model.ts";
-import { ResourceMasterRepositoryImpl } from "@/slices/resource-master/repository.ts";
+import { ResourceMaster } from "@/slice/resource-master/model.ts";
+import { ResourceMasterRepositoryImpl } from "@/slice/resource-master/repository.ts";
 import { Kysely } from "kysely";
 import { DB } from "@/dbtype.ts";
-import { ResourceMasterService } from "@/slices/resource-master/service.ts";
+import { ResourceMasterService } from "@/slice/resource-master/service.ts";
 
 const responseSchema = z.object({
   resourceMasters: z.array(
     toSchema<ResourceMaster>()(
       z.object({
-        id: z.string().ulid()
-          .openapi({ description: "Resource master ID", example: ulid() }),
-        name: z.string()
-          .openapi({
-            description: "Resource master name",
-            example: "Dev team",
-          }),
-        description: z.string()
-          .openapi({
-            description: "Resource master description",
-            example: "Development team",
-          }),
-        code: z.string()
-          .openapi({
-            description: "Resource master code",
-            example: "dev-team",
-          }),
-        category: z.string()
-          .openapi({
-            description: "Resource master category",
-            example: "team",
-          }),
+        id: z.string().ulid().openapi({ example: ulid() }),
+        name: z.string().openapi({ example: "Dev team" }),
+        description: z.string().openapi({ example: "Development team"}),
+        code: z.string().openapi({ example: "dev-team" }),
+        category: z.string().openapi({ example: "team" }),
         attributes: z.array(z.object({
           name: z.string().openapi({ example: "Team Slack Channel" }),
           code: z.string().openapi({ example: "team-slack-channel" }),
-          valueType: z.union([
-            z.literal("std:user"),
-            z.literal("slack:channel"),
-          ]),
+          valueType: z.union([z.literal("std:user"), z.literal("slack:channel")]),
           isArray: z.boolean(),
           orderNo: z.number(),
         })),
@@ -67,7 +47,7 @@ const list = (db: Kysely<DB>) => {
     authentication,
     describeRoute({
       description: "List resource masters",
-      response: {
+      responses: {
         200: {
           description: "List of resource masters",
           content: {

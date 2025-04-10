@@ -8,10 +8,10 @@ declare module "react-router" {
 
 type Params = {
   "/": {};
-  "/app": {};
-  "/app/incidents": {};
-  "/app/workflows": {};
-  "/app/workflows/:id": {
+  "/incidents": {};
+  "/workflows": {};
+  "/workflows/:id": {
     "id": string;
   };
+  "/resources": {};
 };

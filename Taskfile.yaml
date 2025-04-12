@@ -1,0 +1,46 @@
+version: "3"
+
+dotenv:
+  - .env
+  - core/.env
+
+tasks:
+  start:otel:
+    cmd: |
+      docker run --name lgtm -p 3000:3000 -p 4317:4317 -p 4318:4318 --rm -ti \
+      -v "$PWD"/lgtm/grafana:/data/grafana \
+      -v "$PWD"/lgtm/prometheus:/data/prometheus \
+      -v "$PWD"/lgtm/loki:/data/loki \
+      -e GF_PATHS_DATA=/data/grafana \
+      docker.io/grafana/otel-lgtm:0.8.1
+  start:jaeger:
+    cmd: |
+      docker run --rm \
+      -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 \
+      -p 16686:16686 \
+      -p 4317:4317 \
+      -p 4318:4318 \
+      -p 9411:9411 \
+      jaegertracing/all-in-one:latest
+  dev:api:
+    dir: ./api
+    cmds:
+      - deno run -A src/main.ts
+  gen:kysely:
+    dir: ./api
+    cmd: |
+      echo "import 'npm:pg@^8.11.3'; import 'npm:kysely-codegen@^0.11.0';" | \
+      deno run -A npm:kysely-codegen@^0.11.0 - \
+      kysely-codegen --dialect=postgres --out-file ./src/dbtype.ts --camel-case
+    silent: true
+  gen:openapi:
+    dir: ./web
+    cmd: pnpm dlx openapi-typescript http:localhost:8000/openapi -o ./generated/openapi/schema.d.ts
+  ngrok:
+    cmd: ngrok http 8001
+  dev:slack:
+    dir: ./slack
+    cmd: deno run -A ./src/main.ts
+  db:migrate:
+    dir: ./db
+    cmd: PGPASSWORD=$DB_PASS psqldef -h $DB_HOST -U $DB_USER $DB_NAME --enable-drop-table < schema.sql

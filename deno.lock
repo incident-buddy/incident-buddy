@@ -1,0 +1,16 @@
+{
+  "version": "4",
+  "specifiers": {
+    "jsr:@es-toolkit/es-toolkit@^1.34.1": "1.34.1"
+  },
+  "jsr": {
+    "@es-toolkit/es-toolkit@1.34.1": {
+      "integrity": "6e2cb98076bf0928cf15da18e4e6eb04ae68be3d6be640ed9ce730cc2ca0406e"
+    }
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@es-toolkit/es-toolkit@^1.34.1"
+    ]
+  }
+}

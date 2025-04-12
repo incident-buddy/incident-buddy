@@ -5,11 +5,11 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "@/component/ui/sheet";
 import { Plus, SquarePen, Trash } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { IconType, ResourceIcon } from "@/components/workflow/resource-icon";
+import { Button } from "@/component/ui/button";
+import { Input } from "@/component/ui/input";
+import { IconType, ResourceIcon } from "@/component/workflow/resource-icon";
 
 import {
   Select,
@@ -19,9 +19,9 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Hr } from "@/components/hr";
+} from "@/component/ui/select";
+import { Badge } from "@/component/ui/badge";
+import { Hr } from "@/component/hr";
 
 export function Condition() {
   const [open, setOpen] = React.useState(false);

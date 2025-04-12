@@ -5,20 +5,20 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "@/component/ui/sheet";
 import {
   ChevronsDownUp,
   ChevronsUpDown,
   GripHorizontal,
   SquarePen,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ActionIcon, IconType } from "@/components/workflow/action-icon";
+import { Button } from "@/component/ui/button";
+import { ActionIcon, IconType } from "@/component/workflow/action-icon";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+} from "@/component/ui/collapsible";
 
 export function Steps() {
   return (

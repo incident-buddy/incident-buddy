@@ -1,4 +1,4 @@
-import { Messages } from "@/translation/index";
+import type { Messages } from "@/translation/index";
 
 export const JaMessages: Messages = {
   page: {
@@ -7,6 +7,13 @@ export const JaMessages: Messages = {
     },
     workflow: {
       pageTitle: "ワークフロー",
+    },
+    resource: {
+      categories: {
+        team: "チーム",
+        communication: "コミュニケーション",
+        feature: "機能",
+      },
     },
   },
   workflow: {

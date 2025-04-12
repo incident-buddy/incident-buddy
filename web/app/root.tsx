@@ -1,6 +1,6 @@
 import type { LinksFunction } from "react-router";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/component/ui/toaster";
 
 import "./tailwind.css";
 
@@ -13,7 +13,7 @@ export const links: LinksFunction = () => [
   },
   {
     rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    href: "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap",
   },
 ];
 

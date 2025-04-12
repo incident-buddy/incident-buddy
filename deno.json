@@ -1,5 +1,0 @@
-{
-  "imports": {
-    "@es-toolkit/es-toolkit": "jsr:@es-toolkit/es-toolkit@^1.34.1"
-  }
-}

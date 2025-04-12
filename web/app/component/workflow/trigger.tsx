@@ -5,16 +5,16 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "@/component/ui/sheet";
 import { SquarePen } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/component/ui/button";
+import { Skeleton } from "@/component/ui/skeleton";
 import { MessageContext } from "@/translation";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 
-import { IconType, ResourceIcon } from "@/components/workflow/resource-icon";
-import { Error } from "@/components/error";
+import { IconType, ResourceIcon } from "@/component/workflow/resource-icon";
+import { Error } from "@/component/error";
 import { paths } from "generated/openapi/schema";
 
 type Entries<T> = [keyof T, T[keyof T]][];

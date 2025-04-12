@@ -1,8 +1,8 @@
-import { Trigger } from "@/components/workflow/trigger";
-import { Condition } from "@/components/workflow/condition";
-import { Steps } from "@/components/workflow/step";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Trigger } from "@/component/workflow/trigger";
+import { Condition } from "@/component/workflow/condition";
+import { Steps } from "@/component/workflow/step";
+import { Input } from "@/component/ui/input";
+import { Button } from "@/component/ui/button";
 import React from "react";
 
 export default function Page() {
@@ -35,9 +35,9 @@ export default function Page() {
             />
           </h3>
           <Trigger selected={trigger} setSelected={setTrigger} />
-          <div className="w-1 h-8 bg-slate-100 mx-auto"></div>
+          <div className="w-1 h-8 bg-slate-100 mx-auto" />
           <Condition />
-          <div className="w-1 h-8 bg-slate-100 mx-auto"></div>
+          <div className="w-1 h-8 bg-slate-100 mx-auto" />
           <Steps />
         </div>
       </div>

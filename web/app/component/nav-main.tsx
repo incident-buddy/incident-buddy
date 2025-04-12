@@ -13,13 +13,13 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/component/ui/dropdown-menu";
 import { NavLink } from "react-router";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+} from "@/component/ui/collapsible";
 import {
   SidebarGroup,
   SidebarMenu,
@@ -30,7 +30,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   useSidebar,
-} from "@/components/ui/sidebar";
+} from "@/component/ui/sidebar";
 
 type Item = {
   title: string;

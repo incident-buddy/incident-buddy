@@ -1,6 +1,7 @@
 import { JaMessages } from "@/translation/ja";
 import { EnMessages } from "@/translation/en";
-import { createContext, JSX, useState } from "react";
+import { createContext, type JSX, useState } from "react";
+import type { Category } from "@/feature/resource/category";
 
 type Props = {
   children: JSX.Element;
@@ -37,6 +38,11 @@ export type Messages = {
     workflow: {
       pageTitle: string;
     };
+    resource: {
+      categories: {
+        [key in Category]: string
+      }
+    }
   };
 
   workflow: {

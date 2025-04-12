@@ -10,16 +10,16 @@ import {
 } from "lucide-react";
 import type * as React from "react";
 
-import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
+import { NavMain } from "@/component/nav-main";
+import { NavUser } from "@/component/nav-user";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar";
-import { OrganizationMenu } from "@/components/organization-menu";
+} from "@/component/ui/sidebar";
+import { OrganizationMenu } from "@/component/organization-menu";
 
 type User = {
   name: string;

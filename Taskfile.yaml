@@ -36,6 +36,13 @@ tasks:
     dir: ./api
     cmds:
       - deno run -A src/main.ts
+  dev:web:
+    dir: ./web
+    cmd: pnpm dev
+  dev:
+    deps:
+      - dev:api
+      - dev:web
   gen:kysely:
     dir: ./api
     cmd: |

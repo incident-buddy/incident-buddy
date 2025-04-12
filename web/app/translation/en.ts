@@ -1,4 +1,4 @@
-import { Messages } from "@/translation/index";
+import type { Messages } from "@/translation/index";
 
 export const EnMessages: Messages = {
   page: {
@@ -8,6 +8,13 @@ export const EnMessages: Messages = {
     workflow: {
       pageTitle: "Automation",
     },
+    resource: {
+      categories: {
+        team: "Team",
+        communication: "Communication",
+        feature: "Feature",
+      }
+    }
   },
   workflow: {
     workflowName: "Workflow",

@@ -23,6 +23,7 @@
     }
   },
   "javascript": {
+    "jsxRuntime": "transparent",
     "formatter": {
       "quoteStyle": "double"
     }

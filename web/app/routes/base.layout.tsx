@@ -1,17 +1,17 @@
 import { Outlet, useMatches } from "react-router";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/component/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
+} from "@/component/ui/breadcrumb";
+import { Separator } from "@/component/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
+} from "@/component/ui/sidebar";
 import { MessageProvider } from "@/translation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";

@@ -1,12 +1,12 @@
-import { resourceMasterApi } from "@/handler/resource-master.ts";
-import { triggerApi } from "@/handler/trigger.ts";
-import { newApp } from "@/app.ts";
-import { openapi } from "@/openapi.ts";
 // @ts-types="npm:@types/pg-pool@^2.0.6"
 import Pool from "pg-pool";
 import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely";
 import { DB } from "@/dbtype.ts";
-import {resourceApi} from "./handler/resource.ts";
+import { newApp } from "@/app.ts";
+import { openapi } from "@/openapi.ts";
+import { resourceApi } from "./feature/resource/handler.ts";
+import { resourceMasterApi } from "./feature/resource-master/handler.ts";
+import { triggerApi } from "./feature/trigger/handler.ts";
 
 const dialect = new PostgresDialect({
   pool: new Pool({
@@ -25,7 +25,7 @@ const app = newApp();
 resourceApi(app, db);
 resourceMasterApi(app, db);
 triggerApi(app, db);
-openapi(app)
+openapi(app);
 
 // Learn more at https://docs.deno.com/runtime/manual/examples/module_metadata#concepts
 if (import.meta.main) {

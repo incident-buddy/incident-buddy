@@ -1,6 +1,7 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@es-toolkit/es-toolkit@^1.34.1": "1.34.1",
     "jsr:@std/assert@1": "1.0.11",
     "jsr:@std/collections@1": "1.0.9",
     "jsr:@std/internal@^1.0.5": "1.0.5",
@@ -24,6 +25,9 @@
     "npm:zod@^3.24.2": "3.24.2"
   },
   "jsr": {
+    "@es-toolkit/es-toolkit@1.34.1": {
+      "integrity": "6e2cb98076bf0928cf15da18e4e6eb04ae68be3d6be640ed9ce730cc2ca0406e"
+    },
     "@std/assert@1.0.11": {
       "integrity": "2461ef3c368fe88bc60e186e7744a93112f16fd110022e113a0849e94d1c83c1",
       "dependencies": [
@@ -753,6 +757,7 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@es-toolkit/es-toolkit@^1.34.1",
       "jsr:@std/assert@1",
       "jsr:@std/collections@1",
       "jsr:@std/ulid@1",

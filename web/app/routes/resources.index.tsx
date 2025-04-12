@@ -1,5 +1,5 @@
-import {apiClient} from "@/lib/api-client";
-import {useQuery} from "@tanstack/react-query";
+import { apiClient } from "@/lib/api-client";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Page() {
   const { status, data: resources } = useQuery({
@@ -17,7 +17,7 @@ export default function Page() {
           <h3 className="font-bold text-md">Loading...</h3>
         </div>
       </div>
-    )
+    );
   }
   if (status === "error" || !resources) {
     return (
@@ -26,14 +26,12 @@ export default function Page() {
           <h3 className="font-bold text-md">Error loading resources</h3>
         </div>
       </div>
-    )
+    );
   }
-
-
 
   return (
     <>
       <h1>{JSON.stringify(resources)}</h1>
     </>
-  )
+  );
 }

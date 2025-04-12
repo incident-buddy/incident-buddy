@@ -54,8 +54,8 @@ export type Messages = {
   generic: {
     state: {
       notSelected: string;
-    }
-  }
+    };
+  };
 
   error: {
     generic: string;

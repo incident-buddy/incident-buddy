@@ -66,6 +66,14 @@ export interface IncidentStatuses {
   tenantId: string;
 }
 
+export interface ResourceAttributeValues {
+  attributeValue: Json;
+  id: string;
+  resourceId: string;
+  resourceMasterAttributeId: string;
+  tenantId: string;
+}
+
 export interface ResourceMasterAttributes {
   code: string;
   id: string;
@@ -73,6 +81,7 @@ export interface ResourceMasterAttributes {
   name: string;
   orderNo: number;
   resourceMasterId: string;
+  resourceReference: string | null;
   tenantId: string;
   valueType: string;
 }
@@ -87,7 +96,6 @@ export interface ResourceMasters {
 }
 
 export interface Resources {
-  attributeValues: Json;
   code: string;
   id: string;
   name: string;
@@ -155,6 +163,7 @@ export interface DB {
   incidentRoles: IncidentRoles;
   incidents: Incidents;
   incidentStatuses: IncidentStatuses;
+  resourceAttributeValues: ResourceAttributeValues;
   resourceMasterAttributes: ResourceMasterAttributes;
   resourceMasters: ResourceMasters;
   resources: Resources;

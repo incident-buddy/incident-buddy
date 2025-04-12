@@ -1,12 +1,12 @@
 import {
   Blocks,
+  Database,
   FileCheck,
   Flame,
   LayoutGrid,
   PanelsTopLeft,
   Settings2,
   Workflow,
-  Database
 } from "lucide-react";
 import type * as React from "react";
 

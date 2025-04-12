@@ -6,7 +6,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { SquarePen, Plus, Trash } from "lucide-react";
+import { Plus, SquarePen, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { IconType, ResourceIcon } from "@/components/workflow/resource-icon";

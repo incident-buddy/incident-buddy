@@ -1,10 +1,9 @@
-
 import {
-  type RouteConfig,
-  route,
   index,
   layout,
   prefix,
+  route,
+  type RouteConfig,
 } from "@react-router/dev/routes";
 
 export default [
@@ -13,20 +12,19 @@ export default [
     ...prefix("incidents", [
       layout("routes/incidents.layout.tsx", [
         route("", "routes/incidents.index.tsx"),
-//        route(":id", "routes/incidents.detail.tsx"),
-      ])
+        //        route(":id", "routes/incidents.detail.tsx"),
+      ]),
     ]),
     ...prefix("workflows", [
       layout("routes/workflows.layout.tsx", [
         index("routes/workflows.index.tsx"),
         route(":id", "routes/workflows.detail.tsx"),
-      ])
+      ]),
     ]),
     ...prefix("resources", [
       layout("routes/resources.layout.tsx", [
         index("routes/resources.index.tsx"),
-      ])
+      ]),
     ]),
-
-  ])
+  ]),
 ] satisfies RouteConfig;

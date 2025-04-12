@@ -1,20 +1,20 @@
-import z from "zod";
-import { toSchema } from "@/misc/schema-for-type.ts";
-import {
-  PresetTriggers,
-  Trigger,
-  TriggerCategory,
-  TriggerCode,
-  TriggerIcon,
-} from "@/slice/trigger/model.ts";
-import { App } from "@/app.ts";
-import { Kysely } from "kysely";
 import { DB } from "@/dbtype.ts";
-
+import { Kysely } from "kysely";
 import { factory } from "@/app-env.ts";
 import { authentication } from "@/authn.ts";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/zod";
+import { z } from "zod";
+import "zod-openapi/extend";
+import { toSchema } from "@/misc/schema-for-type.ts";
+import { App } from "@/app.ts";
+import {
+    PresetTriggers,
+    Trigger,
+    TriggerCategory,
+    TriggerCode,
+    TriggerIcon,
+} from "./model.ts";
 
 const codeSchema = toSchema<TriggerCode>()(
   z.union([
@@ -33,7 +33,7 @@ const categorySchema = toSchema<TriggerCategory>()(
 const iconSchema = toSchema<TriggerIcon>()(
   z.union([
     z.literal("incident"),
-    z.literal("slack")
+    z.literal("slack"),
   ]),
 );
 

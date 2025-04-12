@@ -7,10 +7,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
-  SquarePen,
-  GripHorizontal,
   ChevronsDownUp,
   ChevronsUpDown,
+  GripHorizontal,
+  SquarePen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ActionIcon, IconType } from "@/components/workflow/action-icon";

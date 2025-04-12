@@ -9,11 +9,11 @@ import "zod-openapi/extend";
 import { toSchema } from "@/misc/schema-for-type.ts";
 import { App } from "@/app.ts";
 import {
-    PresetTriggers,
-    Trigger,
-    TriggerCategory,
-    TriggerCode,
-    TriggerIcon,
+  PresetTriggers,
+  Trigger,
+  TriggerCategory,
+  TriggerCode,
+  TriggerIcon,
 } from "./model.ts";
 
 const codeSchema = toSchema<TriggerCode>()(

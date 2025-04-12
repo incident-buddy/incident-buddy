@@ -1,6 +1,11 @@
 node_modules
-*.idea
-
 *.env
 *.envrc
+.cache
+
+*.idea
 *.iml
+
+/web/build
+/web/public/build
+

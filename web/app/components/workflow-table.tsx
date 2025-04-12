@@ -105,13 +105,11 @@ export const columns: ColumnDef<Workflows>[] = [
       const lastTriggered = row.getValue<LastTriggered | undefined>(
         "lastTriggered",
       );
-      return lastTriggered
-        ? (
-          <div>
-            {lastTriggered.at} - {lastTriggered.status}
-          </div>
-        )
-        : null;
+      return lastTriggered ? (
+        <div>
+          {lastTriggered.at} - {lastTriggered.status}
+        </div>
+      ) : null;
     },
   },
   {
@@ -143,9 +141,8 @@ export default function WorkflowTable() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
-  const [columnVisibility, setColumnVisibility] = React.useState<
-    VisibilityState
-  >({});
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
@@ -174,7 +171,8 @@ export default function WorkflowTable() {
           placeholder="検索"
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)}
+            table.getColumn("name")?.setFilterValue(event.target.value)
+          }
           className="max-w-sm"
         />
       </div>
@@ -186,10 +184,12 @@ export default function WorkflowTable() {
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   );
                 })}
@@ -197,36 +197,34 @@ export default function WorkflowTable() {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length
-              ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        <Link to={`/workflows/${row.id}`}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </Link>
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              )
-              : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      <Link to={`/workflows/${row.id}`}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </Link>
+                    </TableCell>
+                  ))}
                 </TableRow>
-              )}
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>

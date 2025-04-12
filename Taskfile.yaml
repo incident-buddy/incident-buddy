@@ -5,6 +5,16 @@ dotenv:
   - core/.env
 
 tasks:
+  fmt:api:
+    dir: ./api
+    cmd: deno fmt
+  fmt:web:
+    dir: ./web
+    cmd: pnpm format
+  fmt:
+    deps:
+      - fmt:api
+      - fmt:web
   start:otel:
     cmd: |
       docker run --name lgtm -p 3000:3000 -p 4317:4317 -p 4318:4318 --rm -ti \

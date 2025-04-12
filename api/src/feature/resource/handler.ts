@@ -8,8 +8,8 @@ import { factory } from "@/app-env.ts";
 import { authentication } from "@/authn.ts";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/zod";
-import {ListResourceResult, ResourceQueryImpl} from "./query.ts";
-import {toSchema} from "../../misc/schema-for-type.ts";
+import { ListResourceResult, ResourceQueryImpl } from "./query.ts";
+import { toSchema } from "../../misc/schema-for-type.ts";
 
 const responseSchema = toSchema<ListResourceResult>()(
   z.object({
@@ -23,7 +23,7 @@ const responseSchema = toSchema<ListResourceResult>()(
         masterName: z.string().openapi({ example: "Team" }),
       }),
     ),
-  })
+  }),
 );
 
 export const resourceApi = (app: App, db: Kysely<DB>) => {
@@ -41,10 +41,11 @@ const list = (db: Kysely<DB>) => {
         {
           name: "masterId",
           in: "query",
-          description: "Resource master ID to filter resources. If not provided, all resources will be listed",
+          description:
+            "Resource master ID to filter resources. If not provided, all resources will be listed",
           required: false,
           schema: z.string().ulid().optional().openapi({ example: ulid() }),
-        }
+        },
       ],
       responses: {
         200: {
@@ -57,7 +58,7 @@ const list = (db: Kysely<DB>) => {
     }),
     async (c) => {
       const ctx = { user: c.get("loginUser") };
-      const masterId = c.req.query('masterId');
+      const masterId = c.req.query("masterId");
       return c.json(await query.list(ctx, masterId));
     },
   );

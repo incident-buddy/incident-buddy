@@ -79,9 +79,9 @@ export function Trigger({ selected, setSelected }: Props) {
     typeof data.triggers
   >;
   const triggers = new Map(
-    triggersByCategory.flatMap(([, triggers]) => triggers).map((
-      t,
-    ) => [`${t.code}`, t]),
+    triggersByCategory
+      .flatMap(([, triggers]) => triggers)
+      .map((t) => [`${t.code}`, t]),
   );
 
   const SelectedItem = (props: { code?: string }) => {
@@ -186,9 +186,11 @@ function TriggerSetting(props: {
   );
 }
 
-function TriggerItem(
-  props: { icon: IconType; name: string; active?: boolean },
-) {
+function TriggerItem(props: {
+  icon: IconType;
+  name: string;
+  active?: boolean;
+}) {
   const style = props.active
     ? "bg-white border-blue-600 shadow shadow-blue-200"
     : "bg-white";

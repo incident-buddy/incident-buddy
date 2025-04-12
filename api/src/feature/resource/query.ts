@@ -23,8 +23,8 @@ export class ResourceQueryImpl implements ResourceQuery {
         "rm.name as masterName",
       ]).where("r.tenantId", "=", tenantId)
       .orderBy(["rm.code", "r.code"]);
-    if(masterId) {
-        query = query.where("r.resourceMasterId", "=", masterId);
+    if (masterId) {
+      query = query.where("r.resourceMasterId", "=", masterId);
     }
     const resources = await query.execute();
 
@@ -42,4 +42,3 @@ export type ListResourceResult = {
     masterName: string;
   }[];
 };
-

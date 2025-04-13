@@ -39,6 +39,8 @@ export type Messages = {
       pageTitle: string;
     };
     resource: {
+      pageTitle: string;
+      createNew: string;
       categories: {
         [key in Category]: string
       }

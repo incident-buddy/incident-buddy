@@ -9,17 +9,20 @@ values ('00000000TEAM_ECOM_USER_001', 'Eコマース', '開発者1', '0000000000
      , ('000000TEAM_KESSAI_USER_002', '決済', '開発者2', '0000000000000000TENANT_001', 'ACTIVE')
 ;
 
-insert into resource_masters (id, name, description, code, category, tenant_id)
-values ('00RESOURCE_MASTER_SLACK_CH', 'Slackチャネル', 'Slackチャネル', 'slack-channel', 'communication', '0000000000000000TENANT_001')
-     , ('00RESOURCE_MASTER_DEV_TEAM', '開発チーム', null, 'dev-team', 'team', '0000000000000000TENANT_001')
-     , ('000000RESOURCE_MASTER_FEAT', '機能', '提供している機能', 'feature', 'feature', '0000000000000000TENANT_001')
+insert into resource_masters (id, name, description, code, icon, category, tenant_id)
+values ('00RESOURCE_MASTER_SLACK_CH', 'Slackチャネル', 'Slackチャネル', 'slack-channel', 'slack', 'communication', '0000000000000000TENANT_001')
+     , ('00RESOURCE_MASTER_DEV_TEAM', '開発チーム', null, 'dev-team', 'team', 'team', '0000000000000000TENANT_001')
+     , ('RESOURCE_MASTER_SALES_TEAM', 'セールスチーム', null, 'sales-team', 'team', 'team', '0000000000000000TENANT_001')
+     , ('000RESOURCE_MASTER_PRODUCT', 'プロダクト', null, 'product', 'box', 'service', '0000000000000000TENANT_001')
+     , ('000000RESOURCE_MASTER_FEAT', '機能', 'プロダクトが持つ機能', 'feature', 'function', 'service', '0000000000000000TENANT_001')
 ;
 
 insert into resource_master_attributes (id, name, code, value_type, resource_reference, is_array, order_no, resource_master_id, tenant_id)
-values ('000000RMA_SLACK_CHANNEL_ID', 'SlackチャネルID', 'slack-channel-id', 'slack:channel:id', null                        , false, '1', '00RESOURCE_MASTER_SLACK_CH', '0000000000000000TENANT_001')
-     , ('00000000000RMA_TEAM_MEMBER', 'メンバー'       , 'member'          , 'std:user'        , null                        , true , '1', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
-     , ('00000000RMA_DEV_TEAM_SLACK', 'Slackチャネル'  , 'slack-channel'   , 'slack:channel'   , '00RESOURCE_MASTER_SLACK_CH', false, '2', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
-     , ('00000000RMA_FEAT_RESP_TEAM', '担当チーム'     , 'responsible-team', 'reference'       , '00RESOURCE_MASTER_DEV_TEAM', false, '2', '000000RESOURCE_MASTER_FEAT', '0000000000000000TENANT_001')
+values ('000000RMA_SLACK_CHANNEL_ID', 'SlackチャネルID'     , 'slack-channel-id', 'slack:channel:id', null                        , false, '1', '00RESOURCE_MASTER_SLACK_CH', '0000000000000000TENANT_001')
+     , ('00000000000RMA_TEAM_MEMBER', 'メンバー'            , 'member'          , 'std:user'        , null                        , true , '1', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
+     , ('00000000RMA_DEV_TEAM_SLACK', 'チームのSlackチャネル' , 'slack-channel'   , 'reference'       , '00RESOURCE_MASTER_SLACK_CH', false, '2', '00RESOURCE_MASTER_DEV_TEAM', '0000000000000000TENANT_001')
+     , ('0000RMA_PRODUCT_RESP_TEAM' , '担当チーム'           , 'responsible-team', 'reference'       , '00RESOURCE_MASTER_DEV_TEAM', false, '2', '000RESOURCE_MASTER_PRODUCT', '0000000000000000TENANT_001')
+     , ('000000RMA_PRODUCT_FEATURE' , 'プロダクトの機能'      , 'product-feature' , 'reference'       , '00RESOURCE_MASTER_DEV_FEAT', false, '2', '000RESOURCE_MASTER_PRODUCT', '0000000000000000TENANT_001')
 ;
 
 insert into resources (id, name, code, resource_master_id, tenant_id)
@@ -32,7 +35,7 @@ insert into resource_attribute_values (id, resource_id, resource_master_attribut
 values ('00000ECOM_TEAM_SLACK_CH_ID', '00000000ECOM_TEAM_SLACK_CH', '000000RMA_SLACK_CHANNEL_ID', '0000000000000000TENANT_001', '"G05EXVALLDU"'::jsonb)
      , ('0000000000ECOM_TEAM_MEMBER', '0000000000000RES_ECOM_TEAM', '00000000000RMA_TEAM_MEMBER', '0000000000000000TENANT_001', '["00000000TEAM_ECOM_USER_001", "00000000TEAM_ECOM_USER_002", "00000000TEAM_ECOM_USER_003"]'::jsonb)
      , ('00000000000ECOM_TEAM_SLACK', '0000000000000RES_ECOM_TEAM', '00000000RMA_DEV_TEAM_SLACK', '0000000000000000TENANT_001', '{"reference": "00000000ECOM_TEAM_SLACK_CH"}'::jsonb)
-     , ('000000000000ECOM_RESP_TEAM', '00000000000000ECOM_FEATURE', '00000000RMA_FEAT_RESP_TEAM', '0000000000000000TENANT_001', '{"reference": "0000000000000RES_ECOM_TEAM"}'::jsonb)
+     , ('000000000000ECOM_RESP_TEAM', '00000000000000ECOM_FEATURE', '0000RMA_PRODUCT_RESP_TEAM', '0000000000000000TENANT_001', '{"reference": "0000000000000RES_ECOM_TEAM"}'::jsonb)
 ;
 
 insert into incident_statuses (id, name, status_type, color, tenant_id)

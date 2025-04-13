@@ -90,6 +90,7 @@ export interface ResourceMasters {
   category: string;
   code: string;
   description: string | null;
+  icon: string;
   id: string;
   name: string;
   tenantId: string;

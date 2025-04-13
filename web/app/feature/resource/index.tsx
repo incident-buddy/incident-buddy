@@ -1,30 +1,23 @@
-import { apiClient } from "@/lib/api-client";
-import { useQuery } from "@tanstack/react-query";
-import { groupBy } from "es-toolkit";
-import { Categories } from "./category";
+import {apiClient} from "@/lib/api-client";
+import {useQuery} from "@tanstack/react-query";
+import {groupBy} from "es-toolkit";
+import {Categories} from "./category";
 import {useContext} from "react";
 import {MessageContext} from "@/translation";
-import {EllipsisVertical} from "lucide-react";
+import {toIcon} from "@/feature/resource/icon";
+import {Link} from "react-router";
+import {Button} from "@/component/ui/button";
 
 export default function Page() {
   const dict = useContext(MessageContext).dict.page.resource;
-  const resourceQuery = useQuery({
-    queryKey: ['resources'],
-    queryFn: () => apiClient.GET("/resource").then((res) =>
-      groupBy(res.data?.resources ?? [], (r) => r.category)
-    ),
-  });
-  const masterQuery = useQuery({
+  const {status, data: masters} = useQuery({
     queryKey: ['resource-master'],
     queryFn: () => apiClient.GET("/resource-master").then((res) =>
       groupBy(res.data?.resourceMasters ?? [], (m) => m.category)
     ),
   });
 
-  const pending = resourceQuery.isPending || masterQuery.isPending;
-  const error = resourceQuery.isError || masterQuery.isError;
-
-  if (pending) {
+  if (status === 'pending') {
     return (
       <div className="flex flex-col gap-y-2 rounded-sm border bg-card text-card-foreground p-4 bg-slate-50">
         <div className="flex flex-row items-center justify-between">
@@ -33,7 +26,7 @@ export default function Page() {
       </div>
     );
   }
-  if (error) {
+  if (status === 'error') {
     return (
       <div className="flex flex-col gap-y-2 rounded-sm border bg-card text-card-foreground p-4 bg-slate-50">
         <div className="flex flex-row items-center justify-between">
@@ -43,83 +36,56 @@ export default function Page() {
     );
   }
 
-  const masters = masterQuery.data;
-
   return (
     <>
-      <div className="container max-w-6xl">
-        <h1 className="scroll-m-20 font-semibold tracking-tight mb-4">
-          Resource Masters
-        </h1>
+      <div className="container max-w-6xl flex flex-col gap-y-4">
+        <HeaderActions />
         {Categories.map((category) => (
-          <div key={category} className="mb-8">
-            <h2 className="text-lg font-semibold tracking-tight mb-4">{dict.categories[category]}</h2>
-            <ul className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-              {masters[category].map((master) => (
-                <li key={master.id} className="col-span-1 flex rounded-md shadow-sm">
-                  <div className="flex w-16 shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white">
-                    {master.name.slice(0, 2)}
-                  </div>
-                  <div className="flex flex-1 items-center justify-between truncate rounded-r-md border-b border-r border-t border-gray-200 bg-white">
-                    <div className="flex-1 truncate px-4 py-2 text-sm">
-                      <a href={master.id} className="font-medium text-gray-900 hover:text-gray-600">
-                        {master.name}
-                      </a>
-                      <p className="text-gray-500">{master.code}</p>
-                    </div>
-                    <div className="shrink-0 pr-2">
-                      <button
-                        type="button"
-                        className="inline-flex size-8 items-center justify-center rounded-full bg-transparent bg-white text-gray-400 hover:text-gray-500 "
-                      ><EllipsisVertical aria-hidden="true" className="size-5" /></button>
-                    </div>
-                  </div>
+          <div key={category} className="flex flex-col gap-y-2">
+            <h2 className="text-lg font-semibold tracking-tight">{dict.categories[category]}</h2>
+            <ul className="grid gap-4 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {(masters[category] ?? []).map((master) => (
+                <li key={master.id} className="col-span-1 flex">
+                  <Master master={{...master, count:12}} />
                 </li>
               ))}
             </ul>
           </div>
         ))}
-
       </div>
-      <h1>Resources</h1>
-      <pre>{JSON.stringify(resourceQuery.data, null, 2)}</pre>
-      <pre>{JSON.stringify(masterQuery.data, null, 2)}</pre>
     </>
   );
 }
 
-/** Card element for resource master */
-function ResourceMaster(props: {
-  id: string;
-  name: string;
-  description: string;
-  code: string;
-  category: string;
-  attributes: {
-    code: string;
-    name: string;
-    isArray: boolean;
-    valueType: string;
-  }[];
-}) {
+function HeaderActions() {
+  const { dict } = useContext(MessageContext);
   return (
-    <div className="flex flex-col gap-y-2 rounded-sm border bg-card text-card-foreground p-4 bg-slate-50">
-      <div className="flex flex-row items-center justify-between">
-        <h3 className="font-bold text-md">{props.name}</h3>
-        <p className="text-sm text-muted-foreground">{props.code}</p>
+    <div className="flex flex-row items-center justify-between">
+      <h1 className="font-bold text-xl">{dict.page.resource.pageTitle}</h1>
+      <div>
+        <Button>{dict.page.resource.createNew}</Button>
       </div>
-      <p className="text-sm text-muted-foreground">{props.description}</p>
-      <p className="text-sm text-muted-foreground">{props.category}</p>
-      <ul>
-        {props.attributes.map((attr) => (
-          <li key={attr.code} className="flex flex-row items-center justify-between">
-            <span>{attr.name}</span>
-            <span>{attr.code}</span>
-            <span>{attr.valueType}</span>
-            <span>{attr.isArray ? "Array" : "Single"}</span>
-          </li>
-        ))}
-      </ul>
     </div>
+  );
+}
+
+function Master(props: { master: {name: string, id: string, code: string, icon: string, count: number} }) {
+  const { master } = props;
+  return (
+    <Link to="/resource/master" className="w-full">
+      <div className="w-full flex flex-row gap-y-2 py-2 border rounded shadow-sm bg-white hover:bg-gray-50">
+        <div className="flex items-start justify-center w-10">{toIcon(master.icon)}</div>
+        <div
+          className="flex flex-1 items-center justify-between truncate">
+          <div className="flex-1 truncate">
+            <div className="flex flex-row items-center justify-between pr-3">
+              <h3 className="text-base">{master.name}</h3>
+              <span className="py-0.5 px-1 text-gray-500 text-xs leading-none rounded bg-gray-100">{master.count}</span>
+            </div>
+            <p className="text-sm text-gray-500">{master.code}</p>
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 }

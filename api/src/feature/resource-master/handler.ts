@@ -9,9 +9,24 @@ import type { App } from "@/app.ts";
 import { factory } from "@/app-env.ts";
 import { authentication } from "@/authn.ts";
 import { toSchema } from "@/misc/schema-for-type.ts";
-import { ResourceMaster } from "./model.ts";
-import { ResourceMasterRepositoryImpl } from "./repository.ts";
-import { ResourceMasterService } from "./service.ts";
+import type {IconType, ResourceMaster, ValueType} from "./model.ts";
+import { ResourceMasterQueryImpl } from "./query.ts";
+
+const valueTypeSchema = toSchema<ValueType>()(
+  z.union([
+    z.literal("std:user"),
+    z.literal("slack:channel:id"),
+  ])
+);
+
+const iconTypeSchema = toSchema<IconType>()(
+  z.union([
+    z.literal("slack"),
+    z.literal("team"),
+    z.literal("box"),
+    z.literal("function"),
+  ])
+);
 
 const responseSchema = z.object({
   resourceMasters: z.array(
@@ -19,18 +34,16 @@ const responseSchema = z.object({
       z.object({
         id: z.string().ulid().openapi({ example: ulid() }),
         name: z.string().openapi({ example: "Dev team" }),
-        description: z.string().openapi({ example: "Development team" }),
         code: z.string().openapi({ example: "dev-team" }),
+        description: z.string().openapi({ example: "Development team" }),
+        icon: iconTypeSchema,
         category: z.string().openapi({ example: "team" }),
         attributes: z.array(z.object({
-          name: z.string().openapi({ example: "Team Slack Channel" }),
           code: z.string().openapi({ example: "team-slack-channel" }),
-          valueType: z.union([
-            z.literal("std:user"),
-            z.literal("slack:channel"),
-          ]),
+          name: z.string().openapi({ example: "Team Slack Channel" }),
           isArray: z.boolean(),
           orderNo: z.number(),
+          valueType: valueTypeSchema,
         })),
       }),
     ),
@@ -42,8 +55,7 @@ export const resourceMasterApi = (app: App, db: Kysely<DB>) => {
 };
 
 const list = (db: Kysely<DB>) => {
-  const repo = new ResourceMasterRepositoryImpl(db);
-  const service = new ResourceMasterService(repo);
+  const query = new ResourceMasterQueryImpl(db);
 
   return factory.createHandlers(
     authentication,
@@ -58,12 +70,10 @@ const list = (db: Kysely<DB>) => {
         },
       },
     }),
-    (c) => {
+    async (c) => {
       const ctx = { user: c.get("loginUser") };
-      return service.list(ctx).match(
-        (res) => c.json({ resourceMasters: res }, 200),
-        (err) => c.json(err, 500), // TODO
-      );
+      const resourceMasters = await query.list(ctx)
+      return c.json({ resourceMasters }, 200);
     },
   );
 };

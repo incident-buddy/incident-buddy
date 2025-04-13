@@ -9,10 +9,12 @@ export const JaMessages: Messages = {
       pageTitle: "ワークフロー",
     },
     resource: {
+      pageTitle: "リソース",
+      createNew: "リソースの追加",
       categories: {
         team: "チーム",
         communication: "コミュニケーション",
-        feature: "機能",
+        service: "サービス",
       },
     },
   },

@@ -9,10 +9,12 @@ export const EnMessages: Messages = {
       pageTitle: "Automation",
     },
     resource: {
+      pageTitle: "Resources",
+      createNew: "Add New",
       categories: {
         team: "Team",
         communication: "Communication",
-        feature: "Feature",
+        service: "Service",
       }
     }
   },

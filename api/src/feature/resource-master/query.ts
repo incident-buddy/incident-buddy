@@ -3,20 +3,20 @@ import { DB } from "@/dbtype.ts";
 import { Kysely } from "kysely";
 import { jsonArrayFrom } from "kysely/helpers/postgres";
 
-import { ResourceMaster, toValueType } from "./model.ts";
+import {IconType, ResourceMaster, toValueType} from "./model.ts";
 
-export interface ResourceMasterRepository {
+export interface ResourceMasterQuery {
   /** List all resource masters */
   list(c: UserContext): Promise<ResourceMaster[]>;
 }
 
-export class ResourceMasterRepositoryImpl implements ResourceMasterRepository {
+export class ResourceMasterQueryImpl implements ResourceMasterQuery {
   constructor(private db: Kysely<DB>) {}
 
   async list(c: UserContext): Promise<ResourceMaster[]> {
     const { tenantId } = c.user;
     const records = await this.db.selectFrom("resourceMasters")
-      .select(["id", "name", "code", "description", "category"])
+      .select(["id", "name", "code", "description", "icon", "category"])
       .select((eb) => [
         jsonArrayFrom(
           eb.selectFrom("resourceMasterAttributes")
@@ -36,7 +36,8 @@ export class ResourceMasterRepositoryImpl implements ResourceMasterRepository {
         ...attr,
         valueType: toValueType(attr.valueType),
       }));
-      return { ...r, attributes };
+      const icon = r.icon as IconType;
+      return { ...r, icon, attributes };
     });
   }
 }

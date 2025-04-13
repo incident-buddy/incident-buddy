@@ -30,18 +30,20 @@ alter table user_emails add constraint user_emails__unique_email unique (email, 
 
 create index user_emails__ui on user_emails (user_id);
 
--- e.g. チーム
+-- e.g. 開発チーム
 create table resource_masters
 (
     id          text primary key,
     name        text not null,
     description text,
     code        text not null,
+    icon        text not null,
     category    text not null,
     tenant_id   text not null references tenants (id)
 );
 
 create index resource_masters__ti_ca_co on resource_masters (tenant_id, category, code);
+create unique index resource_masters__ti_co on resource_masters (tenant_id, code);
 
 -- e.g. チームのSlackチャンネル
 create table resource_master_attributes

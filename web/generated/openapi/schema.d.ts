@@ -4,168 +4,176 @@
  */
 
 export interface paths {
-  "/resource": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/resource": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description List available resources */
+        get: operations["getResource"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /** @description List available resources */
-    get: operations["getResource"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/resource-master": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/resource-master": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description List resource masters */
+        get: operations["getResource-master"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /** @description List resource masters */
-    get: operations["getResource-master"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/trigger": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/trigger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description List available triggers for workflow */
+        get: operations["getTrigger"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /** @description List available triggers for workflow */
-    get: operations["getTrigger"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: never;
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    schemas: never;
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  getResource: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description List of available resources */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            resources: {
-              /** @example 01JR4R1FS589XW46V1NB4RYPWK */
-              id: string;
-              /** @example E-commerce Team */
-              name: string;
-              /** @example ecom-team */
-              code: string;
-              /** @example team */
-              category: string;
-            }[];
-          };
-        };
-      };
-    };
-  };
-  "getResource-master": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description List of resource masters */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            resourceMasters: {
-              /** @example 01JR4R1FS27EY49K72D2XHZZZW */
-              id: string;
-              /** @example Dev team */
-              name: string;
-              /** @example Development team */
-              description: string;
-              /** @example dev-team */
-              code: string;
-              /** @example team */
-              category: string;
-              attributes: {
-                /** @example Team Slack Channel */
-                name: string;
-                /** @example team-slack-channel */
-                code: string;
-                valueType: "std:user" | "slack:channel";
-                isArray: boolean;
-                orderNo: number;
-              }[];
-            }[];
-          };
-        };
-      };
-    };
-  };
-  getTrigger: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description List of available triggers */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            triggers: {
-              [key: string]: {
-                code: "incident.updated" | "slack.channel.joined";
-                category: "incident" | "slack";
-                icon: "incident" | "slack";
-              }[];
+    getResource: {
+        parameters: {
+            query?: {
+                /** @description Resource master ID to filter resources. If not provided, all resources will be listed */
+                masterId?: unknown;
             };
-          };
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-      };
+        requestBody?: never;
+        responses: {
+            /** @description List of available resources */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        resources: {
+                            /** @example 01JRP8S7WBKXM2ZWT7N4AH82W3 */
+                            resourceId: string;
+                            /** @example E-commerce Team */
+                            resourceName: string;
+                            /** @example ecom-team */
+                            resourceCode: string;
+                            /** @example 01JRP8S7WB58DTXKT40SF5VBJE */
+                            masterId: string;
+                            /** @example team */
+                            masterCode: string;
+                            /** @example Team */
+                            masterName: string;
+                        }[];
+                    };
+                };
+            };
+        };
     };
-  };
+    "getResource-master": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of resource masters */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        resourceMasters: {
+                            /** @example 01JRP8S7WBV1VNEDGFVF3Q7B75 */
+                            id: string;
+                            /** @example Dev team */
+                            name: string;
+                            /** @example dev-team */
+                            code: string;
+                            /** @example Development team */
+                            description: string;
+                            icon: "slack" | "team" | "feature";
+                            /** @example team */
+                            category: string;
+                            attributes: {
+                                /** @example team-slack-channel */
+                                code: string;
+                                /** @example Team Slack Channel */
+                                name: string;
+                                isArray: boolean;
+                                orderNo: number;
+                                valueType: "std:user" | "slack:channel:id";
+                            }[];
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    getTrigger: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of available triggers */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        triggers: {
+                            [key: string]: {
+                                code: "incident.updated" | "slack.channel.joined";
+                                category: "incident" | "slack";
+                                icon: "incident" | "slack";
+                            }[];
+                        };
+                    };
+                };
+            };
+        };
+    };
 }

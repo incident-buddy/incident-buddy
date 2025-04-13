@@ -1,9 +1,10 @@
 export type ResourceMaster = {
   id: string;
-  category: string;
+  name: string;
   code: string;
   description: string | null;
-  name: string;
+  icon: IconType,
+  category: string;
   attributes: {
     code: string;
     name: string;
@@ -30,6 +31,25 @@ type Reference = typeof valueTypes.reference;
 type User = typeof valueTypes.stdUser;
 type SlackChannelId = typeof valueTypes.slackChannelId;
 type StdText = typeof valueTypes.text;
+
+export type IconType =
+  | IconSlack
+  | IconTeam
+  | IconBox
+  | IconFunction
+;
+
+export const iconTypes = {
+  slack: "slack",
+  team: "team",
+  box: "box",
+  function: "function",
+} as const;
+
+type IconSlack = typeof iconTypes.slack;
+type IconTeam = typeof iconTypes.team;
+type IconBox = typeof iconTypes.box;
+type IconFunction = typeof iconTypes.function;
 
 export function toValueType(s: string): ValueType {
   switch (s) {

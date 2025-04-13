@@ -14,4 +14,5 @@ type Params = {
     "id": string;
   };
   "/resources": {};
+  "/resources/create": {};
 };

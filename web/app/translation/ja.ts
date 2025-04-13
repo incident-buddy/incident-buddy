@@ -10,7 +10,17 @@ export const JaMessages: Messages = {
     },
     resource: {
       pageTitle: "リソース",
-      createNew: "リソースの追加",
+      master: {
+        name: "マスタの名称",
+        nameExample: "提供サービス",
+        code: "マスタを一意に特定するコード",
+        codeExample: "service",
+        description: "説明文",
+        descriptionExample: "顧客に提供中のサービス",
+        icon: "アイコン",
+        category: "マスタが属するカテゴリ",
+      },
+      addNewMaster: "マスタの追加",
       categories: {
         team: "チーム",
         communication: "コミュニケーション",

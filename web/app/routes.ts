@@ -22,8 +22,9 @@ export default [
       ]),
     ]),
     ...prefix("resources", [
-      layout("feature/resource/layout.tsx", [
-        index("feature/resource/index.tsx"),
+      layout("feature/resource-master/layout.tsx", [
+        index("feature/resource-master/index.tsx"),
+        route("create", "feature/resource-master/create.tsx"),
       ]),
     ]),
   ]),

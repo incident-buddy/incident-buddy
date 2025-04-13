@@ -10,7 +10,17 @@ export const EnMessages: Messages = {
     },
     resource: {
       pageTitle: "Resources",
-      createNew: "Add New",
+      master: {
+        name: "Name",
+        nameExample: "Service name",
+        code: "Code",
+        codeExample: "service",
+        description: "Description",
+        descriptionExample: "Service provided to customers",
+        icon: "Icon",
+        category: "Category",
+      },
+      addNewMaster: "Add New Master",
       categories: {
         team: "Team",
         communication: "Communication",

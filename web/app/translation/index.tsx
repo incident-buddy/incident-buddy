@@ -1,7 +1,7 @@
 import { JaMessages } from "@/translation/ja";
 import { EnMessages } from "@/translation/en";
-import { createContext, type JSX, useState } from "react";
-import type { Category } from "@/feature/resource/category";
+import {createContext, type JSX, useContext, useState} from "react";
+import type { Category } from "@/feature/resource-master/category";
 
 type Props = {
   children: JSX.Element;
@@ -30,6 +30,10 @@ export const MessageProvider = ({ children }: Props) => {
   );
 };
 
+export function useDictionary(): Messages {
+  return useContext(MessageContext).dict;
+}
+
 export type Messages = {
   page: {
     incident: {
@@ -40,7 +44,17 @@ export type Messages = {
     };
     resource: {
       pageTitle: string;
-      createNew: string;
+      master: {
+        name: string;
+        nameExample: string;
+        code: string;
+        codeExample: string;
+        description: string;
+        descriptionExample: string;
+        icon: string;
+        category: string;
+      },
+      addNewMaster: string;
       categories: {
         [key in Category]: string
       }

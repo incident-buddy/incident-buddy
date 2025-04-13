@@ -4,7 +4,7 @@ import {groupBy} from "es-toolkit";
 import {Categories} from "./category";
 import {useContext} from "react";
 import {MessageContext} from "@/translation";
-import {toIcon} from "@/feature/resource/icon";
+import {toIcon} from "@/feature/resource-master/icon";
 import {Link} from "react-router";
 import {Button} from "@/component/ui/button";
 
@@ -63,7 +63,7 @@ function HeaderActions() {
     <div className="flex flex-row items-center justify-between">
       <h1 className="font-bold text-xl">{dict.page.resource.pageTitle}</h1>
       <div>
-        <Button>{dict.page.resource.createNew}</Button>
+        <Link to="create"><Button>{dict.page.resource.addNewMaster}</Button></Link>
       </div>
     </div>
   );
@@ -74,7 +74,7 @@ function Master(props: { master: {name: string, id: string, code: string, icon: 
   return (
     <Link to="/resource/master" className="w-full">
       <div className="w-full flex flex-row gap-y-2 py-2 border rounded shadow-sm bg-white hover:bg-gray-50">
-        <div className="flex items-start justify-center w-10">{toIcon(master.icon)}</div>
+        <div className="flex items-start justify-center w-10">{toIcon(master.icon, "sm")}</div>
         <div
           className="flex flex-1 items-center justify-between truncate">
           <div className="flex-1 truncate">

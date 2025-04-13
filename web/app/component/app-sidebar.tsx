@@ -74,9 +74,9 @@ const nav = [
     icon: Workflow,
   },
   {
-    title: "レポート",
-    path: "/reports",
-    icon: FileCheck,
+    title: "リソース",
+    path: "/resources",
+    icon: Database,
   },
   {
     title: "ステータスページ",
@@ -84,9 +84,9 @@ const nav = [
     icon: PanelsTopLeft,
   },
   {
-    title: "リソース",
-    path: "/resources",
-    icon: Database,
+    title: "レポート",
+    path: "/reports",
+    icon: FileCheck,
   },
   {
     title: "外部連携",

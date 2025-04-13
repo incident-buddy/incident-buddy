@@ -11,8 +11,8 @@ values ('00000000TEAM_ECOM_USER_001', 'Eコマース', '開発者1', '0000000000
 
 insert into resource_masters (id, name, description, code, icon, category, tenant_id)
 values ('00RESOURCE_MASTER_SLACK_CH', 'Slackチャネル', 'Slackチャネル', 'slack-channel', 'slack', 'communication', '0000000000000000TENANT_001')
-     , ('00RESOURCE_MASTER_DEV_TEAM', '開発チーム', null, 'dev-team', 'team', 'team', '0000000000000000TENANT_001')
-     , ('RESOURCE_MASTER_SALES_TEAM', 'セールスチーム', null, 'sales-team', 'team', 'team', '0000000000000000TENANT_001')
+     , ('00RESOURCE_MASTER_DEV_TEAM', '開発系組織', null, 'dev-team', 'team', 'team', '0000000000000000TENANT_001')
+     , ('RESOURCE_MASTER_SALES_TEAM', 'セールス系組織', null, 'sales-team', 'team', 'team', '0000000000000000TENANT_001')
      , ('000RESOURCE_MASTER_PRODUCT', 'プロダクト', null, 'product', 'box', 'service', '0000000000000000TENANT_001')
      , ('000000RESOURCE_MASTER_FEAT', '機能', 'プロダクトが持つ機能', 'feature', 'function', 'service', '0000000000000000TENANT_001')
 ;

@@ -38,7 +38,7 @@ export default function Page() {
 
   return (
     <>
-      <div className="container max-w-6xl flex flex-col gap-y-4">
+      <div className="container max-w-6xl flex flex-col gap-y-6">
         <HeaderActions />
         {Categories.map((category) => (
           <div key={category} className="flex flex-col gap-y-2">

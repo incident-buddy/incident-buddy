@@ -3,7 +3,7 @@ import { DB } from "@/dbtype.ts";
 import { Kysely } from "kysely";
 import { jsonArrayFrom } from "kysely/helpers/postgres";
 
-import {IconType, ResourceMaster, toValueType} from "./model.ts";
+import { IconType, ResourceMaster, toValueType } from "./model.ts";
 
 export interface ResourceMasterQuery {
   /** List all resource masters */

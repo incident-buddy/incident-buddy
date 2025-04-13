@@ -9,14 +9,14 @@ import type { App } from "@/app.ts";
 import { factory } from "@/app-env.ts";
 import { authentication } from "@/authn.ts";
 import { toSchema } from "@/misc/schema-for-type.ts";
-import type {IconType, ResourceMaster, ValueType} from "./model.ts";
+import type { IconType, ResourceMaster, ValueType } from "./model.ts";
 import { ResourceMasterQueryImpl } from "./query.ts";
 
 const valueTypeSchema = toSchema<ValueType>()(
   z.union([
     z.literal("std:user"),
     z.literal("slack:channel:id"),
-  ])
+  ]),
 );
 
 const iconTypeSchema = toSchema<IconType>()(
@@ -25,7 +25,7 @@ const iconTypeSchema = toSchema<IconType>()(
     z.literal("team"),
     z.literal("box"),
     z.literal("function"),
-  ])
+  ]),
 );
 
 const responseSchema = z.object({
@@ -72,7 +72,7 @@ const list = (db: Kysely<DB>) => {
     }),
     async (c) => {
       const ctx = { user: c.get("loginUser") };
-      const resourceMasters = await query.list(ctx)
+      const resourceMasters = await query.list(ctx);
       return c.json({ resourceMasters }, 200);
     },
   );

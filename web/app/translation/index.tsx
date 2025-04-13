@@ -1,6 +1,6 @@
 import { JaMessages } from "@/translation/ja";
 import { EnMessages } from "@/translation/en";
-import {createContext, type JSX, useContext, useState} from "react";
+import { createContext, type JSX, useContext, useState } from "react";
 import type { Category } from "@/feature/resource-master/category";
 
 type Props = {
@@ -53,12 +53,12 @@ export type Messages = {
         descriptionExample: string;
         icon: string;
         category: string;
-      },
+      };
       addNewMaster: string;
       categories: {
-        [key in Category]: string
-      }
-    }
+        [key in Category]: string;
+      };
+    };
   };
 
   workflow: {

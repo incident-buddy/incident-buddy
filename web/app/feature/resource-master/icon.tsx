@@ -1,7 +1,6 @@
-
 // see: api/src/feature/resource-master/model.ts
-import {Box, FunctionSquare, Shapes, Slack, Users} from "lucide-react";
-import type {JSX} from "react";
+import { Box, FunctionSquare, Shapes, Slack, Users } from "lucide-react";
+import type { JSX } from "react";
 
 export const iconTypes = [
   "default",
@@ -11,9 +10,9 @@ export const iconTypes = [
   "slack",
 ] as const;
 
-export type IconType = typeof iconTypes[number];
+export type IconType = (typeof iconTypes)[number];
 
-export function toIcon(s: string, size?: 'sm' | "lg"): JSX.Element {
+export function toIcon(s: string, size?: "sm" | "lg"): JSX.Element {
   let className = "w-5 h-5";
   if (size === "lg") {
     className = "w-10 h-10 mt-1";

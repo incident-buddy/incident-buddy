@@ -1,17 +1,16 @@
-import {Button} from "@/component/ui/button";
-import {Label} from "@/component/ui/label";
-import {Input} from "@/component/ui/input";
-import {Textarea} from "@/component/ui/textarea";
-import {type IconType, iconTypes, toIcon} from "@/feature/resource-master/icon";
-import {useContext, useState} from "react";
+import { Button } from "@/component/ui/button";
+import { Label } from "@/component/ui/label";
+import { Input } from "@/component/ui/input";
+import { Textarea } from "@/component/ui/textarea";
+import {
+  type IconType,
+  iconTypes,
+  toIcon,
+} from "@/feature/resource-master/icon";
+import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/component/ui/radio-group";
-import {Categories} from "@/feature/resource-master/category";
-import {MessageContext, useDictionary} from "@/translation";
-
-/*
-## input items
--
- */
+import { Categories } from "@/feature/resource-master/category";
+import { useDictionary } from "@/translation";
 
 export default function Page() {
   const dict = useDictionary().page.resource;
@@ -22,7 +21,7 @@ export default function Page() {
         <div className="grid grid-cols-1 gap-x-4 gap-y-6">
           <div className="grid max-w-sm gap-y-2">
             <Label>{dict.master.name}</Label>
-            <Input type="text" placeholder={dict.master.nameExample}/>
+            <Input type="text" placeholder={dict.master.nameExample} />
           </div>
           <div className="grid max-w-sm gap-y-2">
             <Label>{dict.master.code}</Label>
@@ -42,14 +41,24 @@ export default function Page() {
           </div>
         </div>
         <div className="mt-6 flex items-center justify-end gap-x-6">
-          <Button variant="secondary" onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}>Cancel</Button>
-          <Button type="submit" onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}>Save</Button>
+          <Button
+            variant="secondary"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+          >
+            Save
+          </Button>
         </div>
       </div>
     </form>
@@ -61,7 +70,8 @@ function IconForm() {
   return (
     <div className="flex items-center gap-x-3">
       {iconTypes.map((icon) => {
-        let className = "w-10 h-10 flex items-center justify-center rounded border shadow-sm";
+        let className =
+          "w-10 h-10 flex items-center justify-center rounded border shadow-sm";
         if (selected === icon) {
           className = `${className} border-gray-900`;
         }
@@ -71,9 +81,11 @@ function IconForm() {
               className={className}
               onKeyDown={() => {}}
               onClick={() => setSelected(icon)}
-            >{toIcon(icon)}</div>
+            >
+              {toIcon(icon)}
+            </div>
           </div>
-        )
+        );
       })}
     </div>
   );
@@ -90,8 +102,8 @@ function CategoryForm() {
             <RadioGroupItem value={category} id={id} />
             <Label htmlFor={id}>{dict[category]}</Label>
           </div>
-        )
+        );
       })}
     </RadioGroup>
-  )
+  );
 }

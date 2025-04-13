@@ -25,8 +25,8 @@ export const EnMessages: Messages = {
         team: "Team",
         communication: "Communication",
         service: "Service",
-      }
-    }
+      },
+    },
   },
   workflow: {
     workflowName: "Workflow",

@@ -3,7 +3,7 @@ export type ResourceMaster = {
   name: string;
   code: string;
   description: string | null;
-  icon: IconType,
+  icon: IconType;
   category: string;
   attributes: {
     code: string;
@@ -36,8 +36,7 @@ export type IconType =
   | IconSlack
   | IconTeam
   | IconBox
-  | IconFunction
-;
+  | IconFunction;
 
 export const iconTypes = {
   slack: "slack",

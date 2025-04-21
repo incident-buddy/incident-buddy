@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package api.v1;
+
+message ListResourceMasterRequest {}
+
+message ListResourceMasterResponse {
+  repeated ResourceMaster resources = 1;
+}
+message ResourceMaster {
+  string id = 1;
+  string code = 2;
+  string name = 3;
+  string description = 4;
+  Icon icon = 5;
+  repeated string categories = 6;
+
+}
+
+message Icon {
+  string type = 1;
+  string color = 2;
+}
+
+message Attribute {
+  string code = 1;
+  string name = 2;
+  ValueType value_type = 3;
+  bool is_array = 4;
+  int32 order_no = 5;
+}
+
+enum ValueType {
+  VALUE_TYPE_UNSPECIFIED = 0;
+  VALUE_TYPE_STRING = 1;
+  VALUE_TYPE_NUMBER = 2;
+  VALUE_TYPE_BOOLEAN = 3;
+}
+
+service ResourceMasterService {
+  rpc ListResourceMaster (ListResourceMasterRequest) returns (ListResourceMasterResponse);
+}

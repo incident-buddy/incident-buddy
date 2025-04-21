@@ -7,7 +7,7 @@ dotenv:
 tasks:
   fmt:api:
     dir: ./api
-    cmd: deno fmt
+    cmd: go fmt ./...
   fmt:web:
     dir: ./web
     cmd: pnpm format
@@ -15,7 +15,7 @@ tasks:
     deps:
       - fmt:api
       - fmt:web
-  start:otel:
+  lgtm:
     cmd: |
       docker run --name lgtm -p 3000:3000 -p 4317:4317 -p 4318:4318 --rm -ti \
       -v "$PWD"/lgtm/grafana:/data/grafana \
@@ -23,7 +23,7 @@ tasks:
       -v "$PWD"/lgtm/loki:/data/loki \
       -e GF_PATHS_DATA=/data/grafana \
       docker.io/grafana/otel-lgtm:0.8.1
-  start:jaeger:
+  jaeger:
     cmd: |
       docker run --rm \
       -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 \
@@ -35,7 +35,7 @@ tasks:
   dev:api:
     dir: ./api
     cmds:
-      - deno run -A src/main.ts
+      - go run ./cmd/incidentbuddy/main.go
   dev:web:
     dir: ./web
     cmd: pnpm dev
@@ -43,16 +43,17 @@ tasks:
     deps:
       - dev:api
       - dev:web
-  gen:kysely:
-    dir: ./api
-    cmd: |
-      echo "import 'npm:pg@^8.11.3'; import 'npm:kysely-codegen@^0.11.0';" | \
-      deno run -A npm:kysely-codegen@^0.11.0 - \
-      kysely-codegen --dialect=postgres --out-file ./src/dbtype.ts --camel-case
-    silent: true
-  gen:openapi:
-    dir: ./web
-    cmd: pnpm dlx openapi-typescript http:localhost:8000/openapi -o ./generated/openapi/schema.d.ts
+  clean:proto:
+    cmds:
+      - rm -rf ../api/gen
+      - rm -rf ../web/gen
+  gen:proto:
+    deps:
+      - clean:proto
+    dir: ./proto
+    cmds:
+      - buf lint
+      - buf generate
   ngrok:
     cmd: ngrok http 8001
   dev:slack:

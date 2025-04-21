@@ -18,6 +18,7 @@
     "paths": {
       "@/*": ["./app/*"],
       "generated/*": ["./generated/*"],
+      "gen*": ["./gen/*"],
       "environment": ["./environment.ts"]
     },
     "noEmit": true

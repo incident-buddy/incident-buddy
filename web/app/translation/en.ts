@@ -22,6 +22,7 @@ export const EnMessages: Messages = {
       },
       addNewMaster: "Add New Master",
       categories: {
+        "none": "None",
         team: "Team",
         communication: "Communication",
         service: "Service",

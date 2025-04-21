@@ -11,6 +11,7 @@ export const iconTypes = [
 ] as const;
 
 export type IconType = (typeof iconTypes)[number];
+export const DefaultIconType = "default";
 
 export function toIcon(s: string, size?: "sm" | "lg"): JSX.Element {
   let className = "w-5 h-5";

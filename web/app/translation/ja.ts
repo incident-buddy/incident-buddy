@@ -22,6 +22,7 @@ export const JaMessages: Messages = {
       },
       addNewMaster: "マスタの追加",
       categories: {
+        "none": "カテゴリなし",
         team: "チーム",
         communication: "コミュニケーション",
         service: "サービス",

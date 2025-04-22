@@ -17,7 +17,8 @@ create table users
 
 create index users__ti_s on users (tenant_id, status);
 
-create table user_emails (
+create table user_emails
+(
     id        text primary key,
     user_id   text    not null references users (id),
     email     text    not null,
@@ -26,7 +27,8 @@ create table user_emails (
 );
 
 -- unique(email, tenant_id) はpsqldefではsyntax error
-alter table user_emails add constraint user_emails__unique_email unique (email, tenant_id);
+alter table user_emails
+    add constraint user_emails__unique_email unique (email, tenant_id);
 
 create index user_emails__ui on user_emails (user_id);
 
@@ -35,15 +37,24 @@ create table resource_masters
 (
     id          text primary key,
     name        text not null,
-    description text,
+    description text not null,
     code        text not null,
-    icon        text not null,
-    category    text not null,
+    icon_type   text not null,
+    icon_color  text not null,
     tenant_id   text not null references tenants (id)
 );
 
-create index resource_masters__ti_ca_co on resource_masters (tenant_id, category, code);
 create unique index resource_masters__ti_co on resource_masters (tenant_id, code);
+
+create table resource_master_categories
+(
+    id                 text primary key,
+    resource_master_id text not null references resource_masters (id),
+    category_code      text not null,
+    tenant_id          text not null references tenants (id)
+);
+
+create index resource_master_categories__ti_cc_rm on resource_master_categories (tenant_id, category_code, resource_master_id);
 
 -- e.g. チームのSlackチャンネル
 create table resource_master_attributes
@@ -65,10 +76,10 @@ create index resource_master_attributes__rm_on on resource_master_attributes (re
 create table resources
 (
     id                 text primary key,
-    name               text  not null,
-    code               text  not null,
-    resource_master_id text  not null references resource_masters (id),
-    tenant_id          text  not null references tenants (id)
+    name               text not null,
+    code               text not null,
+    resource_master_id text not null references resource_masters (id),
+    tenant_id          text not null references tenants (id)
 );
 
 create index resources__ti_rm_co on resources (tenant_id, resource_master_id, code);
@@ -76,10 +87,10 @@ create index resources__ti_rm_co on resources (tenant_id, resource_master_id, co
 create table resource_attribute_values
 (
     id                           text primary key,
-    resource_id                  text not null references resources (id),
-    resource_master_attribute_id text not null references resource_master_attributes (id),
+    resource_id                  text  not null references resources (id),
+    resource_master_attribute_id text  not null references resource_master_attributes (id),
     attribute_value              jsonb not null, -- referenceの場合は '{"reference": "resource_id"}'
-    tenant_id                    text not null references tenants (id)
+    tenant_id                    text  not null references tenants (id)
 );
 
 create table incident_statuses

@@ -45,8 +45,8 @@ tasks:
       - dev:web
   clean:proto:
     cmds:
-      - rm -rf ../api/gen
-      - rm -rf ../web/gen
+      - rm -rf ./api/gen/pb
+      - rm -rf ./web/gen/pb
   gen:proto:
     deps:
       - clean:proto
@@ -54,6 +54,14 @@ tasks:
     cmds:
       - buf lint
       - buf generate
+  clean:sqlc:
+    cmds:
+      - rm -rf ./api/gen/sqlc
+  gen:sqlc:
+    deps:
+      - clean:sqlc
+    dir: ./api
+    cmd: sqlc generate
   ngrok:
     cmd: ngrok http 8001
   dev:slack:

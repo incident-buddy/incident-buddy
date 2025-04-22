@@ -9,12 +9,12 @@ values ('00000000TEAM_ECOM_USER_001', 'Eコマース', '開発者1', '0000000000
      , ('000000TEAM_KESSAI_USER_002', '決済', '開発者2', '0000000000000000TENANT_001', 'ACTIVE')
 ;
 
-insert into resource_masters (id, name, description, code, icon, category, tenant_id)
-values ('00RESOURCE_MASTER_SLACK_CH', 'Slackチャネル', 'Slackチャネル', 'slack-channel', 'slack', 'communication', '0000000000000000TENANT_001')
-     , ('00RESOURCE_MASTER_DEV_TEAM', '開発系組織', null, 'dev-team', 'team', 'team', '0000000000000000TENANT_001')
-     , ('RESOURCE_MASTER_SALES_TEAM', 'セールス系組織', null, 'sales-team', 'team', 'team', '0000000000000000TENANT_001')
-     , ('000RESOURCE_MASTER_PRODUCT', 'プロダクト', null, 'product', 'box', 'service', '0000000000000000TENANT_001')
-     , ('000000RESOURCE_MASTER_FEAT', '機能', 'プロダクトが持つ機能', 'feature', 'function', 'service', '0000000000000000TENANT_001')
+insert into resource_masters (id, name, description, code, icon_type, icon_color, tenant_id)
+values ('00RESOURCE_MASTER_SLACK_CH', 'Slackチャネル', 'Slackチャネル', 'slack-channel', 'slack', 'orange', '0000000000000000TENANT_001')
+     , ('00RESOURCE_MASTER_DEV_TEAM', '開発系組織', null, 'dev-team', 'team', 'blue', '0000000000000000TENANT_001')
+     , ('RESOURCE_MASTER_SALES_TEAM', 'セールス系組織', null, 'sales-team', 'team', 'yellow', '0000000000000000TENANT_001')
+     , ('000RESOURCE_MASTER_PRODUCT', 'プロダクト', null, 'product', 'box', 'gray', '0000000000000000TENANT_001')
+     , ('000000RESOURCE_MASTER_FEAT', '機能', 'プロダクトが持つ機能', 'feature', 'function', 'gray', '0000000000000000TENANT_001')
 ;
 
 insert into resource_master_attributes (id, name, code, value_type, resource_reference, is_array, order_no, resource_master_id, tenant_id)

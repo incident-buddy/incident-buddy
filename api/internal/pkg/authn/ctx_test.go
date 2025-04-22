@@ -13,7 +13,7 @@ func TestRead(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    *AuthenticationContext
+		want    *IdCtx
 		wantErr bool
 	}{
 		{
@@ -23,7 +23,7 @@ func TestRead(t *testing.T) {
 					context.WithValue(context.Background(), TenantIdCtxKey, "tenant-id"),
 					UserIdCtxKey, "user-id"),
 			},
-			want: &AuthenticationContext{
+			want: &IdCtx{
 				TenantId: "tenant-id",
 				UserId:   "user-id",
 			},

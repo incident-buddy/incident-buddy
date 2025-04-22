@@ -1,22 +1,31 @@
 package wire
 
 import (
-	"github.com/incident-buddy/api/internal/shared/clock"
-	"github.com/incident-buddy/api/internal/shared/id"
+	"connectrpc.com/connect"
+	v1connect "github.com/incident-buddy/api/gen/pb/resourcemaster/v1/resourcemasterv1connect"
+	"github.com/incident-buddy/api/gen/sqlc"
+	"github.com/incident-buddy/api/internal/feature/resourcemaster"
+	"github.com/incident-buddy/api/internal/pkg/clock"
+	"github.com/incident-buddy/api/internal/pkg/handlers"
+	"github.com/incident-buddy/api/internal/pkg/id"
+	"net/http"
 )
 
 type Wirer struct {
-	Clock         clock.Clock
-	IdGenerator   id.Generator
-	AuthCtxReader auth.AuthCtxReader
-	DB            *dbaccess.Queries
+	clock.Clock
+	IdGenerator id.Generator
+	DB          *dbaccess.Queries
 }
 
 func NewWirer(
 	clock clock.Clock,
-	idGen id.IdGenerator,
-	ctxReader auth.AuthCtxReader,
+	idGen id.Generator,
 	db *dbaccess.Queries,
 ) *Wirer {
-	return &Wirer{clock, idGen, ctxReader, db}
+	return &Wirer{clock, idGen, db}
+}
+
+func (w Wirer) ResourceMasterHandler(opt ...connect.HandlerOption) (string, http.Handler) {
+	query := resourcemaster.NewQuery(w.DB)
+	return v1connect.NewResourceMasterServiceHandler(handlers.NewResourceMasterService(query), opt...)
 }

@@ -3,7 +3,6 @@ import { createRequestHandler } from "@react-router/express";
 import express from "express";
 import type { Transport } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-node";
-import { ulid } from "ulid";
 
 declare module "react-router" {
 	interface AppLoadContext {
@@ -28,7 +27,6 @@ app.use(
 		getLoadContext() {
 			return {
 				transport,
-				requestId: ulid(),
 			};
 		},
 	}),

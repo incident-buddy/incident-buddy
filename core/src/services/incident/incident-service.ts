@@ -1,9 +1,12 @@
 import type { ServiceImpl } from "@connectrpc/connect";
-import { IncidentService } from "@pb/api/incident/v1/incident_pb.ts";
+import {
+	IncidentService,
+	GetIncidentResponseSchema,
+} from "@pb/api/incident/v1/incident_pb.ts";
 import { withDB } from "@/db/db.ts";
 import { incidents, incidentStatuses } from "drizzle/schema.ts";
 import { eq } from "drizzle-orm";
-import { Code, ConnectError } from "@connectrpc/connect";
+import { create } from "@bufbuild/protobuf";
 
 export const incidentService: ServiceImpl<typeof IncidentService> = {
 	async getIncident(req, ctx) {
@@ -14,12 +17,6 @@ export const incidentService: ServiceImpl<typeof IncidentService> = {
 				code: incidents.code,
 				title: incidents.title,
 				description: incidents.description,
-				latestStatus: {
-					id: incidentStatuses.id,
-					name: incidentStatuses.name,
-					type: incidentStatuses.statusType,
-					color: incidentStatuses.color,
-				},
 			})
 			.from(incidents)
 			.innerJoin(
@@ -29,7 +26,7 @@ export const incidentService: ServiceImpl<typeof IncidentService> = {
 			.where(eq(incidents.id, req.id));
 
 		if (!row) {
-			throw new ConnectError("hoge", Code.NotFound);
+			return create(GetIncidentResponseSchema);
 		}
 
 		return { incident: row };

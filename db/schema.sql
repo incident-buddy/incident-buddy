@@ -30,6 +30,14 @@ create table user_emails
 alter table user_emails
     add constraint user_emails__unique_email unique (email, tenant_id);
 
+create table user_hashed_passwords
+(
+		id             text primary key,
+		user_id        text    not null references users (id),
+		hashed_password text    not null,
+		tenant_id      text    not null references tenants (id)
+);
+
 create index user_emails__ui on user_emails (user_id);
 
 -- e.g. 開発チーム
@@ -99,10 +107,11 @@ create table incident_statuses
     name        text not null,
     status_type text not null,
     color       text not null,
-    tenant_id   text not null references tenants (id)
+    tenant_id   text not null references tenants (id),
+    is_active   boolean not null default true
 );
 
-create table incident_roles
+cr2eate table incident_roles
 (
     id        text primary key,
     name      text not null,
@@ -115,7 +124,7 @@ create table incidents
     id               text primary key,
     title            text      not null,
     code             text      not null,
-    description      text,
+    description      text      not null,
     created_at       timestamp not null,
     latest_status_id text      not null references incident_statuses (id),
     tenant_id        text      not null references tenants (id)

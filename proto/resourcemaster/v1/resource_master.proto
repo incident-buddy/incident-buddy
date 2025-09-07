@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package resourcemaster.v1;
 
-option go_package = "github.com/incident-buddy/api/gen/pb/resourcemaster/v1;resourcemasterv1";
-
 message ListResourceMasterRequest {}
 
 message ListResourceMasterResponse {

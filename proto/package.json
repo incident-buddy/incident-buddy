@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "buf:lint": "buf lint",
+		"buf:gen": "buf generate"
+  },
+	"devDependencies": {
+		"@bufbuild/protoc-gen-es": "^2.7.0",
+		"@bufbuild/buf": "^1.57.0"
+	}
+}

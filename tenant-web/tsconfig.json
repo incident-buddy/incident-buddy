@@ -1,0 +1,25 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.vite.json" }
+  ],
+  "compilerOptions": {
+    "checkJs": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    // Other Outputs
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+   	"baseUrl": ".",
+    "paths": {
+			"@/*": ["src/*"],
+      "@pb/*": ["gen/pb/*"]
+    },
+  	// by me
+		"allowImportingTsExtensions": true
+  }
+}

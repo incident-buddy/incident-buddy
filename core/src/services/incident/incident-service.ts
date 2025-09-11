@@ -1,7 +1,8 @@
 import type { ServiceImpl } from "@connectrpc/connect";
 import {
-	IncidentService,
-	GetIncidentResponseSchema,
+  IncidentService,
+  GetIncidentResponseSchema,
+  IncidentStatusType, Color
 } from "@pb/api/incident/v1/incident_pb.ts";
 import { withDB } from "@/db/db.ts";
 import { incidents, incidentStatuses } from "drizzle/schema.ts";
@@ -50,8 +51,49 @@ export const incidentService: ServiceImpl<typeof IncidentService> = {
 			.innerJoin(
 				incidentStatuses,
 				eq(incidents.latestStatusId, incidentStatuses.id),
-			);
+			).then((rows) => rows.map((row) => ({
+        ...row,
+        latestStatus: {
+          ...row.latestStatus,
+          type: incidentStatusTypeFromString(row.latestStatus.type),
+          color: colorFromString(row.latestStatus.color),
+        }
+      })));
 
 		return { incidents: rows };
 	},
 };
+
+function incidentStatusTypeFromString(
+  str: string,
+): IncidentStatusType {
+  switch (str) {
+    case "INVESTIGATING":
+      return IncidentStatusType.INVESTIGATING;
+    case "DECLARED":
+      return IncidentStatusType.DECLARED
+    case "ONGOING":
+      return IncidentStatusType.ONGOING
+    case "CONVERGED":
+      return IncidentStatusType.CONVERGED
+    case "CLOSED":
+      return IncidentStatusType.CLOSED
+    default:
+      return IncidentStatusType.UNSPECIFIED
+  }
+}
+
+function colorFromString(
+  str: string,
+): Color {
+  switch (str) {
+    case "RED":
+      return Color.RED;
+    case "GREEN":
+      return Color.GREEN
+    case "BLUE":
+      return Color.BLUE
+    default:
+      return Color.UNSPECIFIED
+  }
+}

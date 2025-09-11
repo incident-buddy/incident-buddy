@@ -2,15 +2,15 @@
 // @generated from file api/incident/v1/incident.proto (package api.incident.v1, edition 2023)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file api/incident/v1/incident.proto.
  */
 export const file_api_incident_v1_incident: GenFile = /*@__PURE__*/
-  fileDesc("Ch5hcGkvaW5jaWRlbnQvdjEvaW5jaWRlbnQucHJvdG8SD2FwaS5pbmNpZGVudC52MSJICghJbmNpZGVudBIKCgJpZBgBIAEoCRIMCgRjb2RlGAIgASgJEg0KBXRpdGxlGAMgASgJEhMKC2Rlc2NyaXB0aW9uGAQgASgJIhYKFExpc3RJbmNpZGVudHNSZXF1ZXN0IkUKFUxpc3RJbmNpZGVudHNSZXNwb25zZRIsCglpbmNpZGVudHMYASADKAsyGS5hcGkuaW5jaWRlbnQudjEuSW5jaWRlbnQiIAoSR2V0SW5jaWRlbnRSZXF1ZXN0EgoKAmlkGAEgASgJIkIKE0dldEluY2lkZW50UmVzcG9uc2USKwoIaW5jaWRlbnQYASABKAsyGS5hcGkuaW5jaWRlbnQudjEuSW5jaWRlbnQyywEKD0luY2lkZW50U2VydmljZRJYCgtHZXRJbmNpZGVudBIjLmFwaS5pbmNpZGVudC52MS5HZXRJbmNpZGVudFJlcXVlc3QaJC5hcGkuaW5jaWRlbnQudjEuR2V0SW5jaWRlbnRSZXNwb25zZRJeCg1MaXN0SW5jaWRlbnRzEiUuYXBpLmluY2lkZW50LnYxLkxpc3RJbmNpZGVudHNSZXF1ZXN0GiYuYXBpLmluY2lkZW50LnYxLkxpc3RJbmNpZGVudHNSZXNwb25zZUKCAQoTY29tLmFwaS5pbmNpZGVudC52MUINSW5jaWRlbnRQcm90b1ABogIDQUlYqgIPQXBpLkluY2lkZW50LlYxygIPQXBpXEluY2lkZW50XFYx4gIbQXBpXEluY2lkZW50XFYxXEdQQk1ldGFkYXRh6gIRQXBpOjpJbmNpZGVudDo6VjFiCGVkaXRpb25zcOgH");
+  fileDesc("Ch5hcGkvaW5jaWRlbnQvdjEvaW5jaWRlbnQucHJvdG8SD2FwaS5pbmNpZGVudC52MSKAAQoISW5jaWRlbnQSCgoCaWQYASABKAkSDAoEY29kZRgCIAEoCRINCgV0aXRsZRgDIAEoCRITCgtkZXNjcmlwdGlvbhgEIAEoCRI2Cg1sYXRlc3Rfc3RhdHVzGAUgASgLMh8uYXBpLmluY2lkZW50LnYxLkluY2lkZW50U3RhdHVzIoQBCg5JbmNpZGVudFN0YXR1cxIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEjEKBHR5cGUYAyABKA4yIy5hcGkuaW5jaWRlbnQudjEuSW5jaWRlbnRTdGF0dXNUeXBlEiUKBWNvbG9yGAQgASgOMhYuYXBpLmluY2lkZW50LnYxLkNvbG9yIhYKFExpc3RJbmNpZGVudHNSZXF1ZXN0IkUKFUxpc3RJbmNpZGVudHNSZXNwb25zZRIsCglpbmNpZGVudHMYASADKAsyGS5hcGkuaW5jaWRlbnQudjEuSW5jaWRlbnQiIAoSR2V0SW5jaWRlbnRSZXF1ZXN0EgoKAmlkGAEgASgJIkIKE0dldEluY2lkZW50UmVzcG9uc2USKwoIaW5jaWRlbnQYASABKAsyGS5hcGkuaW5jaWRlbnQudjEuSW5jaWRlbnQq7AEKEkluY2lkZW50U3RhdHVzVHlwZRIkCiBJTkNJREVOVF9TVEFUVVNfVFlQRV9VTlNQRUNJRklFRBAAEiYKIklOQ0lERU5UX1NUQVRVU19UWVBFX0lOVkVTVElHQVRJTkcQARIhCh1JTkNJREVOVF9TVEFUVVNfVFlQRV9ERUNMQVJFRBACEiAKHElOQ0lERU5UX1NUQVRVU19UWVBFX09OR09JTkcQAxIiCh5JTkNJREVOVF9TVEFUVVNfVFlQRV9DT05WRVJHRUQQBBIfChtJTkNJREVOVF9TVEFUVVNfVFlQRV9DTE9TRUQQBSpOCgVDb2xvchIVChFDT0xPUl9VTlNQRUNJRklFRBAAEg0KCUNPTE9SX1JFRBABEg8KC0NPTE9SX0dSRUVOEAISDgoKQ09MT1JfQkxVRRADMssBCg9JbmNpZGVudFNlcnZpY2USWAoLR2V0SW5jaWRlbnQSIy5hcGkuaW5jaWRlbnQudjEuR2V0SW5jaWRlbnRSZXF1ZXN0GiQuYXBpLmluY2lkZW50LnYxLkdldEluY2lkZW50UmVzcG9uc2USXgoNTGlzdEluY2lkZW50cxIlLmFwaS5pbmNpZGVudC52MS5MaXN0SW5jaWRlbnRzUmVxdWVzdBomLmFwaS5pbmNpZGVudC52MS5MaXN0SW5jaWRlbnRzUmVzcG9uc2VCggEKE2NvbS5hcGkuaW5jaWRlbnQudjFCDUluY2lkZW50UHJvdG9QAaICA0FJWKoCD0FwaS5JbmNpZGVudC5WMcoCD0FwaVxJbmNpZGVudFxWMeICG0FwaVxJbmNpZGVudFxWMVxHUEJNZXRhZGF0YeoCEUFwaTo6SW5jaWRlbnQ6OlYxYghlZGl0aW9uc3DoBw");
 
 /**
  * @generated from message api.incident.v1.Incident
@@ -35,6 +35,11 @@ export type Incident = Message<"api.incident.v1.Incident"> & {
    * @generated from field: string description = 4;
    */
   description: string;
+
+  /**
+   * @generated from field: api.incident.v1.IncidentStatus latest_status = 5;
+   */
+  latestStatus?: IncidentStatus;
 };
 
 /**
@@ -43,6 +48,38 @@ export type Incident = Message<"api.incident.v1.Incident"> & {
  */
 export const IncidentSchema: GenMessage<Incident> = /*@__PURE__*/
   messageDesc(file_api_incident_v1_incident, 0);
+
+/**
+ * @generated from message api.incident.v1.IncidentStatus
+ */
+export type IncidentStatus = Message<"api.incident.v1.IncidentStatus"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string name = 2;
+   */
+  name: string;
+
+  /**
+   * @generated from field: api.incident.v1.IncidentStatusType type = 3;
+   */
+  type: IncidentStatusType;
+
+  /**
+   * @generated from field: api.incident.v1.Color color = 4;
+   */
+  color: Color;
+};
+
+/**
+ * Describes the message api.incident.v1.IncidentStatus.
+ * Use `create(IncidentStatusSchema)` to create a new message.
+ */
+export const IncidentStatusSchema: GenMessage<IncidentStatus> = /*@__PURE__*/
+  messageDesc(file_api_incident_v1_incident, 1);
 
 /**
  * @generated from message api.incident.v1.ListIncidentsRequest
@@ -55,7 +92,7 @@ export type ListIncidentsRequest = Message<"api.incident.v1.ListIncidentsRequest
  * Use `create(ListIncidentsRequestSchema)` to create a new message.
  */
 export const ListIncidentsRequestSchema: GenMessage<ListIncidentsRequest> = /*@__PURE__*/
-  messageDesc(file_api_incident_v1_incident, 1);
+  messageDesc(file_api_incident_v1_incident, 2);
 
 /**
  * @generated from message api.incident.v1.ListIncidentsResponse
@@ -72,7 +109,7 @@ export type ListIncidentsResponse = Message<"api.incident.v1.ListIncidentsRespon
  * Use `create(ListIncidentsResponseSchema)` to create a new message.
  */
 export const ListIncidentsResponseSchema: GenMessage<ListIncidentsResponse> = /*@__PURE__*/
-  messageDesc(file_api_incident_v1_incident, 2);
+  messageDesc(file_api_incident_v1_incident, 3);
 
 /**
  * @generated from message api.incident.v1.GetIncidentRequest
@@ -89,7 +126,7 @@ export type GetIncidentRequest = Message<"api.incident.v1.GetIncidentRequest"> &
  * Use `create(GetIncidentRequestSchema)` to create a new message.
  */
 export const GetIncidentRequestSchema: GenMessage<GetIncidentRequest> = /*@__PURE__*/
-  messageDesc(file_api_incident_v1_incident, 3);
+  messageDesc(file_api_incident_v1_incident, 4);
 
 /**
  * @generated from message api.incident.v1.GetIncidentResponse
@@ -106,7 +143,79 @@ export type GetIncidentResponse = Message<"api.incident.v1.GetIncidentResponse">
  * Use `create(GetIncidentResponseSchema)` to create a new message.
  */
 export const GetIncidentResponseSchema: GenMessage<GetIncidentResponse> = /*@__PURE__*/
-  messageDesc(file_api_incident_v1_incident, 4);
+  messageDesc(file_api_incident_v1_incident, 5);
+
+/**
+ * @generated from enum api.incident.v1.IncidentStatusType
+ */
+export enum IncidentStatusType {
+  /**
+   * @generated from enum value: INCIDENT_STATUS_TYPE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: INCIDENT_STATUS_TYPE_INVESTIGATING = 1;
+   */
+  INVESTIGATING = 1,
+
+  /**
+   * @generated from enum value: INCIDENT_STATUS_TYPE_DECLARED = 2;
+   */
+  DECLARED = 2,
+
+  /**
+   * @generated from enum value: INCIDENT_STATUS_TYPE_ONGOING = 3;
+   */
+  ONGOING = 3,
+
+  /**
+   * @generated from enum value: INCIDENT_STATUS_TYPE_CONVERGED = 4;
+   */
+  CONVERGED = 4,
+
+  /**
+   * @generated from enum value: INCIDENT_STATUS_TYPE_CLOSED = 5;
+   */
+  CLOSED = 5,
+}
+
+/**
+ * Describes the enum api.incident.v1.IncidentStatusType.
+ */
+export const IncidentStatusTypeSchema: GenEnum<IncidentStatusType> = /*@__PURE__*/
+  enumDesc(file_api_incident_v1_incident, 0);
+
+/**
+ * @generated from enum api.incident.v1.Color
+ */
+export enum Color {
+  /**
+   * @generated from enum value: COLOR_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: COLOR_RED = 1;
+   */
+  RED = 1,
+
+  /**
+   * @generated from enum value: COLOR_GREEN = 2;
+   */
+  GREEN = 2,
+
+  /**
+   * @generated from enum value: COLOR_BLUE = 3;
+   */
+  BLUE = 3,
+}
+
+/**
+ * Describes the enum api.incident.v1.Color.
+ */
+export const ColorSchema: GenEnum<Color> = /*@__PURE__*/
+  enumDesc(file_api_incident_v1_incident, 1);
 
 /**
  * @generated from service api.incident.v1.IncidentService

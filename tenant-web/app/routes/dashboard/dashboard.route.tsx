@@ -24,8 +24,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 			<ul>
 				{loaderData.incidents.map((inc) => (
 					<li key={inc.id}>
-						<Link className="flex flex-row gap-x-2" to={href("/incident/:incidentId", { incidentId: inc.id })}>
-						<span>{inc.code}</span><span>{inc.title}</span>
+					<Link className="flex flex-row gap-x-2" to={href("/incident/:incidentId", { incidentId: inc.id })}>
+					<span>{inc.latestStatus?.name}</span>
+					<span>{inc.code}{inc.latestStatus?.color}</span><span>{inc.title}</span>
 						</Link>
 					</li>
 				))}

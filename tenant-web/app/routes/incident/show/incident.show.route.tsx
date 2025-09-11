@@ -22,6 +22,8 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 		<div className="flex flex-col gap-y-4">
 		<h1 className="flex flex-row gap-x-2 text-2xl"><span>${incident.code}</span> {incident.title}</h1>
 		<p>{incident.description}</p>
+		{JSON.stringify(incident.latestStatus)}
+		
 		</div>
 		</>
 	);

@@ -111,7 +111,7 @@ create table incident_statuses
     is_active   boolean not null default true
 );
 
-cr2eate table incident_roles
+create table incident_roles
 (
     id        text primary key,
     name      text not null,

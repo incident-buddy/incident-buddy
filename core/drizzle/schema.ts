@@ -204,7 +204,7 @@ export const incidents = pgTable("incidents", {
 	title: text().notNull(),
 	code: text().notNull(),
 	summary: text().notNull(),
-	declaredAt: timestamp("declared_at", { mode: 'string' }).notNull(),
+	declaredAt: timestamp("declared_at", { mode: 'date' }).notNull(),
 	latestStatusId: text("latest_status_id").notNull(),
 	tenantId: text("tenant_id").notNull(),
 }, (table) => [
@@ -225,7 +225,7 @@ export const incidentRoleAssignments = pgTable("incident_role_assignments", {
 	incidentId: text("incident_id").notNull(),
 	roleId: text("role_id").notNull(),
 	userId: text("user_id").notNull(),
-	assignedAt: timestamp("assigned_at", { mode: 'string' }).notNull(),
+	assignedAt: timestamp("assigned_at", { mode: 'date' }).notNull(),
 	assignedBy: text("assigned_by"),
 	tenantId: text("tenant_id").notNull(),
 }, (table) => [
@@ -262,7 +262,7 @@ export const incidentEventHistories = pgTable("incident_event_histories", {
 	incidentId: text("incident_id").notNull(),
 	eventType: text("event_type").notNull(),
 	eventBody: jsonb("event_body").notNull(),
-	placedAt: timestamp("placed_at", { mode: 'string' }).notNull(),
+	placedAt: timestamp("placed_at", { mode: 'date' }).notNull(),
 	placedBy: text("placed_by"),
 	externalPlatform: text("external_platform"),
 	externalPlace: text("external_place"),
@@ -328,8 +328,8 @@ export const workflowExecutions = pgTable("workflow_executions", {
 	workflowId: text("workflow_id").notNull(),
 	workflowVersionId: text("workflow_version_id").notNull(),
 	status: text().notNull(),
-	startedAt: timestamp("started_at", { mode: 'string' }).notNull(),
-	finishedAt: timestamp("finished_at", { mode: 'string' }),
+	startedAt: timestamp("started_at", { mode: 'date' }).notNull(),
+	finishedAt: timestamp("finished_at", { mode: 'date' }),
 	tenantId: text("tenant_id").notNull(),
 }, (table) => [
 	index("workflow_executions__ti_sa_s").using("btree", table.tenantId.asc().nullsLast().op("text_ops"), table.startedAt.asc().nullsLast().op("text_ops"), table.status.asc().nullsLast().op("text_ops")),

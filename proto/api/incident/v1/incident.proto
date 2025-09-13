@@ -2,13 +2,15 @@ edition = "2023";
 
 package api.incident.v1;
 
+import "google/protobuf/timestamp.proto";
+
 message Incident {
   string id = 1;
   string code = 2;
   string title = 3;
   string summary = 4;
 	IncidentStatus latest_status = 5;
-	string declared_at = 6;
+	google.protobuf.Timestamp declared_at = 6;
 }
 
 message IncidentStatus {

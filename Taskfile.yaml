@@ -5,11 +5,15 @@ dotenv:
   - core/.env
 
 tasks:
+  fmt:core:
+    dir: ./core
+    cmd: pnpm format
   fmt:web:
-    dir: ./web
+    dir: ./tenant-web
     cmd: pnpm format
   fmt:
     deps:
+      - fmt:core
       - fmt:web
   dev:web:
     dir: ./web

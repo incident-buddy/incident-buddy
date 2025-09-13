@@ -13,3 +13,13 @@ export const getIncident = IncidentService.method.getIncident;
  * @generated from rpc api.incident.v1.IncidentService.ListIncidents
  */
 export const listIncidents = IncidentService.method.listIncidents;
+
+/**
+ * @generated from rpc api.incident.v1.IncidentService.UpdateIncidentTitle
+ */
+export const updateIncidentTitle = IncidentService.method.updateIncidentTitle;
+
+/**
+ * @generated from rpc api.incident.v1.IncidentService.UpdateIncidentSummary
+ */
+export const updateIncidentSummary = IncidentService.method.updateIncidentSummary;

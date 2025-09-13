@@ -124,7 +124,7 @@ create table incidents
     id               text primary key,
     title            text      not null,
     code             text      not null,
-    description      text      not null,
+    summary          text      not null,
     created_at       timestamp not null,
     latest_status_id text      not null references incident_statuses (id),
     tenant_id        text      not null references tenants (id)

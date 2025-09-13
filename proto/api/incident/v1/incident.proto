@@ -6,7 +6,7 @@ message Incident {
   string id = 1;
   string code = 2;
   string title = 3;
-  string description = 4;
+  string summary = 4;
 	IncidentStatus latest_status = 5;
 }
 
@@ -47,7 +47,21 @@ message GetIncidentResponse {
 	Incident incident = 1;
 }
 
+message UpdateIncidentTitleRequest {
+	string id = 1;
+	string title = 2;
+}
+message UpdateIncidentTitleResponse {}
+
+message UpdateIncidentSummaryRequest {
+	string id = 1;
+	string summary = 2;
+}
+message UpdateIncidentSummaryResponse {}
+
 service IncidentService {
 	rpc GetIncident (GetIncidentRequest) returns (GetIncidentResponse);
   rpc ListIncidents (ListIncidentsRequest) returns (ListIncidentsResponse);
+	rpc UpdateIncidentTitle (UpdateIncidentTitleRequest) returns (UpdateIncidentTitleResponse);
+	rpc UpdateIncidentSummary (UpdateIncidentSummaryRequest) returns (UpdateIncidentSummaryResponse);
 }

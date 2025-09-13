@@ -6,8 +6,8 @@
     "app/**/.server/**/*",
     "app/**/.client/**/*",
     "server/**/*",
-		"gen/**/*",
-		"src/**/*"
+    "gen/**/*",
+    "src/**/*"
   ],
   "compilerOptions": {
     "composite": true,
@@ -21,14 +21,14 @@
     "baseUrl": ".",
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
-  		"@/*": ["./src/*"],
+      "@/*": ["./src/*"],
       "~/*": ["./app/*"],
-			"@pb/*": ["gen/pb/*"]
+      "@pb/*": ["gen/pb/*"]
     },
     "esModuleInterop": true,
     "resolveJsonModule": true,
 
-		// by me
-		"allowImportingTsExtensions": true
+    // by me
+    "allowImportingTsExtensions": true
   }
 }

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { tenants, users, userEmails, resourceMasters, resourceMasterCategories, resourceMasterAttributes, resources, resourceAttributeValues, incidentStatuses, incidentRoles, incidents, incidentRoleAssignments, incidentEventHistories, workflows, workflowVersions, workflowExecutions, slackWorkspaces } from "./schema";
+import { tenants, users, userEmails, userHashedPasswords, resourceMasters, resourceMasterCategories, resourceMasterAttributes, resources, resourceAttributeValues, incidentStatuses, incidentRoles, incidents, incidentRoleAssignments, incidentEventHistories, workflows, workflowVersions, workflowExecutions, slackWorkspaces } from "./schema";
 
 export const usersRelations = relations(users, ({one, many}) => ({
 	tenant: one(tenants, {
@@ -7,6 +7,7 @@ export const usersRelations = relations(users, ({one, many}) => ({
 		references: [tenants.id]
 	}),
 	userEmails: many(userEmails),
+	userHashedPasswords: many(userHashedPasswords),
 	incidentRoleAssignments_userId: many(incidentRoleAssignments, {
 		relationName: "incidentRoleAssignments_userId_users_id"
 	}),
@@ -19,6 +20,7 @@ export const usersRelations = relations(users, ({one, many}) => ({
 export const tenantsRelations = relations(tenants, ({many}) => ({
 	users: many(users),
 	userEmails: many(userEmails),
+	userHashedPasswords: many(userHashedPasswords),
 	resourceMasters: many(resourceMasters),
 	resourceMasterCategories: many(resourceMasterCategories),
 	resourceMasterAttributes: many(resourceMasterAttributes),
@@ -42,6 +44,17 @@ export const userEmailsRelations = relations(userEmails, ({one}) => ({
 	}),
 	tenant: one(tenants, {
 		fields: [userEmails.tenantId],
+		references: [tenants.id]
+	}),
+}));
+
+export const userHashedPasswordsRelations = relations(userHashedPasswords, ({one}) => ({
+	user: one(users, {
+		fields: [userHashedPasswords.userId],
+		references: [users.id]
+	}),
+	tenant: one(tenants, {
+		fields: [userHashedPasswords.tenantId],
 		references: [tenants.id]
 	}),
 }));

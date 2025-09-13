@@ -1,9 +1,6 @@
 {
   "files": [],
-  "references": [
-    { "path": "./tsconfig.node.json" },
-    { "path": "./tsconfig.vite.json" }
-  ],
+  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.vite.json" }],
   "compilerOptions": {
     "checkJs": true,
     "verbatimModuleSyntax": true,
@@ -14,13 +11,13 @@
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-   	"baseUrl": ".",
+    "baseUrl": ".",
     "paths": {
-  		"@/*": ["./src/*"],
+      "@/*": ["./src/*"],
       "~/*": ["./app/*"],
-			"@pb/*": ["gen/pb/*"]
+      "@pb/*": ["gen/pb/*"]
     },
-  	// by me
-		"allowImportingTsExtensions": true
+    // by me
+    "allowImportingTsExtensions": true
   }
 }

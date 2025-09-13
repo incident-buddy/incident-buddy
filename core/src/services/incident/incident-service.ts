@@ -1,8 +1,8 @@
 import type { ServiceImpl } from "@connectrpc/connect";
 import {
-  IncidentService,
-  GetIncidentResponseSchema,
-  IncidentStatusType, Color
+	IncidentService,
+	GetIncidentResponseSchema,
+	IncidentStatusType, Color
 } from "@pb/api/incident/v1/incident_pb.ts";
 import { withDB } from "@/db/db.ts";
 import { incidents, incidentStatuses } from "drizzle/schema.ts";
@@ -17,7 +17,7 @@ export const incidentService: ServiceImpl<typeof IncidentService> = {
 				id: incidents.id,
 				code: incidents.code,
 				title: incidents.title,
-				description: incidents.description,
+				summary: incidents.summary,
 			})
 			.from(incidents)
 			.innerJoin(
@@ -39,7 +39,7 @@ export const incidentService: ServiceImpl<typeof IncidentService> = {
 				id: incidents.id,
 				code: incidents.code,
 				title: incidents.title,
-				description: incidents.description,
+				summary: incidents.summary,
 				latestStatus: {
 					id: incidentStatuses.id,
 					name: incidentStatuses.name,
@@ -52,48 +52,61 @@ export const incidentService: ServiceImpl<typeof IncidentService> = {
 				incidentStatuses,
 				eq(incidents.latestStatusId, incidentStatuses.id),
 			).then((rows) => rows.map((row) => ({
-        ...row,
-        latestStatus: {
-          ...row.latestStatus,
-          type: incidentStatusTypeFromString(row.latestStatus.type),
-          color: colorFromString(row.latestStatus.color),
-        }
-      })));
+				...row,
+				latestStatus: {
+					...row.latestStatus,
+					type: incidentStatusTypeFromString(row.latestStatus.type),
+					color: colorFromString(row.latestStatus.color),
+				}
+			})));
 
 		return { incidents: rows };
 	},
+	async updateIncidentTitle(req, ctx) {
+		const { id, title } = req;
+		const db = withDB(ctx);
+		await db.update(incidents).set({ title }).where(eq(incidents.id, id)).returning();
+		return {};
+	},
+	async updateIncidentSummary(req, ctx) {
+		const { id, summary } = req;
+		console.log("summary", summary);
+		const db = withDB(ctx);
+		await db.update(incidents).set({ summary }).where(eq(incidents.id, id)).returning();
+		return {};
+	}
 };
 
 function incidentStatusTypeFromString(
-  str: string,
+	str: string,
 ): IncidentStatusType {
-  switch (str) {
-    case "INVESTIGATING":
-      return IncidentStatusType.INVESTIGATING;
-    case "DECLARED":
-      return IncidentStatusType.DECLARED
-    case "ONGOING":
-      return IncidentStatusType.ONGOING
-    case "CONVERGED":
-      return IncidentStatusType.CONVERGED
-    case "CLOSED":
-      return IncidentStatusType.CLOSED
-    default:
-      return IncidentStatusType.UNSPECIFIED
-  }
+	switch (str) {
+		case "INVESTIGATING":
+			return IncidentStatusType.INVESTIGATING;
+		case "DECLARED":
+			return IncidentStatusType.DECLARED
+		case "ONGOING":
+			return IncidentStatusType.ONGOING
+		case "CONVERGED":
+			return IncidentStatusType.CONVERGED
+		case "CLOSED":
+			return IncidentStatusType.CLOSED
+		default:
+			return IncidentStatusType.UNSPECIFIED
+	}
 }
 
 function colorFromString(
-  str: string,
+	str: string,
 ): Color {
-  switch (str) {
-    case "RED":
-      return Color.RED;
-    case "GREEN":
-      return Color.GREEN
-    case "BLUE":
-      return Color.BLUE
-    default:
-      return Color.UNSPECIFIED
-  }
+	switch (str) {
+		case "RED":
+			return Color.RED;
+		case "GREEN":
+			return Color.GREEN
+		case "BLUE":
+			return Color.BLUE
+		default:
+			return Color.UNSPECIFIED
+	}
 }

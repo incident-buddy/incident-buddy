@@ -44,6 +44,24 @@ export const userEmails = pgTable("user_emails", {
 	unique("user_emails__unique_email").on(table.email, table.tenantId),
 ]);
 
+export const userHashedPasswords = pgTable("user_hashed_passwords", {
+	id: text().primaryKey().notNull(),
+	userId: text("user_id").notNull(),
+	hashedPassword: text("hashed_password").notNull(),
+	tenantId: text("tenant_id").notNull(),
+}, (table) => [
+	foreignKey({
+			columns: [table.userId],
+			foreignColumns: [users.id],
+			name: "user_hashed_passwords_user_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.tenantId],
+			foreignColumns: [tenants.id],
+			name: "user_hashed_passwords_tenant_id_fkey"
+		}),
+]);
+
 export const resourceMasters = pgTable("resource_masters", {
 	id: text().primaryKey().notNull(),
 	name: text().notNull(),
@@ -185,7 +203,7 @@ export const incidents = pgTable("incidents", {
 	id: text().primaryKey().notNull(),
 	title: text().notNull(),
 	code: text().notNull(),
-	description: text().notNull(),
+	summary: text().notNull(),
 	createdAt: timestamp("created_at", { mode: 'string' }).notNull(),
 	latestStatusId: text("latest_status_id").notNull(),
 	tenantId: text("tenant_id").notNull(),

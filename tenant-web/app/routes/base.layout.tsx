@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import SideNav from "~/components/sidenav.tsx";
+import SideNav from "@/components/sidenav.tsx";
 
 export default function() {
 	return (

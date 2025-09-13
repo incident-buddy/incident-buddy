@@ -16,8 +16,9 @@
     "declarationMap": true,
    	"baseUrl": ".",
     "paths": {
-			"@/*": ["src/*"],
-      "@pb/*": ["gen/pb/*"]
+  		"@/*": ["./src/*"],
+      "~/*": ["./app/*"],
+			"@pb/*": ["gen/pb/*"]
     },
   	// by me
 		"allowImportingTsExtensions": true

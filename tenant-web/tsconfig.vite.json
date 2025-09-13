@@ -6,20 +6,22 @@
     "app/**/.server/**/*",
     "app/**/.client/**/*",
     "server/**/*",
-		"gen/**/*"
+		"gen/**/*",
+		"src/**/*"
   ],
   "compilerOptions": {
     "composite": true,
     "strict": true,
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "lib": ["DOM", "DOM.Iterable", "es2022"],
     "types": ["vite/client"],
-    "target": "ES2022",
-    "module": "E2022",
+    "target": "es2022",
+    "module": "es2022",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "baseUrl": ".",
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
+  		"@/*": ["./src/*"],
       "~/*": ["./app/*"],
 			"@pb/*": ["gen/pb/*"]
     },

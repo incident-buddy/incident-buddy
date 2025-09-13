@@ -70,10 +70,6 @@ export default function ({ loaderData, actionData }: Route.ComponentProps) {
         >
           <div className="flex flex-col gap-y-4">
             <FormItem>
-              <Label htmlFor="code">コード</Label>
-              <p className="text-sm">{loaderData.incident.code}</p>
-            </FormItem>
-            <FormItem>
               <Label htmlFor={fields.title.id}>タイトル</Label>
               <Input
                 type="text"

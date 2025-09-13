@@ -101,7 +101,7 @@ values ('1', 'インシデントコマンダー', 'incident-commander', '0000000
      , ('3', 'オペレーター', 'operator', '0000000000000000TENANT_001')
 ;
 
-insert into incidents (id, title, code, summary, tenant_id, created_at, latest_status_id)
+insert into incidents (id, title, code, summary, tenant_id, declared_at, latest_status_id)
 values ('1', 'カート機能が動かない', 'INC-1', 'カート機能が動かないという大変な事象が発生', '0000000000000000TENANT_001',
         '2025-01-01 09:00:00', '4')
      , ('2', '決済機能が動かない', 'INC-2', '決済機能が動かないという致命的な事象が発生', '0000000000000000TENANT_001', '2025-01-02 10:00:00',

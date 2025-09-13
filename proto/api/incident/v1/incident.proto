@@ -8,6 +8,7 @@ message Incident {
   string title = 3;
   string summary = 4;
 	IncidentStatus latest_status = 5;
+	string declared_at = 6;
 }
 
 message IncidentStatus {

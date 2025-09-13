@@ -1,4 +1,5 @@
 import type { ServiceImpl } from "@connectrpc/connect";
+import { timestampFromDate } from '@bufbuild/protobuf/wkt';
 import {
 	IncidentService,
 	GetIncidentResponseSchema,
@@ -10,6 +11,7 @@ import { eq } from "drizzle-orm";
 import { create } from "@bufbuild/protobuf";
 
 export const incidentService: ServiceImpl<typeof IncidentService> = {
+	
 	async getIncident(req, ctx) {
 		const db = withDB(ctx);
 		const [row] = await db
@@ -18,6 +20,7 @@ export const incidentService: ServiceImpl<typeof IncidentService> = {
 				code: incidents.code,
 				title: incidents.title,
 				summary: incidents.summary,
+				declaredAt: incidents.declaredAt,
 			})
 			.from(incidents)
 			.innerJoin(
@@ -25,7 +28,7 @@ export const incidentService: ServiceImpl<typeof IncidentService> = {
 				eq(incidents.latestStatusId, incidentStatuses.id),
 			)
 			.where(eq(incidents.id, req.id));
-
+			
 		if (!row) {
 			return create(GetIncidentResponseSchema);
 		}
@@ -46,6 +49,7 @@ export const incidentService: ServiceImpl<typeof IncidentService> = {
 					type: incidentStatuses.statusType,
 					color: incidentStatuses.color,
 				},
+				declaredAt: incidents.declaredAt,
 			})
 			.from(incidents)
 			.innerJoin(

@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file api/incident/v1/incident.proto.
  */
 export const file_api_incident_v1_incident: GenFile = /*@__PURE__*/
-  fileDesc("Ch5hcGkvaW5jaWRlbnQvdjEvaW5jaWRlbnQucHJvdG8SD2FwaS5pbmNpZGVudC52MSKAAQoISW5jaWRlbnQSCgoCaWQYASABKAkSDAoEY29kZRgCIAEoCRINCgV0aXRsZRgDIAEoCRITCgtkZXNjcmlwdGlvbhgEIAEoCRI2Cg1sYXRlc3Rfc3RhdHVzGAUgASgLMh8uYXBpLmluY2lkZW50LnYxLkluY2lkZW50U3RhdHVzIoQBCg5JbmNpZGVudFN0YXR1cxIKCgJpZBgBIAEoCRIMCgRuYW1lGAIgASgJEjEKBHR5cGUYAyABKA4yIy5hcGkuaW5jaWRlbnQudjEuSW5jaWRlbnRTdGF0dXNUeXBlEiUKBWNvbG9yGAQgASgOMhYuYXBpLmluY2lkZW50LnYxLkNvbG9yIhYKFExpc3RJbmNpZGVudHNSZXF1ZXN0IkUKFUxpc3RJbmNpZGVudHNSZXNwb25zZRIsCglpbmNpZGVudHMYASADKAsyGS5hcGkuaW5jaWRlbnQudjEuSW5jaWRlbnQiIAoSR2V0SW5jaWRlbnRSZXF1ZXN0EgoKAmlkGAEgASgJIkIKE0dldEluY2lkZW50UmVzcG9uc2USKwoIaW5jaWRlbnQYASABKAsyGS5hcGkuaW5jaWRlbnQudjEuSW5jaWRlbnQq7AEKEkluY2lkZW50U3RhdHVzVHlwZRIkCiBJTkNJREVOVF9TVEFUVVNfVFlQRV9VTlNQRUNJRklFRBAAEiYKIklOQ0lERU5UX1NUQVRVU19UWVBFX0lOVkVTVElHQVRJTkcQARIhCh1JTkNJREVOVF9TVEFUVVNfVFlQRV9ERUNMQVJFRBACEiAKHElOQ0lERU5UX1NUQVRVU19UWVBFX09OR09JTkcQAxIiCh5JTkNJREVOVF9TVEFUVVNfVFlQRV9DT05WRVJHRUQQBBIfChtJTkNJREVOVF9TVEFUVVNfVFlQRV9DTE9TRUQQBSpOCgVDb2xvchIVChFDT0xPUl9VTlNQRUNJRklFRBAAEg0KCUNPTE9SX1JFRBABEg8KC0NPTE9SX0dSRUVOEAISDgoKQ09MT1JfQkxVRRADMssBCg9JbmNpZGVudFNlcnZpY2USWAoLR2V0SW5jaWRlbnQSIy5hcGkuaW5jaWRlbnQudjEuR2V0SW5jaWRlbnRSZXF1ZXN0GiQuYXBpLmluY2lkZW50LnYxLkdldEluY2lkZW50UmVzcG9uc2USXgoNTGlzdEluY2lkZW50cxIlLmFwaS5pbmNpZGVudC52MS5MaXN0SW5jaWRlbnRzUmVxdWVzdBomLmFwaS5pbmNpZGVudC52MS5MaXN0SW5jaWRlbnRzUmVzcG9uc2VCggEKE2NvbS5hcGkuaW5jaWRlbnQudjFCDUluY2lkZW50UHJvdG9QAaICA0FJWKoCD0FwaS5JbmNpZGVudC5WMcoCD0FwaVxJbmNpZGVudFxWMeICG0FwaVxJbmNpZGVudFxWMVxHUEJNZXRhZGF0YeoCEUFwaTo6SW5jaWRlbnQ6OlYxYghlZGl0aW9uc3DoBw");
+  fileDesc("Ch5hcGkvaW5jaWRlbnQvdjEvaW5jaWRlbnQucHJvdG8SD2FwaS5pbmNpZGVudC52MSKRAQoISW5jaWRlbnQSCgoCaWQYASABKAkSDAoEY29kZRgCIAEoCRINCgV0aXRsZRgDIAEoCRIPCgdzdW1tYXJ5GAQgASgJEjYKDWxhdGVzdF9zdGF0dXMYBSABKAsyHy5hcGkuaW5jaWRlbnQudjEuSW5jaWRlbnRTdGF0dXMSEwoLZGVjbGFyZWRfYXQYBiABKAkihAEKDkluY2lkZW50U3RhdHVzEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSMQoEdHlwZRgDIAEoDjIjLmFwaS5pbmNpZGVudC52MS5JbmNpZGVudFN0YXR1c1R5cGUSJQoFY29sb3IYBCABKA4yFi5hcGkuaW5jaWRlbnQudjEuQ29sb3IiFgoUTGlzdEluY2lkZW50c1JlcXVlc3QiRQoVTGlzdEluY2lkZW50c1Jlc3BvbnNlEiwKCWluY2lkZW50cxgBIAMoCzIZLmFwaS5pbmNpZGVudC52MS5JbmNpZGVudCIgChJHZXRJbmNpZGVudFJlcXVlc3QSCgoCaWQYASABKAkiQgoTR2V0SW5jaWRlbnRSZXNwb25zZRIrCghpbmNpZGVudBgBIAEoCzIZLmFwaS5pbmNpZGVudC52MS5JbmNpZGVudCI3ChpVcGRhdGVJbmNpZGVudFRpdGxlUmVxdWVzdBIKCgJpZBgBIAEoCRINCgV0aXRsZRgCIAEoCSIdChtVcGRhdGVJbmNpZGVudFRpdGxlUmVzcG9uc2UiOwocVXBkYXRlSW5jaWRlbnRTdW1tYXJ5UmVxdWVzdBIKCgJpZBgBIAEoCRIPCgdzdW1tYXJ5GAIgASgJIh8KHVVwZGF0ZUluY2lkZW50U3VtbWFyeVJlc3BvbnNlKuwBChJJbmNpZGVudFN0YXR1c1R5cGUSJAogSU5DSURFTlRfU1RBVFVTX1RZUEVfVU5TUEVDSUZJRUQQABImCiJJTkNJREVOVF9TVEFUVVNfVFlQRV9JTlZFU1RJR0FUSU5HEAESIQodSU5DSURFTlRfU1RBVFVTX1RZUEVfREVDTEFSRUQQAhIgChxJTkNJREVOVF9TVEFUVVNfVFlQRV9PTkdPSU5HEAMSIgoeSU5DSURFTlRfU1RBVFVTX1RZUEVfQ09OVkVSR0VEEAQSHwobSU5DSURFTlRfU1RBVFVTX1RZUEVfQ0xPU0VEEAUqTgoFQ29sb3ISFQoRQ09MT1JfVU5TUEVDSUZJRUQQABINCglDT0xPUl9SRUQQARIPCgtDT0xPUl9HUkVFThACEg4KCkNPTE9SX0JMVUUQAzK1AwoPSW5jaWRlbnRTZXJ2aWNlElgKC0dldEluY2lkZW50EiMuYXBpLmluY2lkZW50LnYxLkdldEluY2lkZW50UmVxdWVzdBokLmFwaS5pbmNpZGVudC52MS5HZXRJbmNpZGVudFJlc3BvbnNlEl4KDUxpc3RJbmNpZGVudHMSJS5hcGkuaW5jaWRlbnQudjEuTGlzdEluY2lkZW50c1JlcXVlc3QaJi5hcGkuaW5jaWRlbnQudjEuTGlzdEluY2lkZW50c1Jlc3BvbnNlEnAKE1VwZGF0ZUluY2lkZW50VGl0bGUSKy5hcGkuaW5jaWRlbnQudjEuVXBkYXRlSW5jaWRlbnRUaXRsZVJlcXVlc3QaLC5hcGkuaW5jaWRlbnQudjEuVXBkYXRlSW5jaWRlbnRUaXRsZVJlc3BvbnNlEnYKFVVwZGF0ZUluY2lkZW50U3VtbWFyeRItLmFwaS5pbmNpZGVudC52MS5VcGRhdGVJbmNpZGVudFN1bW1hcnlSZXF1ZXN0Gi4uYXBpLmluY2lkZW50LnYxLlVwZGF0ZUluY2lkZW50U3VtbWFyeVJlc3BvbnNlQoIBChNjb20uYXBpLmluY2lkZW50LnYxQg1JbmNpZGVudFByb3RvUAGiAgNBSViqAg9BcGkuSW5jaWRlbnQuVjHKAg9BcGlcSW5jaWRlbnRcVjHiAhtBcGlcSW5jaWRlbnRcVjFcR1BCTWV0YWRhdGHqAhFBcGk6OkluY2lkZW50OjpWMWIIZWRpdGlvbnNw6Ac");
 
 /**
  * @generated from message api.incident.v1.Incident
@@ -32,14 +32,19 @@ export type Incident = Message<"api.incident.v1.Incident"> & {
   title: string;
 
   /**
-   * @generated from field: string description = 4;
+   * @generated from field: string summary = 4;
    */
-  description: string;
+  summary: string;
 
   /**
    * @generated from field: api.incident.v1.IncidentStatus latest_status = 5;
    */
   latestStatus?: IncidentStatus;
+
+  /**
+   * @generated from field: string declared_at = 6;
+   */
+  declaredAt: string;
 };
 
 /**
@@ -146,6 +151,76 @@ export const GetIncidentResponseSchema: GenMessage<GetIncidentResponse> = /*@__P
   messageDesc(file_api_incident_v1_incident, 5);
 
 /**
+ * @generated from message api.incident.v1.UpdateIncidentTitleRequest
+ */
+export type UpdateIncidentTitleRequest = Message<"api.incident.v1.UpdateIncidentTitleRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string title = 2;
+   */
+  title: string;
+};
+
+/**
+ * Describes the message api.incident.v1.UpdateIncidentTitleRequest.
+ * Use `create(UpdateIncidentTitleRequestSchema)` to create a new message.
+ */
+export const UpdateIncidentTitleRequestSchema: GenMessage<UpdateIncidentTitleRequest> = /*@__PURE__*/
+  messageDesc(file_api_incident_v1_incident, 6);
+
+/**
+ * @generated from message api.incident.v1.UpdateIncidentTitleResponse
+ */
+export type UpdateIncidentTitleResponse = Message<"api.incident.v1.UpdateIncidentTitleResponse"> & {
+};
+
+/**
+ * Describes the message api.incident.v1.UpdateIncidentTitleResponse.
+ * Use `create(UpdateIncidentTitleResponseSchema)` to create a new message.
+ */
+export const UpdateIncidentTitleResponseSchema: GenMessage<UpdateIncidentTitleResponse> = /*@__PURE__*/
+  messageDesc(file_api_incident_v1_incident, 7);
+
+/**
+ * @generated from message api.incident.v1.UpdateIncidentSummaryRequest
+ */
+export type UpdateIncidentSummaryRequest = Message<"api.incident.v1.UpdateIncidentSummaryRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string summary = 2;
+   */
+  summary: string;
+};
+
+/**
+ * Describes the message api.incident.v1.UpdateIncidentSummaryRequest.
+ * Use `create(UpdateIncidentSummaryRequestSchema)` to create a new message.
+ */
+export const UpdateIncidentSummaryRequestSchema: GenMessage<UpdateIncidentSummaryRequest> = /*@__PURE__*/
+  messageDesc(file_api_incident_v1_incident, 8);
+
+/**
+ * @generated from message api.incident.v1.UpdateIncidentSummaryResponse
+ */
+export type UpdateIncidentSummaryResponse = Message<"api.incident.v1.UpdateIncidentSummaryResponse"> & {
+};
+
+/**
+ * Describes the message api.incident.v1.UpdateIncidentSummaryResponse.
+ * Use `create(UpdateIncidentSummaryResponseSchema)` to create a new message.
+ */
+export const UpdateIncidentSummaryResponseSchema: GenMessage<UpdateIncidentSummaryResponse> = /*@__PURE__*/
+  messageDesc(file_api_incident_v1_incident, 9);
+
+/**
  * @generated from enum api.incident.v1.IncidentStatusType
  */
 export enum IncidentStatusType {
@@ -236,6 +311,22 @@ export const IncidentService: GenService<{
     methodKind: "unary";
     input: typeof ListIncidentsRequestSchema;
     output: typeof ListIncidentsResponseSchema;
+  },
+  /**
+   * @generated from rpc api.incident.v1.IncidentService.UpdateIncidentTitle
+   */
+  updateIncidentTitle: {
+    methodKind: "unary";
+    input: typeof UpdateIncidentTitleRequestSchema;
+    output: typeof UpdateIncidentTitleResponseSchema;
+  },
+  /**
+   * @generated from rpc api.incident.v1.IncidentService.UpdateIncidentSummary
+   */
+  updateIncidentSummary: {
+    methodKind: "unary";
+    input: typeof UpdateIncidentSummaryRequestSchema;
+    output: typeof UpdateIncidentSummaryResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_api_incident_v1_incident, 0);

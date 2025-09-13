@@ -125,7 +125,7 @@ create table incidents
     title            text      not null,
     code             text      not null,
     summary          text      not null,
-    created_at       timestamp not null,
+    declared_at      timestamp not null,
     latest_status_id text      not null references incident_statuses (id),
     tenant_id        text      not null references tenants (id)
 );

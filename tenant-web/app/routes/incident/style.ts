@@ -1,14 +1,4 @@
-import { Color, IncidentStatusType } from "@pb/api/incident/v1/incident_pb";
-
-export type StatusType = keyof typeof IncidentStatusType;
-export function statusTypeFromCode(n: number): StatusType {
-  return IncidentStatusType[n] as StatusType;
-}
-
-export type ColorType = keyof typeof Color;
-export function colorFromCode(n: number): ColorType {
-  return Color[n] as ColorType;
-}
+import type { ColorType } from "./type";
 
 export function statusStyle(color: ColorType) {
   switch (color) {
@@ -19,7 +9,7 @@ export function statusStyle(color: ColorType) {
           bd: "bg-red-600",
         },
         circle: {
-          bg: "bg-red-700",
+          bg: "bg-red-600/80",
         },
       };
     case "BLUE":

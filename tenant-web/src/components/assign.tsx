@@ -43,7 +43,7 @@ export function Assign(props: Assignment) {
       </div>
       <div className="flex flex-col justify-between">
         <div className="text-xs text-muted-foreground">{role.label}</div>
-        <div className="font-medium">
+        <div className="font-semibold">
           <button onClick={onClick}>{assigneeLabel}</button>
         </div>
       </div>

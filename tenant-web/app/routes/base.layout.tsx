@@ -23,14 +23,12 @@ const menus = [
 export default function () {
   return (
     <>
-      <div className="flex min-h-screen flex-row">
-        <aside className="flex w-[80px] border-r border-gray-200 dark:border-white/10 dark:bg-black/10">
+      <div className="flex flex-row items-stretch h-svh">
+        <aside className="flex min-w-[72px] border-r border-gray-200 dark:border-white/10 dark:bg-black/10">
           <SideNav menus={menus} />
         </aside>
         <main className="flex-grow dark:bg-gray-900/80">
-          <div className="h-screen">
-            <Outlet />
-          </div>
+          <Outlet />
         </main>
       </div>
     </>

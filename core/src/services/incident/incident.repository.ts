@@ -4,19 +4,20 @@ import type { Incident } from "./incident.type.ts";
 import type { DB } from "@/db/type.ts";
 
 export async function store(db: DB, incident: Incident) {
-	void await db
+	void (await db
 		.insert(s.incidents)
 		.values({
 			...incident,
-			latestStatusId: incident.latestStatus.id
-		}).onConflictDoUpdate({
+			latestStatusId: incident.latestStatus.id,
+		})
+		.onConflictDoUpdate({
 			target: s.incidents.id,
 			set: {
 				title: incident.title,
 				summary: incident.summary,
 				latestStatusId: incident.latestStatus.id,
-			}
-		});
+			},
+		}));
 }
 
 const selectClause = {
@@ -32,7 +33,7 @@ const selectClause = {
 	},
 	declaredAt: s.incidents.declaredAt,
 	tenantId: s.incidents.tenantId,
-}
+};
 
 export async function fetch(db: DB, args: { id: string }) {
 	return await db
@@ -55,4 +56,3 @@ export async function list(db: DB) {
 			eq(s.incidents.latestStatusId, s.incidentStatuses.id),
 		);
 }
-

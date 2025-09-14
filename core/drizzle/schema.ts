@@ -269,7 +269,7 @@ export const incidentEventHistories = pgTable("incident_event_histories", {
 	externalId: text("external_id"),
 	tenantId: text("tenant_id").notNull(),
 }, (table) => [
-	index("incident_event_histories__ti_ii_et_ra").using("btree", table.tenantId.asc().nullsLast().op("text_ops"), table.incidentId.asc().nullsLast().op("timestamp_ops"), table.eventType.asc().nullsLast().op("timestamp_ops"), table.placedAt.asc().nullsLast().op("timestamp_ops")),
+	index("incident_event_histories__ti_ii_et_ra").using("btree", table.tenantId.asc().nullsLast().op("text_ops"), table.incidentId.asc().nullsLast().op("text_ops"), table.eventType.asc().nullsLast().op("timestamp_ops"), table.placedAt.asc().nullsLast().op("text_ops")),
 	index("incident_event_histories_ti_ii_ep_ecp_eci").using("btree", table.tenantId.asc().nullsLast().op("text_ops"), table.incidentId.asc().nullsLast().op("text_ops"), table.externalPlatform.asc().nullsLast().op("text_ops"), table.externalPlace.asc().nullsLast().op("text_ops"), table.externalId.asc().nullsLast().op("text_ops")),
 	foreignKey({
 			columns: [table.incidentId],
@@ -310,7 +310,7 @@ export const workflowVersions = pgTable("workflow_versions", {
 	steps: jsonb().default([]).notNull(),
 	tenantId: text("tenant_id").notNull(),
 }, (table) => [
-	index("workflow_versions__ti_wi_il").using("btree", table.tenantId.asc().nullsLast().op("text_ops"), table.workflowId.asc().nullsLast().op("text_ops"), table.isLatest.asc().nullsLast().op("text_ops")),
+	index("workflow_versions__ti_wi_il").using("btree", table.tenantId.asc().nullsLast().op("bool_ops"), table.workflowId.asc().nullsLast().op("text_ops"), table.isLatest.asc().nullsLast().op("bool_ops")),
 	foreignKey({
 			columns: [table.workflowId],
 			foreignColumns: [workflows.id],
@@ -332,7 +332,7 @@ export const workflowExecutions = pgTable("workflow_executions", {
 	finishedAt: timestamp("finished_at", { mode: 'date' }),
 	tenantId: text("tenant_id").notNull(),
 }, (table) => [
-	index("workflow_executions__ti_sa_s").using("btree", table.tenantId.asc().nullsLast().op("text_ops"), table.startedAt.asc().nullsLast().op("text_ops"), table.status.asc().nullsLast().op("text_ops")),
+	index("workflow_executions__ti_sa_s").using("btree", table.tenantId.asc().nullsLast().op("timestamp_ops"), table.startedAt.asc().nullsLast().op("text_ops"), table.status.asc().nullsLast().op("timestamp_ops")),
 	foreignKey({
 			columns: [table.workflowId],
 			foreignColumns: [workflows.id],

@@ -1,17 +1,20 @@
 type AssignmentColor = "red" | "blue" | "green";
 
-const colorMap: { [key in AssignmentColor]: { bg: string; text: string } } = {
+const colorMap: { [key in AssignmentColor]: { bd: string; bg: string; text: string } } = {
   red: {
-    bg: "bg-red-500",
-    text: "text-white",
+    bd: "border-red-300",
+    bg: "bg-red-50",
+    text: "text-red-950",
   },
   blue: {
-    bg: "bg-blue-800",
-    text: "text-white",
+    bd: "border-blue-300",
+    bg: "bg-blue-50",
+    text: "text-blue-950",
   },
   green: {
-    bg: "bg-green-700",
-    text: "text-white",
+    bd: "border-green-300",
+    bg: "bg-green-50",
+    text: "text-green-950",
   },
 };
 
@@ -33,7 +36,9 @@ export function Assign(props: Assignment) {
   const assigneeLabel = user ? `${user.last} ${user.first}` : "未アサイン";
   return (
     <div className="flex flex-row items-center gap-x-2">
-      <div className={`w-9 h-9 font-medium flex items-center justify-center rounded-md ${colorMap[role.color].bg}`}>
+      <div
+        className={`w-9 h-9 font-medium flex items-center justify-center rounded-md ${colorMap[role.color].bg} border ${colorMap[role.color].bd}`}
+      >
         <span className={colorMap[role.color].text}>{role.abbr}</span>
       </div>
       <div className="flex flex-col justify-between">

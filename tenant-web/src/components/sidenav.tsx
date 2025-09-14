@@ -33,7 +33,7 @@ export default function (props: { menus: Menu[] }) {
               <Link to={menu.path}>
                 <div className={`flex flex-col items-center gap-y-1 py-2 rounded ${ac.icon}`}>
                   <div className={`flex flex-col items-center`}>{<menu.icon size={20} />}</div>
-                  <div className={`text-slate-500 text-xs ${ac.label}`}>{menu.label}</div>
+                  <div className={`text-slate-500 text-xs tracking-tight ${ac.label}`}>{menu.label}</div>
                 </div>
               </Link>
             </li>

@@ -3,7 +3,7 @@ import { Form, href, redirect } from "react-router";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { useForm, getFormProps, getInputProps } from "@conform-to/react";
+import { useForm } from "@conform-to/react";
 import { z } from "zod";
 import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import type { Route } from "./+types/incident.update.route";

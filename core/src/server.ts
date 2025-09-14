@@ -3,15 +3,25 @@ import { fastifyConnectPlugin } from "@connectrpc/connect-fastify";
 import "dotenv/config";
 import { init, setupDBContext } from "./db/setup.ts";
 import routes from "./router.ts";
+import { createLogger } from "./logger.ts";
 
 async function main() {
+	const logger = createLogger(import.meta.filename);
+	const env = process.env.ENVIRONMENT;
+	if (!env) {
+		logger.error("ENVIRONMENT is not set");
+		process.exit(1);
+	}
 	const dbUrl = process.env.DATABASE_URL;
 	if (!dbUrl) {
-		throw new Error("DATABASE_URL is not set");
+		logger.error("DATABASE_URL is not set");
+		process.exit(1);
 	}
 	const db = await init({ dbUrl });
 
-	const server = fastify();
+	const server = fastify({
+		logger: { level: env === "production" ? "info" : "debug" },
+	});
 
 	server.get("/healthz", (_, reply) => {
 		reply.type("text/plain");

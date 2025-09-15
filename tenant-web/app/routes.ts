@@ -5,6 +5,8 @@ export default [
   layout("routes/base.layout.tsx", [
     route("/incident/", "routes/incident/list/incident.list.route.tsx", [
       route(":incidentId/", "routes/incident/show/incident.show.route.tsx", [
+        index("routes/incident/show/todo/incident.show.todo.route.tsx"),
+        route("timeline", "routes/incident/show/timeline/incident.show.timeline.route.tsx"),
         route("edit", "routes/incident/update/incident.update.route.tsx"),
         route("edit-summary", "routes/incident/update/incident.update-summary.route.tsx"),
       ]),

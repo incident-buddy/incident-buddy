@@ -44,7 +44,6 @@ export const incidentService: ServiceImpl<typeof IncidentService> = {
 				color: colorFromString(row.latestStatus.color),
 			},
 		}));
-		console.log(incidents);
 		return { incidents };
 	},
 

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { tenants, users, userEmails, userHashedPasswords, resourceMasters, resourceMasterCategories, resourceMasterAttributes, resources, resourceAttributeValues, incidentStatuses, incidentRoles, incidents, incidentRoleAssignments, incidentEventHistories, workflows, workflowVersions, workflowExecutions, slackWorkspaces } from "./schema";
+import { tenants, users, userEmails, userHashedPasswords, resourceMasters, resourceMasterCategories, resourceMasterAttributes, resources, resourceAttributeValues, incidentStatuses, incidentRoles, incidents, incidentRoleSlots, incidentRoleAssignments, incidentEventHistories, workflows, workflowVersions, workflowExecutions, slackWorkspaces } from "./schema";
 
 export const usersRelations = relations(users, ({one, many}) => ({
 	tenant: one(tenants, {
@@ -29,6 +29,7 @@ export const tenantsRelations = relations(tenants, ({many}) => ({
 	incidentStatuses: many(incidentStatuses),
 	incidentRoles: many(incidentRoles),
 	incidents: many(incidents),
+	incidentRoleSlots: many(incidentRoleSlots),
 	incidentRoleAssignments: many(incidentRoleAssignments),
 	incidentEventHistories: many(incidentEventHistories),
 	workflows: many(workflows),
@@ -143,7 +144,7 @@ export const incidentRolesRelations = relations(incidentRoles, ({one, many}) => 
 		fields: [incidentRoles.tenantId],
 		references: [tenants.id]
 	}),
-	incidentRoleAssignments: many(incidentRoleAssignments),
+	incidentRoleSlots: many(incidentRoleSlots),
 }));
 
 export const incidentsRelations = relations(incidents, ({one, many}) => ({
@@ -155,8 +156,25 @@ export const incidentsRelations = relations(incidents, ({one, many}) => ({
 		fields: [incidents.tenantId],
 		references: [tenants.id]
 	}),
+	incidentRoleSlots: many(incidentRoleSlots),
 	incidentRoleAssignments: many(incidentRoleAssignments),
 	incidentEventHistories: many(incidentEventHistories),
+}));
+
+export const incidentRoleSlotsRelations = relations(incidentRoleSlots, ({one, many}) => ({
+	incident: one(incidents, {
+		fields: [incidentRoleSlots.incidentId],
+		references: [incidents.id]
+	}),
+	incidentRole: one(incidentRoles, {
+		fields: [incidentRoleSlots.roleId],
+		references: [incidentRoles.id]
+	}),
+	tenant: one(tenants, {
+		fields: [incidentRoleSlots.tenantId],
+		references: [tenants.id]
+	}),
+	incidentRoleAssignments: many(incidentRoleAssignments),
 }));
 
 export const incidentRoleAssignmentsRelations = relations(incidentRoleAssignments, ({one}) => ({
@@ -164,9 +182,9 @@ export const incidentRoleAssignmentsRelations = relations(incidentRoleAssignment
 		fields: [incidentRoleAssignments.incidentId],
 		references: [incidents.id]
 	}),
-	incidentRole: one(incidentRoles, {
-		fields: [incidentRoleAssignments.roleId],
-		references: [incidentRoles.id]
+	incidentRoleSlot: one(incidentRoleSlots, {
+		fields: [incidentRoleAssignments.roleSlotId],
+		references: [incidentRoleSlots.id]
 	}),
 	user_userId: one(users, {
 		fields: [incidentRoleAssignments.userId],

@@ -28,7 +28,7 @@ tasks:
   gen:proto:
     deps:
       - clean:proto
-    dir: ./proto
+    dir: ./schema/proto
     cmds:
       - pnpm run buf:lint
       - pnpm run buf:gen

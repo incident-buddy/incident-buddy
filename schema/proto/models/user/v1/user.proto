@@ -1,0 +1,11 @@
+edition = "2023";
+
+package models.user.v1;
+
+message User {
+	string id = 1;
+  string family_name = 2;
+	string given_name = 3;
+	string status = 4;
+	string email = 5;
+}

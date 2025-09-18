@@ -95,10 +95,10 @@ values ('1', 'インシデント検知', 'DECLARED', 'RED', '0000000000000000TEN
      , ('4', '解決', 'CLOSED', 'GREEN', '0000000000000000TENANT_001', true)
 ;
 
-insert into incident_roles (id, name, code, tenant_id)
-values ('1', 'インシデントコマンダー', 'incident-commander', '0000000000000000TENANT_001')
-     , ('2', 'コミュニケーションリード', 'communication-lead', '0000000000000000TENANT_001')
-     , ('3', 'オペレーター', 'operator', '0000000000000000TENANT_001')
+insert into incident_roles (id, name, code, abbreviation, color, tenant_id)
+values ('1', 'インシデントコマンダー', 'incident-commander','IC', 'red', '0000000000000000TENANT_001')
+     , ('2', 'コミュニケーションリード', 'communication-lead', 'CL', 'green', '0000000000000000TENANT_001')
+     , ('3', 'オペレーター', 'operator', 'OP', 'blue', '0000000000000000TENANT_001')
 ;
 
 insert into incidents (id, title, code, summary, tenant_id, declared_at, latest_status_id)
@@ -114,6 +114,19 @@ values ('1', 'カート機能が動かない', 'INC-1', 'カート機能が動�
 ・DDoS攻撃によるサーバダウン', '0000000000000000TENANT_001', '2025-01-03 11:00:00',
         '2')
 ;
+
+insert into incident_role_slots (id, incident_id, role_id, tenant_id)
+values ('1', '1', '1', '0000000000000000TENANT_001'),
+       ('2', '1', '2', '0000000000000000TENANT_001'),
+       ('3', '1', '3', '0000000000000000TENANT_001'),
+       ('4', '2', '1', '0000000000000000TENANT_001'),
+       ('5', '2', '2', '0000000000000000TENANT_001'),
+       ('6', '2', '3', '0000000000000000TENANT_001'),
+       ('7', '3', '1', '0000000000000000TENANT_001'),
+       ('8', '3', '2', '0000000000000000TENANT_001'),
+       ('9', '3', '3', '0000000000000000TENANT_001')
+;
+
 /*
 insert into incident_event_histories (id, incident_id, event_type, event_body, placed_at, placed_by, external_platform,
                                       external_place, external_id, tenant_id)

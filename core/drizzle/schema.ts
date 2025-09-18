@@ -190,6 +190,8 @@ export const incidentRoles = pgTable("incident_roles", {
 	id: text().primaryKey().notNull(),
 	name: text().notNull(),
 	code: text().notNull(),
+	abbreviation: text().notNull(),
+	color: text().notNull(),
 	tenantId: text("tenant_id").notNull(),
 }, (table) => [
 	foreignKey({
@@ -220,25 +222,49 @@ export const incidents = pgTable("incidents", {
 		}),
 ]);
 
-export const incidentRoleAssignments = pgTable("incident_role_assignments", {
+export const incidentRoleSlots = pgTable("incident_role_slots", {
 	id: text().primaryKey().notNull(),
 	incidentId: text("incident_id").notNull(),
 	roleId: text("role_id").notNull(),
+	tenantId: text("tenant_id").notNull(),
+}, (table) => [
+	index("incident_role_slots__ti_ii_ri").using("btree", table.tenantId.asc().nullsLast().op("text_ops"), table.incidentId.asc().nullsLast().op("text_ops"), table.roleId.asc().nullsLast().op("text_ops")),
+	foreignKey({
+			columns: [table.incidentId],
+			foreignColumns: [incidents.id],
+			name: "incident_role_slots_incident_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.roleId],
+			foreignColumns: [incidentRoles.id],
+			name: "incident_role_slots_role_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.tenantId],
+			foreignColumns: [tenants.id],
+			name: "incident_role_slots_tenant_id_fkey"
+		}),
+]);
+
+export const incidentRoleAssignments = pgTable("incident_role_assignments", {
+	id: text().primaryKey().notNull(),
+	incidentId: text("incident_id").notNull(),
+	roleSlotId: text("role_slot_id").notNull(),
 	userId: text("user_id").notNull(),
 	assignedAt: timestamp("assigned_at", { mode: 'date' }).notNull(),
 	assignedBy: text("assigned_by"),
 	tenantId: text("tenant_id").notNull(),
 }, (table) => [
-	index("incident_role_assignments__ti_ii_ri").using("btree", table.tenantId.asc().nullsLast().op("text_ops"), table.incidentId.asc().nullsLast().op("text_ops"), table.roleId.asc().nullsLast().op("text_ops")),
+	index("incident_role_assignments__ti_ii_rsi").using("btree", table.tenantId.asc().nullsLast().op("text_ops"), table.incidentId.asc().nullsLast().op("text_ops"), table.roleSlotId.asc().nullsLast().op("text_ops")),
 	foreignKey({
 			columns: [table.incidentId],
 			foreignColumns: [incidents.id],
 			name: "incident_role_assignments_incident_id_fkey"
 		}),
 	foreignKey({
-			columns: [table.roleId],
-			foreignColumns: [incidentRoles.id],
-			name: "incident_role_assignments_role_id_fkey"
+			columns: [table.roleSlotId],
+			foreignColumns: [incidentRoleSlots.id],
+			name: "incident_role_assignments_role_slot_id_fkey"
 		}),
 	foreignKey({
 			columns: [table.userId],

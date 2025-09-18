@@ -40,7 +40,8 @@
     "baseUrl": ".",
     "paths": {
 			"@/*": ["src/*"],
-      "@pb/*": ["gen/pb/*"]
+      "@pb/*": ["gen/pb/*"],
+			"@worker/*": ["../schema/worker/*"]
     },
 
 		// by me

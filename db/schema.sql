@@ -113,10 +113,12 @@ create table incident_statuses
 
 create table incident_roles
 (
-    id        text primary key,
-    name      text not null,
-    code      text not null,
-    tenant_id text not null references tenants (id)
+    id           text primary key,
+    name         text not null,
+    code         text not null,
+	abbreviation text not null,
+    color        text not null,
+    tenant_id    text not null references tenants (id)
 );
 
 create table incidents
@@ -130,18 +132,27 @@ create table incidents
     tenant_id        text      not null references tenants (id)
 );
 
-create table incident_role_assignments
+create table incident_role_slots
 (
     id          text primary key,
     incident_id text      not null references incidents (id),
     role_id     text      not null references incident_roles (id),
-    user_id     text      not null references users (id),
-    assigned_at timestamp not null,
-    assigned_by text      null references users (id), -- システムユーザーではない人が割り当てるケースがあるのでnullableは仕方ない
     tenant_id   text      not null references tenants (id)
 );
+create index incident_role_slots__ti_ii_ri on incident_role_slots (tenant_id, incident_id, role_id);
 
-create index incident_role_assignments__ti_ii_ri on incident_role_assignments (tenant_id, incident_id, role_id);
+create table incident_role_assignments
+(
+    id           text primary key,
+    incident_id  text      not null references incidents (id),
+    role_slot_id text      not null references incident_role_slots (id),
+    user_id      text      not null references users (id),
+    assigned_at  timestamp not null,
+    assigned_by  text      null references users (id), -- システムユーザーではない人(workflowなど)が割り当てるケースがあるのでnullableは仕方ない
+    tenant_id    text      not null references tenants (id)
+);
+
+create index incident_role_assignments__ti_ii_rsi on incident_role_assignments (tenant_id, incident_id, role_slot_id);
 
 create table incident_event_histories
 (

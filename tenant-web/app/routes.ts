@@ -1,6 +1,7 @@
 import { type RouteConfig, index, route, layout } from "@react-router/dev/routes";
 
 export default [
+	route("/hoge", "routes/task/list/task.list.route.tsx"),
   route("/login", "routes/login/login.route.tsx"),
   layout("routes/base.layout.tsx", [
     route("/incident/", "routes/incident/list/incident.list.route.tsx", [
@@ -12,7 +13,7 @@ export default [
       ]),
     ]),
 
-    route("/task", "routes/task/list/task.list.route.tsx"),
+    //route("/task", "routes/task/list/task.list.route.tsx"),
     route("/setting", "routes/setting/show/setting.show.route.tsx"),
   ]),
 ] satisfies RouteConfig;

@@ -1,0 +1,22 @@
+{
+  "include": [
+    "../core/src/*"
+  ],
+  "compilerOptions": {
+    "checkJs": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    // Other Outputs
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "core/*": ["../core/src/*"]
+    },
+    // by me
+    "allowImportingTsExtensions": true
+  }
+}

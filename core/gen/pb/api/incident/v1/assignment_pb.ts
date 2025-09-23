@@ -2,8 +2,16 @@
 // @generated from file api/incident/v1/assignment.proto (package api.incident.v1, edition 2023)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
+import type {
+	GenFile,
+	GenMessage,
+	GenService,
+} from "@bufbuild/protobuf/codegenv1";
+import {
+	fileDesc,
+	messageDesc,
+	serviceDesc,
+} from "@bufbuild/protobuf/codegenv1";
 import type { User } from "../../../models/user/v1/user_pb";
 import { file_models_user_v1_user } from "../../../models/user/v1/user_pb";
 import type { Message } from "@bufbuild/protobuf";
@@ -11,107 +19,114 @@ import type { Message } from "@bufbuild/protobuf";
 /**
  * Describes the file api/incident/v1/assignment.proto.
  */
-export const file_api_incident_v1_assignment: GenFile = /*@__PURE__*/
-  fileDesc("CiBhcGkvaW5jaWRlbnQvdjEvYXNzaWdubWVudC5wcm90bxIPYXBpLmluY2lkZW50LnYxIrkBCgpBc3NpZ25tZW50EhMKC2luY2lkZW50X2lkGAEgASgJEhQKDHJvbGVfc2xvdF9pZBgCIAEoCRIPCgdyb2xlX2lkGAMgASgJEhEKCXJvbGVfbmFtZRgEIAEoCRIRCglyb2xlX2NvZGUYBSABKAkSEQoJcm9sZV9hYmJyGAYgASgJEhIKCnJvbGVfY29sb3IYByABKAkSIgoEdXNlchgIIAEoCzIULm1vZGVscy51c2VyLnYxLlVzZXIiLQoWTGlzdEFzc2lnbm1lbnRzUmVxdWVzdBITCgtpbmNpZGVudF9pZBgBIAEoCSJLChdMaXN0QXNzaWdubWVudHNSZXNwb25zZRIwCgthc3NpZ25tZW50cxgBIAMoCzIbLmFwaS5pbmNpZGVudC52MS5Bc3NpZ25tZW50MnkKEUFzc2lnbm1lbnRTZXJ2aWNlEmQKD0xpc3RBc3NpZ25tZW50cxInLmFwaS5pbmNpZGVudC52MS5MaXN0QXNzaWdubWVudHNSZXF1ZXN0GiguYXBpLmluY2lkZW50LnYxLkxpc3RBc3NpZ25tZW50c1Jlc3BvbnNlQoQBChNjb20uYXBpLmluY2lkZW50LnYxQg9Bc3NpZ25tZW50UHJvdG9QAaICA0FJWKoCD0FwaS5JbmNpZGVudC5WMcoCD0FwaVxJbmNpZGVudFxWMeICG0FwaVxJbmNpZGVudFxWMVxHUEJNZXRhZGF0YeoCEUFwaTo6SW5jaWRlbnQ6OlYxYghlZGl0aW9uc3DoBw", [file_models_user_v1_user]);
+export const file_api_incident_v1_assignment: GenFile =
+	/*@__PURE__*/
+	fileDesc(
+		"CiBhcGkvaW5jaWRlbnQvdjEvYXNzaWdubWVudC5wcm90bxIPYXBpLmluY2lkZW50LnYxIrkBCgpBc3NpZ25tZW50EhMKC2luY2lkZW50X2lkGAEgASgJEhQKDHJvbGVfc2xvdF9pZBgCIAEoCRIPCgdyb2xlX2lkGAMgASgJEhEKCXJvbGVfbmFtZRgEIAEoCRIRCglyb2xlX2NvZGUYBSABKAkSEQoJcm9sZV9hYmJyGAYgASgJEhIKCnJvbGVfY29sb3IYByABKAkSIgoEdXNlchgIIAEoCzIULm1vZGVscy51c2VyLnYxLlVzZXIiLQoWTGlzdEFzc2lnbm1lbnRzUmVxdWVzdBITCgtpbmNpZGVudF9pZBgBIAEoCSJLChdMaXN0QXNzaWdubWVudHNSZXNwb25zZRIwCgthc3NpZ25tZW50cxgBIAMoCzIbLmFwaS5pbmNpZGVudC52MS5Bc3NpZ25tZW50MnkKEUFzc2lnbm1lbnRTZXJ2aWNlEmQKD0xpc3RBc3NpZ25tZW50cxInLmFwaS5pbmNpZGVudC52MS5MaXN0QXNzaWdubWVudHNSZXF1ZXN0GiguYXBpLmluY2lkZW50LnYxLkxpc3RBc3NpZ25tZW50c1Jlc3BvbnNlQoQBChNjb20uYXBpLmluY2lkZW50LnYxQg9Bc3NpZ25tZW50UHJvdG9QAaICA0FJWKoCD0FwaS5JbmNpZGVudC5WMcoCD0FwaVxJbmNpZGVudFxWMeICG0FwaVxJbmNpZGVudFxWMVxHUEJNZXRhZGF0YeoCEUFwaTo6SW5jaWRlbnQ6OlYxYghlZGl0aW9uc3DoBw",
+		[file_models_user_v1_user],
+	);
 
 /**
  * @generated from message api.incident.v1.Assignment
  */
 export type Assignment = Message<"api.incident.v1.Assignment"> & {
-  /**
-   * @generated from field: string incident_id = 1;
-   */
-  incidentId: string;
+	/**
+	 * @generated from field: string incident_id = 1;
+	 */
+	incidentId: string;
 
-  /**
-   * @generated from field: string role_slot_id = 2;
-   */
-  roleSlotId: string;
+	/**
+	 * @generated from field: string role_slot_id = 2;
+	 */
+	roleSlotId: string;
 
-  /**
-   * @generated from field: string role_id = 3;
-   */
-  roleId: string;
+	/**
+	 * @generated from field: string role_id = 3;
+	 */
+	roleId: string;
 
-  /**
-   * @generated from field: string role_name = 4;
-   */
-  roleName: string;
+	/**
+	 * @generated from field: string role_name = 4;
+	 */
+	roleName: string;
 
-  /**
-   * @generated from field: string role_code = 5;
-   */
-  roleCode: string;
+	/**
+	 * @generated from field: string role_code = 5;
+	 */
+	roleCode: string;
 
-  /**
-   * @generated from field: string role_abbr = 6;
-   */
-  roleAbbr: string;
+	/**
+	 * @generated from field: string role_abbr = 6;
+	 */
+	roleAbbr: string;
 
-  /**
-   * @generated from field: string role_color = 7;
-   */
-  roleColor: string;
+	/**
+	 * @generated from field: string role_color = 7;
+	 */
+	roleColor: string;
 
-  /**
-   * @generated from field: models.user.v1.User user = 8;
-   */
-  user?: User;
+	/**
+	 * @generated from field: models.user.v1.User user = 8;
+	 */
+	user?: User;
 };
 
 /**
  * Describes the message api.incident.v1.Assignment.
  * Use `create(AssignmentSchema)` to create a new message.
  */
-export const AssignmentSchema: GenMessage<Assignment> = /*@__PURE__*/
-  messageDesc(file_api_incident_v1_assignment, 0);
+export const AssignmentSchema: GenMessage<Assignment> =
+	/*@__PURE__*/
+	messageDesc(file_api_incident_v1_assignment, 0);
 
 /**
  * @generated from message api.incident.v1.ListAssignmentsRequest
  */
-export type ListAssignmentsRequest = Message<"api.incident.v1.ListAssignmentsRequest"> & {
-  /**
-   * @generated from field: string incident_id = 1;
-   */
-  incidentId: string;
-};
+export type ListAssignmentsRequest =
+	Message<"api.incident.v1.ListAssignmentsRequest"> & {
+		/**
+		 * @generated from field: string incident_id = 1;
+		 */
+		incidentId: string;
+	};
 
 /**
  * Describes the message api.incident.v1.ListAssignmentsRequest.
  * Use `create(ListAssignmentsRequestSchema)` to create a new message.
  */
-export const ListAssignmentsRequestSchema: GenMessage<ListAssignmentsRequest> = /*@__PURE__*/
-  messageDesc(file_api_incident_v1_assignment, 1);
+export const ListAssignmentsRequestSchema: GenMessage<ListAssignmentsRequest> =
+	/*@__PURE__*/
+	messageDesc(file_api_incident_v1_assignment, 1);
 
 /**
  * @generated from message api.incident.v1.ListAssignmentsResponse
  */
-export type ListAssignmentsResponse = Message<"api.incident.v1.ListAssignmentsResponse"> & {
-  /**
-   * @generated from field: repeated api.incident.v1.Assignment assignments = 1;
-   */
-  assignments: Assignment[];
-};
+export type ListAssignmentsResponse =
+	Message<"api.incident.v1.ListAssignmentsResponse"> & {
+		/**
+		 * @generated from field: repeated api.incident.v1.Assignment assignments = 1;
+		 */
+		assignments: Assignment[];
+	};
 
 /**
  * Describes the message api.incident.v1.ListAssignmentsResponse.
  * Use `create(ListAssignmentsResponseSchema)` to create a new message.
  */
-export const ListAssignmentsResponseSchema: GenMessage<ListAssignmentsResponse> = /*@__PURE__*/
-  messageDesc(file_api_incident_v1_assignment, 2);
+export const ListAssignmentsResponseSchema: GenMessage<ListAssignmentsResponse> =
+	/*@__PURE__*/
+	messageDesc(file_api_incident_v1_assignment, 2);
 
 /**
  * @generated from service api.incident.v1.AssignmentService
  */
 export const AssignmentService: GenService<{
-  /**
-   * @generated from rpc api.incident.v1.AssignmentService.ListAssignments
-   */
-  listAssignments: {
-    methodKind: "unary";
-    input: typeof ListAssignmentsRequestSchema;
-    output: typeof ListAssignmentsResponseSchema;
-  },
-}> = /*@__PURE__*/
-  serviceDesc(file_api_incident_v1_assignment, 0);
-
+	/**
+	 * @generated from rpc api.incident.v1.AssignmentService.ListAssignments
+	 */
+	listAssignments: {
+		methodKind: "unary";
+		input: typeof ListAssignmentsRequestSchema;
+		output: typeof ListAssignmentsResponseSchema;
+	};
+}> = /*@__PURE__*/ serviceDesc(file_api_incident_v1_assignment, 0);

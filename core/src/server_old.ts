@@ -3,7 +3,6 @@ import { zValidator } from "@hono/zod-validator";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { z } from "zod";
-import { createLogger } from "./logger.ts";
 
 const app = new Hono();
 app.get("/", (c) => c.text("Hello Node.js!"));
@@ -29,11 +28,6 @@ const route = app.post(
   }
 );
 
-const port = process.env.CORE_PORT;
-if (!port) {
-	throw new Error("CORE_PORT is not set");
-}
-serve({...route, port: Number(port)});
-console.log(`Server is running on port ${port}`);
+serve({...route, port: 8000});
 
 export type AppType = typeof route;

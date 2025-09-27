@@ -26,7 +26,7 @@ export async function loader({ context, params }: Route.LoaderArgs) {
 export default function ({ loaderData, params }: Route.ComponentProps) {
   const { incident, assignments } = loaderData;
   return (
-    <div className="flex flex-col gap-y-4 h-svh">
+    <div className="flex flex-col gap-y-4 h-svh max-w-4xl">
       <div className="flex flex-col px-6 pb-2">
         {/* title */}
         <div className="flex flex-col py-5">
@@ -63,15 +63,7 @@ export default function ({ loaderData, params }: Route.ComponentProps) {
             <h3 className="text-lg font-medium">アサイン</h3>
             <div className="text-sm flex flex-row flex-wrap items-center gap-x-6 gap-y-3">
               {assignments.map((assign) => {
-                return (
-                  <Assign
-                    key={assign.roleId}
-                    role={{ label: assign.roleName, abbr: assign.roleAbbr, color: assign.roleColor }}
-                    onClick={function (): void {
-                      throw new Error("Function not implemented.");
-                    }}
-                  />
-                );
+                return <Assign key={assign.roleId} assignment={assign} incidentId={params.incidentId} />;
               })}
             </div>
           </div>
@@ -92,7 +84,6 @@ export default function ({ loaderData, params }: Route.ComponentProps) {
 
 function SubMenus({ incidentId }: { incidentId: string }) {
   const { pathname } = useLocation();
-  console.log(pathname);
 
   const menus = [
     {
@@ -106,7 +97,7 @@ function SubMenus({ incidentId }: { incidentId: string }) {
   ];
 
   return (
-    <ul className="flex flex-col px-3 py-3 gap-y-2">
+    <ul className="flex flex-col px-3 py-4 gap-y-2">
       {menus.map((m) => {
         const cls = pathname === m.path ? "bg-slate-100" : "";
         return (

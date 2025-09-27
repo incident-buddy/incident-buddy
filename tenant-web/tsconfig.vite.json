@@ -8,7 +8,6 @@
     "server/**/*",
     "gen/**/*",
     "src/**/*",
-		"../core/src/*"
   ],
   "compilerOptions": {
     "composite": true,
@@ -22,7 +21,6 @@
     "baseUrl": ".",
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
-			"@core/*": ["../core/src/*"],
       "@/*": ["./src/*"],
       "~/*": ["./app/*"],
       "@pb/*": ["gen/pb/*"]

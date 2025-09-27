@@ -10,6 +10,7 @@ export default [
         route("timeline", "routes/incident/show/timeline/incident.show.timeline.route.tsx"),
         route("edit", "routes/incident/update/incident.update.route.tsx"),
         route("edit-summary", "routes/incident/update/incident.update-summary.route.tsx"),
+        route("assign/:roleSlotId/", "routes/incident/assign/assign.route.tsx"),
       ]),
     ]),
 

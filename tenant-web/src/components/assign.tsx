@@ -1,3 +1,5 @@
+import { href, Link } from "react-router";
+
 type AssignmentColor = "red" | "blue" | "green";
 
 function colorMap(color: AssignmentColor | string): { bd: string; bg: string; text: string } {
@@ -18,31 +20,35 @@ function colorMap(color: AssignmentColor | string): { bd: string; bg: string; te
 }
 
 type Assignment = {
-  role: {
-    label: string;
-    abbr: string;
-    color: AssignmentColor | string;
-  };
+  roleSlotId: string;
+  roleName: string;
+  roleCode: string;
+  roleAbbr: string;
+  roleColor: string;
   user?: {
-    first: string;
-    last: string;
+    id: string;
+    familyName: string;
+    givenName: string;
+    email: string;
   };
-  onClick: () => void;
 };
 
-export function Assign(props: Assignment) {
-  const { role, user, onClick } = props;
-  const assigneeLabel = user ? `${user.last} ${user.first}` : "未アサイン";
-  const color = colorMap(role.color);
+export function Assign({ assignment, incidentId }: { assignment: Assignment; incidentId: string }) {
+  const assigneeLabel = assignment.user ? `${assignment.user.familyName} ${assignment.user.givenName}` : "未アサイン";
+  const color = colorMap(assignment.roleColor);
   return (
     <div className="flex flex-row items-center gap-x-2">
       <div className={`w-9 h-9 font-medium flex items-center justify-center rounded-md ${color.bg} border ${color.bd}`}>
-        <span className={color.text}>{role.abbr}</span>
+        <span className={color.text}>{assignment.roleAbbr}</span>
       </div>
       <div className="flex flex-col justify-between">
-        <div className="text-xs text-muted-foreground">{role.label}</div>
+        <div className="text-xs text-muted-foreground">{assignment.roleName}</div>
         <div className="font-semibold text-violet-900">
-          <button onClick={onClick}>{assigneeLabel}</button>
+          <Link
+            to={href("/incident/:incidentId/assign/:roleSlotId", { incidentId, roleSlotId: assignment.roleSlotId })}
+          >
+            {assigneeLabel}
+          </Link>
         </div>
       </div>
     </div>

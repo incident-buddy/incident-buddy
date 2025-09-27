@@ -15,11 +15,20 @@ tasks:
     deps:
       - fmt:core
       - fmt:web
+  docker:
+    dir: ./docker
+    cmd: docker compose up -d
   dev:web:
-    dir: ./web
+    dir: ./tenant-web
+    cmd: pnpm dev
+  dev:core:
+    deps:
+      - docker
+    dir: ./core
     cmd: pnpm dev
   dev:
     deps:
+      - dev:core
       - dev:web
   clean:proto:
     cmds:

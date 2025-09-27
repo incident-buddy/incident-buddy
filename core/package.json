@@ -1,19 +1,19 @@
 {
 	"name": "core",
+	"private": true,
 	"version": "1.0.0",
-	"description": "",
 	"type": "module",
-	"main": "index.js",
 	"scripts": {
 		"dev": "tsx src/server.ts | pino-pretty",
 		"gen:schema": "drizzle-kit pull && sed -i 's/mode: '\"'string'\"'/mode: '\"'date'\"'/g' ./drizzle/schema.ts",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"format": "biome format --write ."
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"packageManager": "pnpm@10.12.2",
+	"engines": {
+		"pnpm": "10.17.1",
+		"npm": "please_use_pnpm_instead"
+	},
+	"packageManager": "pnpm@10.17.1",
 	"dependencies": {
 		"@bufbuild/protobuf": "^2.7.0",
 		"@connectrpc/connect": "^2.1.0",

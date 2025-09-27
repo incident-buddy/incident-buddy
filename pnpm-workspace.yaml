@@ -1,5 +1,8 @@
 packages:
-  - 'shared'
-  - 'core'
-  - 'worker'
-  - 'tenant-web'
+  - shared
+  - core
+  - worker
+  - tenant-web
+
+onlyBuiltDependencies:
+  - esbuild

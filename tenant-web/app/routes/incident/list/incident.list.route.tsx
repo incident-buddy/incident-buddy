@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/pagination";
 import { colorFromCode, statusTypeFromCode, type ColorType, type StatusType } from "../type.ts";
 import { statusStyle } from "../style.ts";
+import { apiClient } from "@/lib/api-client.ts";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "New React Router App" }, { name: "description", content: "Welcome to React Router!" }];
@@ -25,17 +26,8 @@ export async function action(args: Route.ActionArgs) {
 }
 
 export async function loader({ context }: Route.LoaderArgs) {
-  const client = createClient(IncidentService, context.transport);
-  const result = await client.listIncidents({});
-  const incidents = result.incidents.map((inc) => {
-    const latestStatus = {
-      ...inc.latestStatus!,
-      color: colorFromCode(inc.latestStatus!.color),
-      type: statusTypeFromCode(inc.latestStatus!.type),
-    };
-    return { ...inc, latestStatus };
-  });
-  return { incidents };
+  const response = await apiClient.incidents.$get();
+	return await response.json();
 }
 export default function ({ loaderData }: Route.ComponentProps) {
   const { pathname } = useLocation();

@@ -19,7 +19,7 @@ import {
 	workflowVersions,
 	workflowExecutions,
 	slackWorkspaces,
-} from "./schema";
+} from "./schema.ts";
 
 export const usersRelations = relations(users, ({ one, many }) => ({
 	tenant: one(tenants, {

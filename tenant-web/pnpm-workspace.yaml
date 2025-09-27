@@ -1,5 +1,0 @@
-onlyBuiltDependencies:
-  - '@tailwindcss/oxide'
-  - bcrypt
-  - core-js
-  - esbuild

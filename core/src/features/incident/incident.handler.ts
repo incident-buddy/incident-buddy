@@ -7,21 +7,20 @@ const app = new Hono();
 const repo = new IncidentRepository(db);
 const service = new IncidentService(repo);
 
-app.get("/", async (c) => {
-	const incidents = await service.listAssignments();
-	return c.json(incidents);
-});
+const route = app
+	.get("/", async (c) => {
+		const incidents = await service.listAssignments();
+		return c.json(incidents);
+	})
+	.get("/:id", async (c) => {
+		const id = c.req.param("id");
+		const incident = await service.fetchAssignment({ id });
+		return c.json(incident);
+	})
+	.get("/:id/assignment", async (c) => {
+		const id = c.req.param("id");
+		const assignments = await service.listAssignmentSlots({ id });
+		return c.json(assignments);
+	});
 
-app.get("/:id", async (c) => {
-	const id = c.req.param("id");
-	const incident = await service.fetchAssignment({ id });
-	return c.json(incident);
-});
-
-app.get("/:id/assignment", async (c) => {
-	const id = c.req.param("id");
-	const assignments = await service.listAssignmentSlots({ id });
-	return c.json(assignments);
-});
-
-export default app;
+export default route;

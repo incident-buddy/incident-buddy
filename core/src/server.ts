@@ -10,27 +10,28 @@ const app = new Hono();
 app.use(logger());
 app.get("/", (c) => c.text("Hello Node.js!"));
 
-const route = app.post(
-	"/posts",
-	zValidator(
-		"form",
-		z.object({
-			title: z.string(),
-			body: z.string(),
-		}),
-	),
-	(c) => {
-		// ...
-		return c.json(
-			{
-				ok: true,
-				message: "Created!",
-			},
-			201,
-		);
-	},
-);
-app.route("/incidents", incidents);
+const route = app
+	.post(
+		"/posts",
+		zValidator(
+			"form",
+			z.object({
+				title: z.string(),
+				body: z.string(),
+			}),
+		),
+		(c) => {
+			// ...
+			return c.json(
+				{
+					ok: true,
+					message: "Created!",
+				},
+				201,
+			);
+		},
+	)
+	.route("/incidents", incidents);
 
 const port = process.env.CORE_PORT;
 if (!port) {

@@ -1,6 +1,11 @@
 {
   "name": "shared",
   "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    "./types/generic": "./types/generic/color.type.ts",
+    "./types/incident": "./types/incident/incident.type.ts"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

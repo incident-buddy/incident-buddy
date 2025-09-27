@@ -1,7 +1,7 @@
 import type { DB } from "@/db/type.ts";
 import { eq } from "drizzle-orm";
 import * as s from "drizzle/schema.ts";
-import type { Incident, Assignment } from "./incident.type.ts";
+import type { Incident, Assignment } from "shared/types/incident";
 
 const selectClause = {
 	id: s.incidents.id,

@@ -52,6 +52,9 @@ importers:
       pino:
         specifier: ^9.9.4
         version: 9.11.0
+      shared:
+        specifier: workspace:*
+        version: link:../shared
       typescript:
         specifier: ^5.9.2
         version: 5.9.2

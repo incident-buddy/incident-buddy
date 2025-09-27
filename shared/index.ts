@@ -1,3 +1,2 @@
-import { route } from "../core/src/index";
-
-export type AppType = typeof route;
+export * from "./types/generic/color.type.js";
+export * from "./types/incident/incident.type.js";

@@ -7,7 +7,8 @@
 		"dev": "tsx src/server.ts | pino-pretty",
 		"gen:schema": "drizzle-kit pull && sed -i 's/mode: '\"'string'\"'/mode: '\"'date'\"'/g' ./drizzle/schema.ts",
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"format": "biome format --write ."
+		"format": "biome format --write .",
+		"typecheck": "tsc --noEmit"
 	},
 	"engines": {
 		"pnpm": "10.17.1",
@@ -30,7 +31,8 @@
 		"pg": "^8.16.3",
 		"pino": "^9.9.4",
 		"typescript": "^5.9.2",
-		"zod": "^4.1.11"
+		"zod": "^4.1.11",
+		"shared": "workspace:*"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.2.4",

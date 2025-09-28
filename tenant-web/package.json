@@ -7,7 +7,7 @@
     "dev": "cross-env NODE_ENV=development node server.js | pino-pretty",
     "start": "node server.js",
     "format": "biome format --write .",
-    "typecheck": "react-router typegen && tsc -b"
+    "typecheck": "react-router typegen && tsc --noEmit"
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.7.0",
@@ -45,7 +45,8 @@
     "tailwind-merge": "^3.3.1",
     "ulid": "^3.0.1",
     "zod": "^3.25.75",
-  	"core": "workspace:*"
+  	"core": "workspace:*",
+		"shared": "workspace:*"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",

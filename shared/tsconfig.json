@@ -1,23 +1,10 @@
 {
-  "include": [
-    "../core/src/*"
-  ],
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "checkJs": true,
-    "verbatimModuleSyntax": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    // Other Outputs
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-    "baseUrl": ".",
-  	"exactOptionalPropertyTypes": true,
-    "paths": {
-      "core/*": ["../core/src/*"]
-    },
-    // by me
-    "allowImportingTsExtensions": true
-  }
+    "composite": true,
+    "baseUrl": "."
+  },
+  "include": [
+    "types/**/*"
+  ]
 }

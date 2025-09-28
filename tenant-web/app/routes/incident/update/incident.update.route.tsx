@@ -10,8 +10,8 @@ import type { Route } from "./+types/incident.update.route";
 import { Modal } from "@/components/modal";
 import { createClient } from "@connectrpc/connect";
 import { notFound } from "~/utils/response";
-import { IncidentService } from "@pb/api/incident/v1/incident_pb";
 import { FormItem } from "@/components/ui/form";
+import { apiClient } from "@/lib/api-client";
 
 const schema = z.object({
   title: z.string().min(1).max(300),
@@ -19,8 +19,8 @@ const schema = z.object({
 
 export async function loader({ context, params }: Route.LoaderArgs) {
   const { incidentId } = params;
-  const client = createClient(IncidentService, context.transport);
-  const { incident } = await client.getIncident({ id: incidentId });
+  const response = await apiClient.incidents[":id"].$get({ param: { id: incidentId } });
+  const { incident } = await response.json();
 
   if (!incident) {
     throw notFound(`incident: ${incidentId}`);
@@ -37,8 +37,9 @@ export const action = async ({ context, request, params }: Route.ActionArgs) => 
   if (submission.status !== "success") {
     return submission.reply();
   }
-  const client = createClient(IncidentService, context.transport);
-  await client.updateIncidentTitle({ id: incidentId, title: submission.value.title });
+
+  // TODO
+  console.warn("not implemented");
 
   return redirect(href("/incident/:incidentId", params));
 };

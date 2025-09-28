@@ -6,11 +6,23 @@ export type Incident = {
 	title: string;
 	summary: string;
 	declaredAt: Date;
-	latestStatus: {
-		id: string;
-	};
+	latestStatus: IncidentStatus;
 	tenantId: string;
 };
+
+export type IncidentStatus = {
+	id: string;
+	type: StatusType;
+	color: Color;
+};
+
+const statusType = [
+	"declared", // 発生
+	"ongoing", // 対応中
+	"converged", // 緩和中
+	"closed", // 終了
+];
+export type StatusType = (typeof statusType)[number];
 
 export type Assignment = {
 	incidentId: string;
@@ -24,7 +36,7 @@ export type Assignment = {
 		color: Color;
 	};
 	/** ロールにアサインされたユーザー*/
-	assignment:
+	assignee:
 		| {
 				id: string;
 				familyName: string;
@@ -33,11 +45,3 @@ export type Assignment = {
 		  }
 		| undefined;
 };
-
-const statusType = [
-	"declared", // 発生
-	"ongoing", // 対応中
-	"converged", // 緩和中
-	"closed", // 終了
-];
-export type StatusType = (typeof statusType)[number];

@@ -1,23 +1,18 @@
 {
+  "extends": "../tsconfig.json",
   "files": [],
-  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.vite.json" }],
+  "references": [
+    { "path": "./tsconfig.node.json" }, 
+    { "path": "./tsconfig.vite.json" }
+  ],
   "compilerOptions": {
+    "composite": true,
     "checkJs": true,
-    "verbatimModuleSyntax": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    // Other Outputs
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "~/*": ["./app/*"],
-      "@pb/*": ["gen/pb/*"]
+      "~/*": ["./app/*"]
     },
-    // by me
-    "allowImportingTsExtensions": true
+    "skipLibCheck": true
   }
 }

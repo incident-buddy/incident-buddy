@@ -60,7 +60,7 @@ export class IncidentRepository {
 			.then((rows) => rows.at(0) ?? null);
 	}
 
-	async listAssignmentSlots(args: { id: string }): Promise<Assignment[]> {
+	async listAssignments(args: { id: string }): Promise<Assignment[]> {
 		const rows = await this.db
 			.select({
 				incidentId: s.incidentRoleSlots.incidentId,
@@ -94,7 +94,7 @@ export class IncidentRepository {
 			incidentId: row.incidentId,
 			roleSlotId: row.roleSlotId,
 			role: row.role,
-			assignment: row.userId
+			assignee: row.userId
 				? {
 						id: row.userId!,
 						familyName: row.familyName!,

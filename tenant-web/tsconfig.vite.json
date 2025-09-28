@@ -6,8 +6,10 @@
     "app/**/.server/**/*",
     "app/**/.client/**/*",
     "server/**/*",
-    "gen/**/*",
-    "src/**/*",
+    "src/**/*"
+  ],
+  "exclude": [
+    "../core/**/*"
   ],
   "compilerOptions": {
     "composite": true,
@@ -22,8 +24,7 @@
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
       "@/*": ["./src/*"],
-      "~/*": ["./app/*"],
-      "@pb/*": ["gen/pb/*"]
+      "~/*": ["./app/*"]
     },
     "esModuleInterop": true,
     "resolveJsonModule": true,

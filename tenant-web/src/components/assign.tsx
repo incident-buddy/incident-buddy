@@ -1,4 +1,5 @@
 import { href, Link } from "react-router";
+import type { Assignment } from "shared/types/incident";
 
 type AssignmentColor = "red" | "blue" | "green";
 
@@ -19,30 +20,18 @@ function colorMap(color: AssignmentColor | string): { bd: string; bg: string; te
   }
 }
 
-type Assignment = {
-  roleSlotId: string;
-  roleName: string;
-  roleCode: string;
-  roleAbbr: string;
-  roleColor: string;
-  user?: {
-    id: string;
-    familyName: string;
-    givenName: string;
-    email: string;
-  };
-};
-
 export function Assign({ assignment, incidentId }: { assignment: Assignment; incidentId: string }) {
-  const assigneeLabel = assignment.user ? `${assignment.user.familyName} ${assignment.user.givenName}` : "未アサイン";
-  const color = colorMap(assignment.roleColor);
+  const assigneeLabel = assignment.assignee
+    ? `${assignment.assignee.familyName} ${assignment.assignee.givenName}`
+    : "未アサイン";
+  const color = colorMap(assignment.role.color);
   return (
     <div className="flex flex-row items-center gap-x-2">
       <div className={`w-9 h-9 font-medium flex items-center justify-center rounded-md ${color.bg} border ${color.bd}`}>
-        <span className={color.text}>{assignment.roleAbbr}</span>
+        <span className={color.text}>{assignment.role.abbr}</span>
       </div>
       <div className="flex flex-col justify-between">
-        <div className="text-xs text-muted-foreground">{assignment.roleName}</div>
+        <div className="text-xs text-muted-foreground">{assignment.role.name}</div>
         <div className="font-semibold text-violet-900">
           <Link
             to={href("/incident/:incidentId/assign/:roleSlotId", { incidentId, roleSlotId: assignment.roleSlotId })}

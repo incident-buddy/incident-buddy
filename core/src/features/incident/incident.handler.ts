@@ -9,7 +9,7 @@ const service = new IncidentService(repo);
 
 const route = app
 	.get("/", async (c) => {
-		const incidents = await service.listAssignments();
+		const incidents = await service.listIncidents();
 		return c.json(incidents);
 	})
 	.get("/:id", async (c) => {
@@ -19,7 +19,8 @@ const route = app
 	})
 	.get("/:id/assignment", async (c) => {
 		const id = c.req.param("id");
-		const assignments = await service.listAssignmentSlots({ id });
+		const assignments = await service.listAssignments({ id });
+		console.log(assignments);
 		return c.json(assignments);
 	});
 

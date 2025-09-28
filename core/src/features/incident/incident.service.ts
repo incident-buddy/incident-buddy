@@ -3,7 +3,7 @@ import type { IncidentRepository } from "./incident.repository.ts";
 export class IncidentService {
 	constructor(private repository: IncidentRepository) {}
 
-	async listAssignments() {
+	async listIncidents() {
 		const incidents = await this.repository.listIncidents();
 		return { incidents };
 	}
@@ -13,8 +13,8 @@ export class IncidentService {
 		return { incident };
 	}
 
-	async listAssignmentSlots(args: { id: string }) {
-		const slots = await this.repository.listAssignmentSlots(args);
-		return { slots };
+	async listAssignments(args: { id: string }) {
+		const assignments = await this.repository.listAssignments(args);
+		return { assignments };
 	}
 }

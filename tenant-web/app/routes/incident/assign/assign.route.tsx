@@ -10,8 +10,8 @@ import { getZodConstraint, parseWithZod } from "@conform-to/zod";
 import { Modal } from "@/components/modal";
 import { createClient } from "@connectrpc/connect";
 import { notFound } from "~/utils/response";
-import { IncidentService } from "@pb/api/incident/v1/incident_pb";
 import { FormItem } from "@/components/ui/form";
+import type { Route } from "./+types/assign.route";
 
 const schema = z.object({
   title: z.string().min(1).max(300),

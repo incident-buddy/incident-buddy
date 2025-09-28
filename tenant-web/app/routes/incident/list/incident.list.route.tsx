@@ -1,6 +1,4 @@
 import type { Route } from "./+types/incident.list.route.ts";
-import { createClient } from "@connectrpc/connect";
-import { IncidentService } from "@pb/api/incident/v1/incident_pb.ts";
 import { href, Link, Outlet, useLocation } from "react-router";
 import { Filter } from "./filter.tsx";
 import { console } from "node:inspector/promises";
@@ -13,9 +11,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { colorFromCode, statusTypeFromCode, type ColorType, type StatusType } from "../type.ts";
 import { statusStyle } from "../style.ts";
 import { apiClient } from "@/lib/api-client.ts";
+import type { IncidentStatus } from "shared/types/incident";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "New React Router App" }, { name: "description", content: "Welcome to React Router!" }];
@@ -97,7 +95,7 @@ function Card({
 }: {
   title: string;
   summary: string;
-  status: { type: StatusType; color: ColorType };
+  status: IncidentStatus;
   isActive: boolean;
 }) {
   const circleStyle = statusStyle(status.color).circle?.bg;

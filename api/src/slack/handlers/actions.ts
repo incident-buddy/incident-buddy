@@ -15,11 +15,10 @@ export function registerActionHandlers(app: App): void {
     await ack();
 
     const values = view.state.values;
-    const title = values["title"]?.["title_input"]?.value ?? "";
-    const severity = (values["severity"]?.["severity_select"]?.selected_option
+    const title = values.title?.title_input?.value ?? "";
+    const severity = (values.severity?.severity_select?.selected_option
       ?.value ?? "P3") as Severity;
-    const description =
-      values["description"]?.["description_input"]?.value ?? "";
+    const description = values.description?.description_input?.value ?? "";
 
     const meta = JSON.parse(view.private_metadata ?? "{}") as {
       channel_id?: string;

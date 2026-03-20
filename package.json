@@ -2,11 +2,17 @@
   "name": "incident-buddy",
   "version": "1.0.0",
   "scripts": {
-    "api": "pnpm -F 'api'"
+    "api": "pnpm -F 'api'",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
   },
-  	"engines": {
-		"pnpm": "10.17.1",
-		"npm": "please_use_pnpm_instead"
-	},
-	"packageManager": "pnpm@10.17.1"
+  "engines": {
+    "pnpm": "10.17.1",
+    "npm": "please_use_pnpm_instead"
+  },
+  "packageManager": "pnpm@10.17.1",
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.8"
+  }
 }

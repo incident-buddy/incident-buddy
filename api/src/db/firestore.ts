@@ -12,7 +12,7 @@ import type {
 } from "./types.js";
 
 if (getApps().length === 0) {
-  initializeApp({ projectId: process.env["FIRESTORE_PROJECT_ID"] });
+  initializeApp({ projectId: process.env.FIRESTORE_PROJECT_ID });
 }
 
 const db = getFirestore();

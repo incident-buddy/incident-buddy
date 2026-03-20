@@ -1,5 +1,5 @@
+import { createHmac, timingSafeEqual } from "node:crypto";
 import type { App, Receiver, ReceiverEvent } from "@slack/bolt";
-import { createHmac, timingSafeEqual } from "crypto";
 import type { Context, Hono } from "hono";
 
 /**
@@ -112,9 +112,7 @@ export class HonoReceiver implements Receiver {
     hmac.update(`v0:${timestamp}:${body}`);
     const computed = `v0=${hmac.digest("hex")}`;
     try {
-      if (
-        !timingSafeEqual(Buffer.from(computed), Buffer.from(signature))
-      ) {
+      if (!timingSafeEqual(Buffer.from(computed), Buffer.from(signature))) {
         return "Invalid signature";
       }
     } catch {

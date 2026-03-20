@@ -1,23 +1,31 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
+import { requireEnv } from "./env.js";
+import { boltApp, receiver } from "./slack/app.js";
+import { registerActionHandlers } from "./slack/handlers/actions.js";
+import { registerCommandHandlers } from "./slack/handlers/commands.js";
+import { registerEventHandlers } from "./slack/handlers/events.js";
+
+// Bolt ハンドラーを登録
+registerCommandHandlers(boltApp);
+registerEventHandlers(boltApp);
+registerActionHandlers(boltApp);
 
 const app = new Hono();
 
-app.get("/", (c) => {
-	return c.text("Hello Hono!");
-});
+// Slack エンドポイントを HonoReceiver 経由で Bolt に委譲
+receiver.registerRoutes(app);
 
-app.post("/", async (c) => {
-	console.log(await c.req.json());
-	return c.json({ ok: true });
-});
+app.get("/health", (c) => c.json({ status: "ok" }));
+
+const port = Number(requireEnv("PORT"));
 
 serve(
-	{
-		fetch: app.fetch,
-		port: 8888,
-	},
-	(info) => {
-		console.log(`Server is running on http://localhost:${info.port}`);
-	},
+  {
+    fetch: app.fetch,
+    port,
+  },
+  (info) => {
+    console.log(`Server is running on http://localhost:${info.port}`);
+  },
 );

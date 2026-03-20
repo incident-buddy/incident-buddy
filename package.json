@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "api": "pnpm -F 'api'",
+    "typecheck": "pnpm -F api typecheck",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write ."

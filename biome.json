@@ -14,6 +14,7 @@
     "indentStyle": "space",
     "indentWidth": 2
   },
+  "plugins": ["./biome-plugins/prefer-object-params.grit"],
   "linter": {
     "enabled": true,
     "rules": {

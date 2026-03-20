@@ -27,9 +27,6 @@
     "noEmit": true
   },
   "references": [
-    { "path": "./shared" },
-    { "path": "./core" },
-    { "path": "./tenant-web" },
-    { "path": "./worker" }
+    { "path": "./api" }
   ]
 }

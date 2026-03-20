@@ -1,0 +1,12 @@
+{
+  "name": "incident-buddy",
+  "version": "1.0.0",
+  "scripts": {
+    "api": "pnpm -F 'api'"
+  },
+  	"engines": {
+		"pnpm": "10.17.1",
+		"npm": "please_use_pnpm_instead"
+	},
+	"packageManager": "pnpm@10.17.1"
+}

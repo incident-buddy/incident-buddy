@@ -2,9 +2,7 @@
   "name": "incident-buddy",
   "version": "1.0.0",
   "scripts": {
-    "core": "pnpm -F 'core'",
-    "shared": "pnpm -F 'shared'",
-		"tenant-web": "pnpm -F 'tenant-web'"
+    "api": "pnpm -F 'api'"
   },
   	"engines": {
 		"pnpm": "10.17.1",

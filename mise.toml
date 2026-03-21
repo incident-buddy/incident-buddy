@@ -37,6 +37,11 @@ run = "devcontainer exec --workspace-folder . bash -c 'pnpm lint:fix'"
 description = "TypeScript 型チェック"
 run = "devcontainer exec --workspace-folder . bash -c 'pnpm typecheck'"
 
+# ── テスト ────────────────────────────────────────────────────
+[tasks.test]
+description = "E2E テストを実行する (devcontainer 内, Firestoreエミュレータ必須)"
+run = "devcontainer exec --workspace-folder . bash -c 'pnpm -F api test'"
+
 # ── 動作確認 ──────────────────────────────────────────────────
 [tasks.health]
 description = "API サーバーのヘルスチェック"

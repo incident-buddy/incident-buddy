@@ -5,7 +5,9 @@
     "dev": "tsx watch --env-file=../.env src/index.ts",
     "typecheck": "tsc --noEmit",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.3",
@@ -15,7 +17,9 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
+    "msw": "^2.7.5",
     "tsx": "^4.7.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
   }
 }

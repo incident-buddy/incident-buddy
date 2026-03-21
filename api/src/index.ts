@@ -11,21 +11,23 @@ registerCommandHandlers(boltApp);
 registerEventHandlers(boltApp);
 registerActionHandlers(boltApp);
 
-const app = new Hono();
+export const app = new Hono();
 
 // Slack エンドポイントを HonoReceiver 経由で Bolt に委譲
 receiver.registerRoutes(app);
 
 app.get("/health", (c) => c.json({ status: "ok" }));
 
-const port = Number(requireEnv("PORT"));
-
-serve(
-  {
-    fetch: app.fetch,
-    port,
-  },
-  (info) => {
-    console.log(`Server is running on http://localhost:${info.port}`);
-  },
-);
+// テスト実行時はサーバーを起動しない
+if (!process.env.VITEST) {
+  const port = Number(requireEnv("PORT"));
+  serve(
+    {
+      fetch: app.fetch,
+      port,
+    },
+    (info) => {
+      console.log(`Server is running on http://localhost:${info.port}`);
+    },
+  );
+}

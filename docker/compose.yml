@@ -5,8 +5,9 @@ services:
       gcloud beta emulators firestore start
       --host-port=0.0.0.0:8080
       --project=demo-incident-buddy
-    ports:
-      - "8080:8080"
-      - "4000:4000"
+    networks:
+      - incident-buddy
 
-volumes:
+networks:
+  incident-buddy:
+    name: incident-buddy

@@ -1,0 +1,96 @@
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { http, HttpResponse } from "msw";
+import { server } from "../setup.js";
+import { app } from "../../index.js";
+import { signSlackRequest } from "../helpers/slack-request.js";
+import { incidentRepository } from "../../features/incident/incident.repository.js";
+import { db } from "../../db/firestore.js";
+
+const SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET!;
+
+async function clearIncidents() {
+  const snap = await db.collection("incidents").get();
+  await Promise.all(snap.docs.map((d) => d.ref.delete()));
+}
+
+describe("POST /slack/interactions - create_incident view submission", () => {
+  beforeEach(clearIncidents);
+  afterEach(() => {
+    server.resetHandlers();
+  });
+
+  it("creates an incident in Firestore and responds 200", async () => {
+    // actions.ts は ack() で HTTP レスポンスを即時返し、Firestoreへの書き込みと
+    // chat.postMessage は非同期で後続実行される。
+    // chat.postMessage が呼ばれた時点で Firestore への書き込みも完了している。
+    let resolvePostMessage!: () => void;
+    const postMessageCalled = new Promise<void>((resolve) => {
+      resolvePostMessage = resolve;
+    });
+    server.use(
+      http.post("https://slack.com/api/chat.postMessage", () => {
+        resolvePostMessage();
+        return HttpResponse.json({ ok: true, ts: "1234567890.000001", channel: "C000TEST" });
+      }),
+    );
+
+    const payload = {
+      type: "view_submission",
+      team: { id: "T000TEST", domain: "testteam" },
+      user: { id: "U000TEST", name: "testuser" },
+      api_app_id: "A000TEST",
+      token: "test-token",
+      trigger_id: "test-trigger",
+      view: {
+        id: "V000TEST",
+        type: "modal",
+        callback_id: "create_incident",
+        private_metadata: JSON.stringify({ channel_id: "C000TEST" }),
+        state: {
+          values: {
+            title: {
+              title_input: {
+                type: "plain_text_input",
+                value: "Database is down",
+              },
+            },
+            severity: {
+              severity_select: {
+                type: "static_select",
+                selected_option: { value: "P1", text: { type: "plain_text", text: "P1 - Critical" } },
+              },
+            },
+            description: {
+              description_input: {
+                type: "plain_text_input",
+                value: "Primary DB not responding",
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const body = new URLSearchParams({
+      payload: JSON.stringify(payload),
+    }).toString();
+
+    const headers = signSlackRequest(body, SIGNING_SECRET);
+
+    const res = await app.request("/slack/interactions", {
+      method: "POST",
+      headers,
+      body,
+    });
+
+    expect(res.status).toBe(200);
+    await postMessageCalled; // Bolt の非同期処理(Firestore書き込み)が完了するまで待つ
+
+    const incidents = await incidentRepository.findOpen();
+    expect(incidents).toHaveLength(1);
+    const incident = incidents[0]!;
+    expect(incident.title).toBe("Database is down");
+    expect(incident.severity).toBe("P1");
+    expect(incident.createdBy).toBe("U000TEST");
+  });
+});

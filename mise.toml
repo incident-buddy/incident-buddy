@@ -11,6 +11,10 @@ run = "devcontainer up --workspace-folder ."
 description = "devcontainer のシェルに入る"
 run = "devcontainer exec --workspace-folder . bash"
 
+[tasks."dc:stop"]
+description = "devcontainer を停止する"
+run = "docker stop $(docker ps -qf 'name=vsc-incident-buddy')"
+
 # ── 開発サーバー ──────────────────────────────────────────────
 [tasks."dev:firestore"]
 description = "Firestore エミュレータを起動する (devcontainer 内)"

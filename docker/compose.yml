@@ -1,10 +1,14 @@
 services:
   firestore:
-    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.emulator
     command: >
-      gcloud beta emulators firestore start
-      --host-port=0.0.0.0:8080
+      firebase emulators:start --only firestore
       --project=demo-incident-buddy
+    ports:
+      - "4004:4000"
+      - "9080:9080"
     networks:
       - incident-buddy
 

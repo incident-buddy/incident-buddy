@@ -18,10 +18,10 @@
   "remoteEnv": {
     "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}"
   },
-  "appPort": [8080, 4000, 8888],
+  "appPort": [9080, 4000, 8888],
   "portsAttributes": {
-    "8080": { "label": "Firestore Emulator" },
-    "4000": { "label": "Firebase Emulator UI" },
+    "9080": { "label": "Firestore Emulator" },
+    "4004": { "label": "Firebase Emulator UI" },
     "8888": { "label": "API Server" }
   }
 }

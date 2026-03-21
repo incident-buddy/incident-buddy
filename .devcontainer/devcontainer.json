@@ -1,0 +1,26 @@
+{
+  "name": "incident-buddy",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts",
+      "nodeGypDependencies": false
+    },
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "moby": false
+    }
+  },
+  "postCreateCommand": "npm install -g pnpm && CI=true pnpm install",
+  "mounts": [
+    "source=${localEnv:HOME}/.claude,target=/root/.claude,type=bind,consistency=cached"
+  ],
+  "remoteEnv": {
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}"
+  },
+  "appPort": [8080, 4000, 8888],
+  "portsAttributes": {
+    "8080": { "label": "Firestore Emulator" },
+    "4000": { "label": "Firebase Emulator UI" },
+    "8888": { "label": "API Server" }
+  }
+}

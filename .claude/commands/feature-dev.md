@@ -271,6 +271,8 @@ Agent(
 - READMEに実装機能を追記
 - docs/backlog.mdから実装済み機能を削除
 
+**specファイルは削除しないこと**
+
 5. 完了を報告する：
    > 「開発ワークフローが完了しました。\n\n- 仕様書: `docs/spec/{feature-slug}.md`\n- 活動日誌: `docs/diary/{yyyy-mm-dd}_{feature-slug}.md`\n\nレトロスペクティブは `docs/retro/` に議事録があります。」
 

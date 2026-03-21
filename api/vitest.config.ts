@@ -6,6 +6,7 @@ export default defineConfig({
     globalSetup: ["./src/test/global-setup.ts"],
     setupFiles: ["./src/test/setup.ts"],
     hookTimeout: 30000,
+    fileParallelism: false,
     env: {
       SLACK_SIGNING_SECRET: "test-signing-secret-32-characters!",
       SLACK_BOT_TOKEN:

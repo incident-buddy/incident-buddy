@@ -9,6 +9,7 @@ export default defineConfig({
     include: [
       "src/features/**/*.presenter.test.ts",
       "src/features/**/*.service.test.ts",
+      "src/features/**/*.parser.test.ts",
     ],
     env: {
       SLACK_SIGNING_SECRET: "test-signing-secret-32-characters!",

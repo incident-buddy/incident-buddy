@@ -16,6 +16,7 @@ export type Incident = {
   serviceName: string;
   slackChannelId: string;
   slackMessageTs: string;
+  incidentChannelId?: string;
   createdBy: string;
   createdByName: string;
   teamIds: string[];

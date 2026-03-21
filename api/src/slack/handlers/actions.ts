@@ -46,6 +46,7 @@ export function registerActionHandlers(app: App): void {
         ...message,
       });
 
+      await incidentRepository.updateIncidentChannelId(incident.id, incidentChannel.id);
       if (result.ts) {
         await incidentRepository.updateSlackMessageTs(incident.id, result.ts);
       }

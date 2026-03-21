@@ -11,7 +11,6 @@ export const incidentService = {
       teamIds: [],
       serviceIds: [],
       responderIds: [],
-      serviceName: params.serviceName,
     });
   },
 };

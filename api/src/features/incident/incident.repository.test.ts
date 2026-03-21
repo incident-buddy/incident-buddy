@@ -93,6 +93,18 @@ describe("incidentRepository.findOpen", () => {
   });
 });
 
+describe("incidentRepository.updateIncidentChannelId", () => {
+  afterEach(clearIncidents);
+
+  it("updates the incidentChannelId field", async () => {
+    const incident = await incidentRepository.create(baseInput);
+    await incidentRepository.updateIncidentChannelId(incident.id, "C_INC_UPDATED");
+
+    const updated = await incidentRepository.findById(incident.id);
+    expect(updated?.incidentChannelId).toBe("C_INC_UPDATED");
+  });
+});
+
 describe("incidentRepository.updateSlackMessageTs", () => {
   afterEach(clearIncidents);
 

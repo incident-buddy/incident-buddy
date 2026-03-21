@@ -11,6 +11,7 @@ const baseIncident: Incident = {
   serviceName: "",
   slackChannelId: "C000TEST",
   slackMessageTs: "",
+  incidentChannelId: "C_INC_001",
   createdBy: "U000TEST",
   createdByName: "testuser",
   teamIds: [],

@@ -43,6 +43,13 @@ export const incidentRepository = {
     return snap.docs.map((d) => toDomain(d.data()));
   },
 
+  async updateIncidentChannelId(id: string, channelId: string): Promise<void> {
+    await incidentsCol.doc(id).update({
+      incidentChannelId: channelId,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  },
+
   async updateSlackMessageTs(id: string, ts: string): Promise<void> {
     await incidentsCol.doc(id).update({
       slackMessageTs: ts,

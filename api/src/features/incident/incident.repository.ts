@@ -1,9 +1,19 @@
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { incidentsCol } from "../../db/firestore.js";
 import type { CreateIncidentInput, IncidentDoc } from "../../db/types.js";
+import type { Incident } from "./incident.model.js";
+
+function toDomain(doc: IncidentDoc): Incident {
+  return {
+    ...doc,
+    createdAt: doc.createdAt.toDate(),
+    updatedAt: doc.updatedAt.toDate(),
+    resolvedAt: doc.resolvedAt?.toDate() ?? null,
+  };
+}
 
 export const incidentRepository = {
-  async create(input: CreateIncidentInput): Promise<IncidentDoc> {
+  async create(input: CreateIncidentInput): Promise<Incident> {
     const ref = incidentsCol.doc();
     const now = Timestamp.now();
     const doc: IncidentDoc = {
@@ -15,20 +25,22 @@ export const incidentRepository = {
       resolvedAt: null,
     };
     await ref.set(doc);
-    return doc;
+    return toDomain(doc);
   },
 
-  async findById(id: string): Promise<IncidentDoc | null> {
+  async findById(id: string): Promise<Incident | null> {
     const snap = await incidentsCol.doc(id).get();
-    return snap.exists ? (snap.data() ?? null) : null;
+    if (!snap.exists) return null;
+    const data = snap.data();
+    return data ? toDomain(data) : null;
   },
 
-  async findOpen(): Promise<IncidentDoc[]> {
+  async findOpen(): Promise<Incident[]> {
     const snap = await incidentsCol
       .where("status", "==", "open")
       .orderBy("createdAt", "desc")
       .get();
-    return snap.docs.map((d) => d.data());
+    return snap.docs.map((d) => toDomain(d.data()));
   },
 
   async updateSlackMessageTs(id: string, ts: string): Promise<void> {

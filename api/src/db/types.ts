@@ -1,13 +1,11 @@
 import type { Timestamp } from "firebase-admin/firestore";
+import type {
+  IncidentStatus,
+  Severity,
+  TimelineEventType,
+} from "../features/incident/incident.model.js";
 
-export type IncidentStatus = "open" | "resolved";
-export type Severity = "P1" | "P2" | "P3" | "P4";
-export type TimelineEventType =
-  | "created"
-  | "responder_added"
-  | "service_added"
-  | "resolved"
-  | "note";
+export type { IncidentStatus, Severity, TimelineEventType };
 
 export type IncidentDoc = {
   readonly id: string;

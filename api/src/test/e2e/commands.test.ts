@@ -1,8 +1,8 @@
+import { HttpResponse, http } from "msw";
 import { afterEach, describe, expect, it } from "vitest";
-import { server } from "../setup.js";
-import { http, HttpResponse } from "msw";
 import { app } from "../../index.js";
 import { signSlackRequest } from "../helpers/slack-request.js";
+import { server } from "../setup.js";
 
 const SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET!;
 

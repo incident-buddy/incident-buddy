@@ -1,10 +1,10 @@
+import { HttpResponse, http } from "msw";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { http, HttpResponse } from "msw";
-import { server } from "../setup.js";
+import { db } from "../../db/firestore.js";
+import { incidentRepository } from "../../features/incident/incident.repository.js";
 import { app } from "../../index.js";
 import { signSlackRequest } from "../helpers/slack-request.js";
-import { incidentRepository } from "../../features/incident/incident.repository.js";
-import { db } from "../../db/firestore.js";
+import { server } from "../setup.js";
 
 const SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET!;
 
@@ -30,7 +30,11 @@ describe("POST /slack/interactions - create_incident view submission", () => {
     server.use(
       http.post("https://slack.com/api/chat.postMessage", () => {
         resolvePostMessage();
-        return HttpResponse.json({ ok: true, ts: "1234567890.000001", channel: "C000TEST" });
+        return HttpResponse.json({
+          ok: true,
+          ts: "1234567890.000001",
+          channel: "C000TEST",
+        });
       }),
     );
 
@@ -57,7 +61,10 @@ describe("POST /slack/interactions - create_incident view submission", () => {
             severity: {
               severity_select: {
                 type: "static_select",
-                selected_option: { value: "P1", text: { type: "plain_text", text: "P1 - Critical" } },
+                selected_option: {
+                  value: "P1",
+                  text: { type: "plain_text", text: "P1 - Critical" },
+                },
               },
             },
             description: {

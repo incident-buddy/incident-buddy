@@ -38,8 +38,12 @@ description = "TypeScript 型チェック"
 run = "devcontainer exec --workspace-folder . bash -c 'pnpm typecheck'"
 
 # ── テスト ────────────────────────────────────────────────────
+[tasks."test:unit"]
+description = "ユニットテストを実行する (devcontainer 内, Firestoreエミュレータ不要)"
+run = "devcontainer exec --workspace-folder . bash -c 'pnpm -F api exec vitest run --config vitest.unit.config.ts'"
+
 [tasks.test]
-description = "E2E テストを実行する (devcontainer 内, Firestoreエミュレータ必須)"
+description = "全テストを実行する (devcontainer 内, Firestoreエミュレータ必須)"
 run = "devcontainer exec --workspace-folder . bash -c 'pnpm -F api test'"
 
 # ── 動作確認 ──────────────────────────────────────────────────

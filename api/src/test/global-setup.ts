@@ -18,13 +18,15 @@ function checkFirestoreEmulator(): Promise<void> {
       reject(
         new Error(
           `Firestore emulator is not running at ${host}.\n` +
-          "Run 'mise run dev:firestore' before running tests.",
+            "Run 'mise run dev:firestore' before running tests.",
         ),
       );
     });
     socket.setTimeout(2000, () => {
       socket.destroy();
-      reject(new Error(`Timed out connecting to Firestore emulator at ${host}.`));
+      reject(
+        new Error(`Timed out connecting to Firestore emulator at ${host}.`),
+      );
     });
   });
 }

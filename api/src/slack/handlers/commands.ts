@@ -2,25 +2,27 @@ import type { App } from "@slack/bolt";
 import { optionalEnv } from "../../env.js";
 import { buildConfigMessage } from "../../features/incident-config/incident-config.presenter.js";
 import { loadConfig } from "../../features/incident-config/incident-config.service.js";
+import { postError } from "./post-error.js";
 
 export function registerCommandHandlers(app: App): void {
-  app.command("/inc", async ({ ack, body, client }) => {
+  app.command("/inc", async ({ ack, body, client, respond }) => {
     await ack();
 
     const configPath = optionalEnv("INCIDENT_CONFIG_PATH");
 
-    // /inc config — 設定確認
+    // /inc config — 設定確認（エラー通知の対象外: 既存の ephemeral 表示で対応）
+    // respond() は response_url を使うためボットのチャンネル参加不要
     if (body.text === "config") {
       const result = configPath ? await loadConfig(configPath) : null;
-      await client.chat.postEphemeral({
-        channel: body.channel_id,
-        user: body.user_id,
+      await respond({
+        response_type: "ephemeral",
         text: buildConfigMessage(result, configPath),
       });
       return;
     }
 
-    const configResult = configPath ? await loadConfig(configPath) : null;
+    try {
+      const configResult = configPath ? await loadConfig(configPath) : null;
     const config = configResult?.type === "ok" ? configResult.config : null;
 
     const severityOptions =
@@ -118,5 +120,8 @@ export function registerCommandHandlers(app: App): void {
         ],
       },
     });
+    } catch (e) {
+      await postError(client, body.channel_id, e);
+    }
   });
 }

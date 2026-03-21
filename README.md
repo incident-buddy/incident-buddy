@@ -6,17 +6,40 @@ Slack からインシデントを宣言・管理するボット。Firestore に�
 
 | 機能 | Slack 操作 | 説明 |
 |---|---|---|
-| インシデント宣言 | `/inc` コマンド | タイトル・重大度・説明を入力してインシデントを作成。チャンネルに通知を投稿 |
+| インシデント宣言 | `/inc` | タイトル・重大度・説明を入力してインシデントを作成。チャンネルに通知を投稿 |
+| 設定確認 | `/inc config` | 現在の重大度・サービス・通知ルール設定を ephemeral メッセージで表示 |
 | メンション応答 | `@incident-buddy` | 使い方を案内 |
+| エラー通知 | （自動） | コマンド処理中に例外が発生した場合、チャンネルにエラーメッセージを投稿 |
 
-### インシデント重大度
+### Markdown による設定カスタマイズ
 
-| レベル | 意味 |
-|---|---|
-| P1 - Critical | サービス全停止・重大な障害 |
-| P2 - High | 主要機能の障害 |
-| P3 - Medium | 部分的な機能低下 |
-| P4 - Low | 軽微な問題 |
+`INCIDENT_CONFIG_PATH` 環境変数に Markdown ファイルのパスを設定することで、重大度・サービス・通知ルールをカスタマイズできる。
+
+```markdown
+# Incident Config
+
+## Severities
+
+### P1
+Critical
+
+### P2
+High
+
+## Services
+
+### payments
+決済処理
+
+## Notification Rules
+
+### Notify Critical
+- severity: P1
+- channel: #incidents-critical
+- mention: @here
+```
+
+設定ファイルが未設定の場合は Critical / High / Medium / Low のデフォルト重大度が使用される。設定ファイルの内容や読み込みエラーは `/inc config` で確認できる。
 
 ## アーキテクチャ
 

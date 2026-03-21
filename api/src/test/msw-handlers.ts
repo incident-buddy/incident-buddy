@@ -19,6 +19,18 @@ export const handlers = [
       channel: "C000TEST",
     });
   }),
+  http.post("https://slack.com/api/conversations.create", () => {
+    return HttpResponse.json({
+      ok: true,
+      channel: { id: "C_DEFAULT_INC", name: "inc-20260321-001" },
+    });
+  }),
+  http.post("https://slack.com/api/conversations.invite", () => {
+    return HttpResponse.json({ ok: true });
+  }),
+  http.post("https://slack.com/api/usergroups.users.list", () => {
+    return HttpResponse.json({ ok: true, users: [] });
+  }),
 
   // GCP メタデータサーバーへのリクエストを即時 404 で返す。
   // Firebase Admin SDK が認証情報チェックで link-local アドレスへ接続しタイムアウトするのを防ぐ。

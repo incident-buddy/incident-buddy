@@ -22,6 +22,17 @@ const baseIncident: Incident = {
 };
 
 describe("buildIncidentMessage", () => {
+  it("incidentChannelId を渡すと通知メッセージにチャンネルリンクが含まれる", () => {
+    const msg = buildIncidentMessage(baseIncident, { incidentChannelId: "C_INC_001" });
+    expect(msg.text).toContain("<#C_INC_001>");
+  });
+
+  it("incidentChannelId を渡さないと通知メッセージにチャンネルリンクは含まれない", () => {
+    const msg = buildIncidentMessage(baseIncident);
+    expect(msg.text).not.toContain("<#");
+  });
+
+
   it("attachments have a color", () => {
     const msg = buildIncidentMessage(baseIncident);
     expect(msg.attachments[0]?.color).toBeTruthy();

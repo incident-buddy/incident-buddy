@@ -10,10 +10,14 @@ export type SlackIncidentMessage = {
   }>;
 };
 
-export function buildIncidentMessage(incident: Incident): SlackIncidentMessage {
+export function buildIncidentMessage(
+  incident: Incident,
+  options?: { incidentChannelId?: string },
+): SlackIncidentMessage {
   const color = DEFAULT_INCIDENT_COLOR;
+  const channelLink = options?.incidentChannelId ? ` | 対応チャンネル: <#${options.incidentChannelId}>` : "";
   return {
-    text: `Incident Declared: ${incident.title}`,
+    text: `Incident Declared: ${incident.title}${channelLink}`,
     attachments: [
       {
         color,

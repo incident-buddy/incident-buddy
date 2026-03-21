@@ -9,6 +9,8 @@ import { server } from "../setup.js";
 
 const SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET!;
 
+const RESPONSE_URL = "https://hooks.slack.com/commands/T000TEST/test-response";
+
 function makeIncCommand(text: string) {
   const body = new URLSearchParams({
     command: "/inc",
@@ -17,6 +19,7 @@ function makeIncCommand(text: string) {
     user_id: "U000TEST",
     user_name: "testuser",
     team_id: "T000TEST",
+    response_url: RESPONSE_URL,
     text,
   }).toString();
   return { body, headers: signSlackRequest(body, SIGNING_SECRET) };
@@ -94,12 +97,13 @@ describe("POST /slack/events - /inc config command", () => {
     let capturedText: string | undefined;
     let resolve!: () => void;
     const called = new Promise<void>((r) => { resolve = r; });
+    // respond() は response_url に JSON POST する（chat.postEphemeral とは異なる）
     server.use(
-      http.post("https://slack.com/api/chat.postEphemeral", async ({ request }) => {
-        const params = new URLSearchParams(await request.text());
-        capturedText = params.get("text") ?? undefined;
+      http.post(RESPONSE_URL, async ({ request }) => {
+        const body = await request.json() as { text?: string };
+        capturedText = body.text;
         resolve();
-        return HttpResponse.json({ ok: true, message_ts: "1234567890.000001" });
+        return HttpResponse.json({ ok: true });
       }),
     );
     return { called, getText: () => capturedText };

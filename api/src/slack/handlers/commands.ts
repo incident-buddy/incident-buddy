@@ -1,5 +1,6 @@
 import type { App } from "@slack/bolt";
 import { optionalEnv } from "../../env.js";
+import { buildConfigMessage } from "../../features/incident-config/incident-config.presenter.js";
 import { loadConfig } from "../../features/incident-config/incident-config.service.js";
 
 export function registerCommandHandlers(app: App): void {
@@ -7,7 +8,20 @@ export function registerCommandHandlers(app: App): void {
     await ack();
 
     const configPath = optionalEnv("INCIDENT_CONFIG_PATH");
-    const config = configPath ? await loadConfig(configPath) : null;
+
+    // /inc config — 設定確認
+    if (body.text === "config") {
+      const result = configPath ? await loadConfig(configPath) : null;
+      await client.chat.postEphemeral({
+        channel: body.channel_id,
+        user: body.user_id,
+        text: buildConfigMessage(result, configPath),
+      });
+      return;
+    }
+
+    const configResult = configPath ? await loadConfig(configPath) : null;
+    const config = configResult?.type === "ok" ? configResult.config : null;
 
     const severityOptions =
       config && config.severities.length > 0

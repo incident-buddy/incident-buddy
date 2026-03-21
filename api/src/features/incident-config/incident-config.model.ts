@@ -30,3 +30,7 @@ export type IncidentConfig = {
   services: ServiceDef[];
   notificationRules: NotificationRule[];
 };
+
+export type ConfigLoadResult =
+  | { type: "ok"; config: IncidentConfig }
+  | { type: "error"; message: string };

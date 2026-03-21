@@ -47,10 +47,10 @@ export function registerActionHandlers(app: App): void {
     const configPath = optionalEnv("INCIDENT_CONFIG_PATH");
     if (!configPath) return;
 
-    const config = await loadConfig(configPath);
-    if (!config) return;
+    const configResult = await loadConfig(configPath);
+    if (configResult.type !== "ok") return;
 
-    const matched = matchRules(config, incident.severity, incident.serviceName);
+    const matched = matchRules(configResult.config, incident.severity, incident.serviceName);
     for (const rule of matched) {
       for (const channel of rule.actions.channels) {
         const mentionText =

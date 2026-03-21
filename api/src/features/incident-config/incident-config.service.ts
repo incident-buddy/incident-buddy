@@ -1,5 +1,5 @@
 import * as fs from "node:fs";
-import type { IncidentConfig, NotificationRule, SeverityCondition } from "./incident-config.model.js";
+import type { ConfigLoadResult, IncidentConfig, NotificationRule, SeverityCondition } from "./incident-config.model.js";
 import { parseIncidentConfig } from "./incident-config.parser.js";
 
 function compareSeverity(
@@ -44,11 +44,20 @@ export function matchRules(
   });
 }
 
-export async function loadConfig(filePath: string): Promise<IncidentConfig | null> {
+const KNOWN_SECTIONS = /^## (Severities|Services|Notification Rules)/im;
+
+export async function loadConfig(filePath: string): Promise<ConfigLoadResult> {
   try {
     const content = fs.readFileSync(filePath, "utf8");
-    return parseIncidentConfig(content);
-  } catch {
-    return null;
+    if (content.trim().length > 0 && !KNOWN_SECTIONS.test(content)) {
+      return {
+        type: "error",
+        message: "No recognizable sections found (expected ## Severities, ## Services, or ## Notification Rules)",
+      };
+    }
+    return { type: "ok", config: parseIncidentConfig(content) };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { type: "error", message };
   }
 }

@@ -1,5 +1,5 @@
 export type IncidentStatus = "open" | "resolved";
-export type Severity = "P1" | "P2" | "P3" | "P4";
+export type Severity = string;
 export type TimelineEventType =
   | "created"
   | "responder_added"
@@ -13,6 +13,7 @@ export type Incident = {
   description: string;
   status: IncidentStatus;
   severity: Severity;
+  serviceName: string;
   slackChannelId: string;
   slackMessageTs: string;
   createdBy: string;
@@ -29,6 +30,7 @@ export type CreateIncidentParams = {
   title: string;
   description: string;
   severity: Severity;
+  serviceName: string;
   slackChannelId: string;
   createdBy: string;
   createdByName: string;

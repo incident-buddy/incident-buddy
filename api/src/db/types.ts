@@ -13,6 +13,7 @@ export type IncidentDoc = {
   description: string;
   status: IncidentStatus;
   severity: Severity;
+  serviceName: string;
   slackChannelId: string;
   slackMessageTs: string;
   createdBy: string;

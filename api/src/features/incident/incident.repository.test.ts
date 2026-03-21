@@ -10,7 +10,8 @@ async function clearIncidents() {
 const baseInput = {
   title: "DB is down",
   description: "Primary DB not responding",
-  severity: "P1" as const,
+  severity: "P1",
+  serviceName: "",
   slackChannelId: "C000TEST",
   slackMessageTs: "",
   createdBy: "U000TEST",

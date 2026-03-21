@@ -1,11 +1,6 @@
-import type { Incident, Severity } from "./incident.model.js";
+import type { Incident } from "./incident.model.js";
 
-const SEVERITY_COLORS: Record<Severity, string> = {
-  P1: "#E53E3E",
-  P2: "#DD6B20",
-  P3: "#D69E2E",
-  P4: "#38A169",
-};
+const DEFAULT_INCIDENT_COLOR = "#718096";
 
 export type SlackIncidentMessage = {
   text: string;
@@ -16,7 +11,7 @@ export type SlackIncidentMessage = {
 };
 
 export function buildIncidentMessage(incident: Incident): SlackIncidentMessage {
-  const color = SEVERITY_COLORS[incident.severity];
+  const color = DEFAULT_INCIDENT_COLOR;
   return {
     text: `Incident Declared: ${incident.title}`,
     attachments: [

@@ -1,3 +1,43 @@
 [tools]
 node = "lts"
 pnpm = "latest"
+
+# ── devcontainer ──────────────────────────────────────────────
+[tasks."dc:up"]
+description = "devcontainer をビルド・起動する"
+run = "devcontainer up --workspace-folder ."
+
+[tasks."dc:shell"]
+description = "devcontainer のシェルに入る"
+run = "devcontainer exec --workspace-folder . bash"
+
+# ── 開発サーバー ──────────────────────────────────────────────
+[tasks."dev:firestore"]
+description = "Firestore エミュレータを起動する (devcontainer 内)"
+run = "devcontainer exec --workspace-folder . bash -c 'docker compose -f docker/compose.yml up'"
+
+[tasks."dev:api"]
+description = "API サーバーを起動する (devcontainer 内, hot reload)"
+run = "devcontainer exec --workspace-folder . bash -c 'pnpm -F api dev'"
+
+[tasks."dev:ngrok"]
+description = "ngrok トンネルを起動する (PORT=8888)"
+run = "ngrok http 8888"
+
+# ── コード品質 ─────────────────────────────────────────────────
+[tasks.lint]
+description = "Biome で lint チェック"
+run = "devcontainer exec --workspace-folder . bash -c 'pnpm lint'"
+
+[tasks."lint:fix"]
+description = "Biome で lint 自動修正"
+run = "devcontainer exec --workspace-folder . bash -c 'pnpm lint:fix'"
+
+[tasks.typecheck]
+description = "TypeScript 型チェック"
+run = "devcontainer exec --workspace-folder . bash -c 'pnpm typecheck'"
+
+# ── 動作確認 ──────────────────────────────────────────────────
+[tasks.health]
+description = "API サーバーのヘルスチェック"
+run = "curl -s http://localhost:8888/health | jq ."

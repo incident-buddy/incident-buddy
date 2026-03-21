@@ -351,14 +351,13 @@ describe("インシデントチャンネル自動作成・招待", () => {
           );
 
           const postedMessages: string[] = [];
-          let notifyCount = 0;
           const allPosted = new Promise<void>((resolve) => {
             server.use(
               http.post("https://slack.com/api/chat.postMessage", async ({ request }) => {
                 const params = new URLSearchParams(await request.text());
-                postedMessages.push(params.get("text") ?? "");
-                notifyCount++;
-                if (notifyCount >= 2) resolve();
+                const text = params.get("text") ?? "";
+                postedMessages.push(text);
+                if (text.includes("Incident declared:")) resolve();
                 return HttpResponse.json({ ok: true, ts: "1000.0001", channel: "C000TEST" });
               }),
             );
@@ -462,7 +461,7 @@ describe("インシデントチャンネル自動作成・招待", () => {
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
         let postMessageCallCount = 0;
         let resolvePost!: () => void;
-        // 元チャンネル(C000TEST) + #incidents の2回
+        // #incidents への通知が届いたら resolve（招待失敗後に続行されることを確認）
         const allPosted = new Promise<void>((r) => {
           resolvePost = r;
         });
@@ -477,9 +476,11 @@ describe("インシデントチャンネル自動作成・招待", () => {
           http.post("https://slack.com/api/conversations.invite", () =>
             HttpResponse.json({ ok: false, error: "cant_invite_self" }),
           ),
-          http.post("https://slack.com/api/chat.postMessage", async () => {
+          http.post("https://slack.com/api/chat.postMessage", async ({ request }) => {
+            const params = new URLSearchParams(await request.text());
+            const text = params.get("text") ?? "";
             postMessageCallCount++;
-            if (postMessageCallCount >= 2) resolvePost();
+            if (text.includes("Incident declared:")) resolvePost();
             return HttpResponse.json({ ok: true, ts: "1000.0001", channel: "C000TEST" });
           }),
         );
@@ -516,16 +517,13 @@ describe("インシデントチャンネル自動作成・招待", () => {
         );
 
         const notificationTexts: string[] = [];
-        let notifyCount = 0;
         const allPosted = new Promise<void>((resolve) => {
           server.use(
             http.post("https://slack.com/api/chat.postMessage", async ({ request }) => {
               const params = new URLSearchParams(await request.text());
               const text = params.get("text") ?? "";
               notificationTexts.push(text);
-              notifyCount++;
-              // 元チャンネル(C000TEST) + 通知ルール(#incidents) = 2回
-              if (notifyCount >= 2) resolve();
+              if (text.includes("Incident declared:")) resolve();
               return HttpResponse.json({ ok: true, ts: "1000.0001", channel: "C000TEST" });
             }),
           );

@@ -2,7 +2,7 @@ import type { App } from "@slack/bolt";
 import { optionalEnv } from "../../env.js";
 import { loadConfig, matchRules } from "../../features/incident-config/incident-config.service.js";
 import type { Severity } from "../../features/incident/incident.model.js";
-import { buildIncidentMessage } from "../../features/incident/incident.presenter.js";
+import { buildChannelWelcomeMessage, buildIncidentMessage } from "../../features/incident/incident.presenter.js";
 import { incidentRepository } from "../../features/incident/incident.repository.js";
 import { incidentService } from "../../features/incident/incident.service.js";
 import { createIncidentChannel, inviteToChannel, resolveInvitees } from "./incident-channel.js";
@@ -49,6 +49,16 @@ export function registerActionHandlers(app: App): void {
       await incidentRepository.updateIncidentChannelId(incident.id, incidentChannel.id);
       if (result.ts) {
         await incidentRepository.updateSlackMessageTs(incident.id, result.ts);
+      }
+
+      // インシデントチャンネルにウェルカムメッセージを投稿
+      const welcomeMessage = buildChannelWelcomeMessage(incident);
+      const welcomeResult = await client.chat.postMessage({
+        channel: incidentChannel.id,
+        ...welcomeMessage,
+      });
+      if (!welcomeResult.ok) {
+        throw new Error(welcomeResult.error ?? "chat.postMessage failed for welcome message");
       }
 
       // 通知ルールの評価と追加通知・招待

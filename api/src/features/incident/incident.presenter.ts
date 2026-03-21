@@ -2,6 +2,11 @@ import type { Incident } from "./incident.model.js";
 
 const DEFAULT_INCIDENT_COLOR = "#718096";
 
+export type SlackMessage = {
+  text: string;
+  blocks: unknown[];
+};
+
 export type SlackIncidentMessage = {
   text: string;
   attachments: Array<{
@@ -9,6 +14,36 @@ export type SlackIncidentMessage = {
     blocks: unknown[];
   }>;
 };
+
+export function buildChannelWelcomeMessage(incident: Incident): SlackMessage {
+  const fields: unknown[] = [
+    { type: "mrkdwn", text: `*Severity*\n${incident.severity}` },
+    { type: "mrkdwn", text: `*Declared by*\n${incident.createdByName}` },
+  ];
+  if (incident.serviceName) {
+    fields.push({ type: "mrkdwn", text: `*Service*\n${incident.serviceName}` });
+  }
+
+  const blocks: unknown[] = [
+    {
+      type: "section",
+      text: { type: "mrkdwn", text: `*🚨 ${incident.title}*` },
+    },
+    { type: "section", fields },
+  ];
+
+  if (incident.description) {
+    blocks.push({
+      type: "section",
+      text: { type: "mrkdwn", text: incident.description },
+    });
+  }
+
+  return {
+    text: `Incident: ${incident.title}`,
+    blocks,
+  };
+}
 
 export function buildIncidentMessage(
   incident: Incident,

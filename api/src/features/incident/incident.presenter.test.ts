@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Incident } from "./incident.model.js";
-import { buildIncidentMessage } from "./incident.presenter.js";
+import { buildChannelWelcomeMessage, buildIncidentMessage } from "./incident.presenter.js";
 
 const baseIncident: Incident = {
   id: "INC001",
@@ -78,5 +78,40 @@ describe("buildIncidentMessage", () => {
     expect(texts).toContain("*Severity*\nP1");
     expect(texts).toContain("*Declared by*\n<@U000TEST>");
     expect(texts).toContain("*Status*\nopen");
+  });
+});
+
+describe("buildChannelWelcomeMessage", () => {
+  it("インシデントタイトルが含まれる", () => {
+    const msg = buildChannelWelcomeMessage(baseIncident);
+    expect(JSON.stringify(msg)).toContain("Database is down");
+  });
+
+  it("severity が含まれる", () => {
+    const msg = buildChannelWelcomeMessage(baseIncident);
+    expect(JSON.stringify(msg)).toContain("P1");
+  });
+
+  it("description が含まれる", () => {
+    const msg = buildChannelWelcomeMessage(baseIncident);
+    expect(JSON.stringify(msg)).toContain("Primary DB not responding");
+  });
+
+  it("宣言者名が含まれる", () => {
+    const msg = buildChannelWelcomeMessage(baseIncident);
+    expect(JSON.stringify(msg)).toContain("testuser");
+  });
+
+  it("description が空のとき description フィールドを含まない", () => {
+    const msg = buildChannelWelcomeMessage({ ...baseIncident, description: "" });
+    const json = JSON.stringify(msg);
+    expect(json).not.toContain("Primary DB not responding");
+  });
+
+  it("serviceName が空のとき serviceName フィールドを含まない", () => {
+    const msg = buildChannelWelcomeMessage({ ...baseIncident, serviceName: "" });
+    const json = JSON.stringify(msg);
+    // serviceName が空文字のときにサービス名ラベルが出ないことを確認
+    expect(json).not.toContain("*Service*");
   });
 });

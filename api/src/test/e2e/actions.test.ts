@@ -166,6 +166,150 @@ describe("POST /slack/interactions - create_incident view submission", () => {
     expect(incident.createdBy).toBe("U000TEST");
   });
 
+  it("インシデント宣言後、インシデントチャンネルにウェルカムメッセージが投稿される", async () => {
+    server.use(
+      http.post("https://slack.com/api/conversations.create", () => {
+        return HttpResponse.json({
+          ok: true,
+          channel: { id: INCIDENT_CHANNEL_ID, name: "inc-20260322-001" },
+        });
+      }),
+    );
+
+    let resolveWelcome!: (params: URLSearchParams) => void;
+    const welcomePosted = new Promise<URLSearchParams>((r) => {
+      resolveWelcome = r;
+    });
+
+    server.use(
+      http.post("https://slack.com/api/chat.postMessage", async ({ request }) => {
+        const params = new URLSearchParams(await request.text());
+        if (params.get("channel") === INCIDENT_CHANNEL_ID) {
+          resolveWelcome(params);
+        }
+        return HttpResponse.json({ ok: true, ts: "1234567890.000001" });
+      }),
+    );
+
+    const payload = {
+      type: "view_submission",
+      team: { id: "T000TEST", domain: "testteam" },
+      user: { id: "U000TEST", name: "testuser" },
+      api_app_id: "A000TEST",
+      token: "test-token",
+      trigger_id: "test-trigger",
+      view: {
+        id: "V000TEST",
+        type: "modal",
+        callback_id: "create_incident",
+        private_metadata: JSON.stringify({ channel_id: "C000TEST" }),
+        state: {
+          values: {
+            title: { title_input: { type: "plain_text_input", value: "DB is down" } },
+            severity: {
+              severity_select: {
+                type: "static_select",
+                selected_option: { value: "P1", text: { type: "plain_text", text: "P1" } },
+              },
+            },
+            description: {
+              description_input: {
+                type: "plain_text_input",
+                value: "Primary DB is not responding",
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const body = new URLSearchParams({ payload: JSON.stringify(payload) }).toString();
+    const headers = signSlackRequest(body, SIGNING_SECRET);
+
+    const res = await app.request("/slack/interactions", { method: "POST", headers, body });
+    expect(res.status).toBe(200);
+
+    const welcomeParams = await welcomePosted;
+
+    // ウェルカムメッセージの内容検証（blocks の JSON 中にインシデント情報が含まれる）
+    const fullBody = JSON.stringify(Object.fromEntries(welcomeParams));
+    expect(fullBody).toContain("DB is down");
+    expect(fullBody).toContain("P1");
+    expect(fullBody).toContain("Primary DB is not responding");
+    expect(fullBody).toContain("testuser");
+  });
+
+  it("ウェルカムメッセージ投稿失敗時、postError でエラーメッセージが投稿される", async () => {
+    server.use(
+      http.post("https://slack.com/api/conversations.create", () => {
+        return HttpResponse.json({
+          ok: true,
+          channel: { id: INCIDENT_CHANNEL_ID, name: "inc-20260322-001" },
+        });
+      }),
+    );
+
+    let resolveError!: () => void;
+    const errorCalled = new Promise<void>((r) => {
+      resolveError = r;
+    });
+    let capturedErrorText: string | undefined;
+
+    server.use(
+      http.post("https://slack.com/api/chat.postMessage", async ({ request }) => {
+        const params = new URLSearchParams(await request.text());
+        const channel = params.get("channel");
+        const text = params.get("text") ?? "";
+
+        if (channel === INCIDENT_CHANNEL_ID) {
+          // ウェルカムメッセージ投稿を失敗させる
+          return HttpResponse.json({ ok: false, error: "channel_not_found" });
+        }
+        if (text.includes("コマンドの実行に失敗しました")) {
+          capturedErrorText = text;
+          resolveError();
+        }
+        return HttpResponse.json({ ok: true, ts: "1234567890.000001" });
+      }),
+    );
+
+    const payload = {
+      type: "view_submission",
+      team: { id: "T000TEST", domain: "testteam" },
+      user: { id: "U000TEST", name: "testuser" },
+      api_app_id: "A000TEST",
+      token: "test-token",
+      trigger_id: "test-trigger",
+      view: {
+        id: "V000TEST",
+        type: "modal",
+        callback_id: "create_incident",
+        private_metadata: JSON.stringify({ channel_id: "C000TEST" }),
+        state: {
+          values: {
+            title: { title_input: { type: "plain_text_input", value: "DB is down" } },
+            severity: {
+              severity_select: {
+                type: "static_select",
+                selected_option: { value: "P1", text: { type: "plain_text", text: "P1" } },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const body = new URLSearchParams({ payload: JSON.stringify(payload) }).toString();
+    const headers = signSlackRequest(body, SIGNING_SECRET);
+
+    const res = await app.request("/slack/interactions", { method: "POST", headers, body });
+    expect(res.status).toBe(200);
+    await errorCalled;
+
+    expect(capturedErrorText).toMatch(/コマンドの実行に失敗しました/);
+    expect(capturedErrorText).toContain("channel_not_found");
+  });
+
   it("updateIncidentChannelId 失敗時、postError でエラーメッセージが投稿される", async () => {
     vi.spyOn(incidentRepository, "updateIncidentChannelId").mockRejectedValueOnce(
       new Error("Firestore update failed"),

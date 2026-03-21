@@ -164,7 +164,6 @@ describe("Notification rules from markdown config", () => {
       withConfigFile(CONFIG, async () => {
         const postedChannels: string[] = [];
         const postedMentions: string[] = [];
-        let notifyCount = 0;
         const allPosted = new Promise<void>((resolve) => {
           server.use(
             http.post("https://slack.com/api/chat.postMessage", async ({ request }) => {
@@ -173,9 +172,10 @@ describe("Notification rules from markdown config", () => {
               const text = params.get("text") ?? "";
               postedChannels.push(channel);
               if (text) postedMentions.push(text);
-              notifyCount++;
-              // 元チャンネル + 2ルールマッチ = 3回
-              if (notifyCount >= 3) resolve();
+              if (
+                postedChannels.includes("#payment-oncall") &&
+                postedChannels.includes("#incidents-critical")
+              ) resolve();
               return HttpResponse.json({ ok: true, ts: "1000.0001", channel });
             }),
           );
@@ -199,16 +199,13 @@ describe("Notification rules from markdown config", () => {
       "severity: High + service: payment-api → #payment-oncall へ通知（Criticalルールはマッチしない）",
       withConfigFile(CONFIG, async () => {
         const postedChannels: string[] = [];
-        let notifyCount = 0;
         const allPosted = new Promise<void>((resolve) => {
           server.use(
             http.post("https://slack.com/api/chat.postMessage", async ({ request }) => {
               const params = new URLSearchParams(await request.text());
               const channel = params.get("channel") ?? "";
               postedChannels.push(channel);
-              notifyCount++;
-              // 元チャンネル + 1ルールマッチ = 2回
-              if (notifyCount >= 2) resolve();
+              if (postedChannels.includes("#payment-oncall")) resolve();
               return HttpResponse.json({ ok: true, ts: "1000.0001", channel });
             }),
           );
@@ -253,15 +250,13 @@ describe("Notification rules from markdown config", () => {
       "serviceのみ条件ルール（service: user-service）が severity 問わずマッチする",
       withConfigFile(CONFIG, async () => {
         const postedChannels: string[] = [];
-        let notifyCount = 0;
         const allPosted = new Promise<void>((resolve) => {
           server.use(
             http.post("https://slack.com/api/chat.postMessage", async ({ request }) => {
               const params = new URLSearchParams(await request.text());
               const channel = params.get("channel") ?? "";
               postedChannels.push(channel);
-              notifyCount++;
-              if (notifyCount >= 2) resolve();
+              if (postedChannels.includes("#user-service-alerts")) resolve();
               return HttpResponse.json({ ok: true, ts: "1000.0001", channel });
             }),
           );
@@ -280,15 +275,13 @@ describe("Notification rules from markdown config", () => {
       "service名の大文字小文字を無視してマッチする（Payment-API → payment-api）",
       withConfigFile(CONFIG, async () => {
         const postedChannels: string[] = [];
-        let notifyCount = 0;
         const allPosted = new Promise<void>((resolve) => {
           server.use(
             http.post("https://slack.com/api/chat.postMessage", async ({ request }) => {
               const params = new URLSearchParams(await request.text());
               const channel = params.get("channel") ?? "";
               postedChannels.push(channel);
-              notifyCount++;
-              if (notifyCount >= 2) resolve();
+              if (postedChannels.includes("#payment-oncall")) resolve();
               return HttpResponse.json({ ok: true, ts: "1000.0001", channel });
             }),
           );
@@ -393,17 +386,15 @@ describe("Notification rules from markdown config", () => {
 - channel: #low-priority
 `,
         async () => {
-          // Low → マッチ → 2 回通知
+          // Low → マッチ → #low-priority へ通知
           const lowChannels: string[] = [];
-          let lowCount = 0;
           const lowDone = new Promise<void>((resolve) => {
             server.use(
               http.post("https://slack.com/api/chat.postMessage", async ({ request }) => {
                 const params = new URLSearchParams(await request.text());
                 const channel = params.get("channel") ?? "";
                 lowChannels.push(channel);
-                lowCount++;
-                if (lowCount >= 2) resolve();
+                if (lowChannels.includes("#low-priority")) resolve();
                 return HttpResponse.json({ ok: true, ts: "1000.0001", channel });
               }),
             );

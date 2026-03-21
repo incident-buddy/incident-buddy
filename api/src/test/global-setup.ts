@@ -5,9 +5,9 @@ import { connect } from "node:net";
  * 起動していない場合は明確なエラーメッセージで早期終了させる。
  */
 function checkFirestoreEmulator(): Promise<void> {
-  const host = process.env.FIRESTORE_EMULATOR_HOST ?? "firestore:8080";
+  const host = process.env.FIRESTORE_EMULATOR_HOST ?? "firestore:9080";
   const [hostname, portStr] = host.split(":");
-  const port = Number(portStr ?? 8080);
+  const port = Number(portStr ?? 9080);
 
   return new Promise((resolve, reject) => {
     const socket = connect({ host: hostname, port }, () => {

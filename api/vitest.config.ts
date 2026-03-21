@@ -12,7 +12,7 @@ export default defineConfig({
       SLACK_BOT_TOKEN:
         "xoxb-test-000000000000-000000000000-xxxxxxxxxxxxxxxxxxxxxxxx",
       FIRESTORE_PROJECT_ID: "demo-test",
-      FIRESTORE_EMULATOR_HOST: "firestore:8080",
+      FIRESTORE_EMULATOR_HOST: "firestore:9080",
       PORT: "0",
     },
   },

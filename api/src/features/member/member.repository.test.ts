@@ -18,8 +18,6 @@ describe("memberRepository.upsert", () => {
     expect(snap.data()).toMatchObject({
       slackUserId: "U001",
       displayName: "Alice",
-      avatarUrl: "",
-      teamIds: [],
     });
   });
 

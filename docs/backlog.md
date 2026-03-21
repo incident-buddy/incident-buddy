@@ -4,26 +4,73 @@
 
 ---
 
-## F: インシデント Slack メッセージの自動更新
+## B: 対応者の追加
 
-宣言時に `#incidents` 等に投稿したメッセージ（`slackMessageTs` で追跡済み）を、状態変化（対応者追加・重大度変更・解決）のたびに `chat.update` で最新化する。
+インシデントチャンネルのウェルカムメッセージにロールベースの「自身をアサイン」ボタンを設置し、
+クリック操作でインシデント対応者をロール付きで登録できるようにする。
 
-**なぜここか**: B（join）や A（resolve）を実装すると「投稿したメッセージが古い情報のまま」になる。B・A の前に入れることで完成度を担保。
+### ユーザーストーリー
+- As a インシデント対応チームのメンバー, I want to ウェルカムメッセージのボタンを押すだけで
+  自分を特定ロール（コマンダー・調査担当など）にアサインできる, so that チャンネルに入った
+  直後から「誰が何をするか」を明確にでき、混乱を防げる
 
-**実装のポイント**:
-- `buildIncidentMessage` はすでに `Incident` 型から生成するため、Incident を更新して再呼び出しするだけ
-- `incidentRepository` から最新 Incident を取得 → `chat.update` を呼ぶヘルパーを `actions.ts` に追加
+### なぜここか（優先度の根拠）
+- インシデント宣言・チャンネル作成・ウェルカムメッセージが実装済みで、次の自然な一手は
+  「誰が対応するか」の可視化
+- timeline への書き込みを初めて実装するため、後続（A: resolve、G: note）の基盤になる
 
----
+### 機能仕様
 
-## B: 対応者の追加（`/inc join`）
+#### 正常系
+- ウェルカムメッセージに `incident-config` で定義されたロールごとの「[ロール名]になる」ボタンを表示する
+- ボタンを押すと：
+  1. インシデントの `responders` に `{ roleId, userId, userName }` が追加される
+  2. ウェルカムメッセージが `chat.update` で更新され、現在の担当者一覧が反映される
+  3. `#incidents` のインシデントメッセージも `refreshIncidentSlackMessage` で更新される
+  4. インシデントチャンネルに「@alice がコマンダーになりました」通知が投稿される
+  5. timeline に `type: "responder_added"` として記録される
+- ロール制約（上限人数など）は設定ファイルに記載するが UI ガイドのみ（システム強制なし）
 
-インシデントチャンネルで `/inc join` を実行すると、実行者が `responderIds` に追加される。timeline に `responder_added` イベントを記録。Slack メッセージも更新（F の成果を活用）。
+#### 異常系・エッジケース
+- すでに同じロールにアサイン済みのユーザーが再度ボタンを押した場合、ephemeral で
+  「既にアサイン済みです」と返す（Firestore 更新・timeline 記録は行わない）
+- `chat.update`（ウェルカムメッセージ更新）が失敗した場合はエラーをスローし `postError` で処理
+- `refreshIncidentSlackMessage`（#incidents 更新）失敗時はログのみで処理継続
+  （アサイン自体は成功扱い）
+- チャンネルへの通知投稿（`chat.postMessage`）失敗時はログのみで処理継続
 
-**実装のポイント**:
-- `incidentService.addResponder(incidentId, userId, userName)` を実装
-- チャンネル ID → インシデント ID のルックアップが必要（E で永続化した `incidentChannelId` を使う）
-- timeline サブコレクションへの書き込みはここで初めて実装
+### 実装のポイント
+- `features/incident/incident.model.ts`: `Responder: { roleId: string, userId: string,
+  userName: string }` 型を追加し、`Incident` の `responderIds: string[]` を
+  `responders: Responder[]` に変更（アーキテクチャルール確認済み）
+- `db/types.ts`: Firestore ドキュメント型の `responderIds` を `responders` に変更
+- `features/incident/incident.repository.ts`: `toDomain()` の `responders` 変換を追加
+- `features/incident/incident.service.ts`:
+  - `findById(id: string): Promise<Incident | null>` を追加
+  - `addResponder(incidentId, roleId, userId, userName): Promise<Incident>` を追加
+- `features/incident/incident.presenter.ts`: `buildChannelWelcomeMessage` を更新して
+  現在の担当者一覧とロールボタンを含める
+- `slack/handlers/actions.ts`:
+  - `refreshIncidentSlackMessage` 内の `incidentRepository.findById()` を
+    `incidentService.findById()` に変更（アーキテクチャ修正を兼ねる）
+  - `assign_role_{roleId}` アクションハンドラーを追加
+  - チャンネル ID → インシデント ID のルックアップは `incidentChannelId` フィールドから行う
+- `features/incident-config/`: ロール定義を新セクションとして `incident-config` に統合
+
+### 受け入れ条件（仮）
+- [ ] ウェルカムメッセージに `incident-config` のロール数だけボタンが表示される
+- [ ] ボタン押下で `incidentService.addResponder` が呼ばれ `responders` にエントリが追加される
+- [ ] ウェルカムメッセージが更新され担当者名が反映される
+- [ ] `#incidents` のインシデントメッセージが `refreshIncidentSlackMessage` で更新される
+- [ ] インシデントチャンネルにアサイン通知が投稿される
+- [ ] timeline に `responder_added` イベントが記録される
+- [ ] 重複アサイン時に ephemeral でエラーが返り、Firestore は変更されない
+- [ ] `actions.ts` 内で `incidentRepository` を直接参照していない
+
+### 除外事項（今回スコープ外）
+- アンアサイン（自身を担当から外す）機能
+- ロール制約のシステム強制（上限超過時のエラー）
+- 他者を代理でアサインする機能
 
 ---
 

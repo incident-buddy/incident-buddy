@@ -65,6 +65,11 @@ export class HonoReceiver implements Receiver {
       }
     }
 
+    // Slack URL verification challenge — Bolt v4 は自動 ack しないので直接処理する
+    if (parsedBody.type === "url_verification") {
+      return c.json({ challenge: parsedBody.challenge });
+    }
+
     return new Promise<Response>((resolve, reject) => {
       const event: ReceiverEvent = {
         body: parsedBody,

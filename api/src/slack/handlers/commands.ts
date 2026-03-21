@@ -1,8 +1,40 @@
 import type { App } from "@slack/bolt";
+import { optionalEnv } from "../../env.js";
+import { loadConfig } from "../../features/incident-config/incident-config.service.js";
 
 export function registerCommandHandlers(app: App): void {
   app.command("/inc", async ({ ack, body, client }) => {
     await ack();
+
+    const configPath = optionalEnv("INCIDENT_CONFIG_PATH");
+    const config = configPath ? await loadConfig(configPath) : null;
+
+    const severityOptions =
+      config && config.severities.length > 0
+        ? config.severities.map((s) => ({
+            text: {
+              type: "plain_text" as const,
+              text: s.description ? `${s.label} - ${s.description}` : s.label,
+            },
+            value: s.label,
+          }))
+        : [
+            { text: { type: "plain_text" as const, text: "Critical" }, value: "Critical" },
+            { text: { type: "plain_text" as const, text: "High" }, value: "High" },
+            { text: { type: "plain_text" as const, text: "Medium" }, value: "Medium" },
+            { text: { type: "plain_text" as const, text: "Low" }, value: "Low" },
+          ];
+
+    const serviceOptions =
+      config && config.services.length > 0
+        ? config.services.map((s) => ({
+            text: {
+              type: "plain_text" as const,
+              text: s.description ? `${s.label} - ${s.description}` : s.label,
+            },
+            value: s.label,
+          }))
+        : null;
 
     await client.views.open({
       trigger_id: body.trigger_id,
@@ -35,26 +67,25 @@ export function registerCommandHandlers(app: App): void {
               type: "static_select",
               action_id: "severity_select",
               placeholder: { type: "plain_text", text: "Select severity" },
-              options: [
-                {
-                  text: { type: "plain_text", text: "P1 - Critical" },
-                  value: "P1",
-                },
-                {
-                  text: { type: "plain_text", text: "P2 - High" },
-                  value: "P2",
-                },
-                {
-                  text: { type: "plain_text", text: "P3 - Medium" },
-                  value: "P3",
-                },
-                {
-                  text: { type: "plain_text", text: "P4 - Low" },
-                  value: "P4",
-                },
-              ],
+              options: severityOptions,
             },
           },
+          ...(serviceOptions
+            ? [
+                {
+                  type: "input" as const,
+                  block_id: "service",
+                  optional: true,
+                  label: { type: "plain_text" as const, text: "Service" },
+                  element: {
+                    type: "static_select" as const,
+                    action_id: "service_select",
+                    placeholder: { type: "plain_text" as const, text: "Select service (optional)" },
+                    options: serviceOptions,
+                  },
+                },
+              ]
+            : []),
           {
             type: "input",
             block_id: "description",

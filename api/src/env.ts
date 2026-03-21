@@ -8,3 +8,10 @@ export function requireEnv(name: string): string {
   }
   return value;
 }
+
+/**
+ * optionalEnv - 任意の環境変数を取得する。未設定の場合は undefined を返す
+ */
+export function optionalEnv(name: string): string | undefined {
+  return process.env[name] || undefined;
+}

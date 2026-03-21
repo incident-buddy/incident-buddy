@@ -10,7 +10,7 @@
       "moby": false
     }
   },
-  "postCreateCommand": "npm install -g pnpm && CI=true pnpm install",
+  "postCreateCommand": "curl https://mise.run | sh && echo 'eval \"$(~/.local/bin/mise activate bash)\"' >> ~/.bashrc && ~/.local/bin/mise trust && npm install -g pnpm && CI=true pnpm install",
   "postStartCommand": "docker network connect incident-buddy $(hostname) 2>/dev/null || true",
   "mounts": [
     "source=${localEnv:HOME}/.claude,target=/root/.claude,type=bind,consistency=cached"

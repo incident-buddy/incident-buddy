@@ -1,4 +1,5 @@
 import type { App } from "@slack/bolt";
+import type { WebClient } from "@slack/web-api";
 import { optionalEnv } from "../../env.js";
 import { loadConfig, matchRules } from "../../features/incident-config/incident-config.service.js";
 import type { Severity } from "../../features/incident/incident.model.js";
@@ -7,6 +8,27 @@ import { incidentRepository } from "../../features/incident/incident.repository.
 import { incidentService } from "../../features/incident/incident.service.js";
 import { createIncidentChannel, inviteToChannel, resolveInvitees } from "./incident-channel.js";
 import { postError } from "./post-error.js";
+
+export async function refreshIncidentSlackMessage(
+  incidentId: string,
+  client: WebClient,
+): Promise<void> {
+  const incident = await incidentRepository.findById(incidentId);
+  if (!incident) throw new Error(`Incident not found: ${incidentId}`);
+  if (!incident.slackMessageTs) return;
+
+  const message = buildIncidentMessage(incident, {
+    incidentChannelId: incident.incidentChannelId,
+  });
+  const result = await client.chat.update({
+    channel: incident.slackChannelId,
+    ts: incident.slackMessageTs,
+    ...message,
+  });
+  if (!result.ok) {
+    throw new Error(result.error ?? "chat.update failed");
+  }
+}
 
 export function registerActionHandlers(app: App): void {
   app.view("create_incident", async ({ ack, body, view, client }) => {

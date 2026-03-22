@@ -48,6 +48,38 @@
 - `toDomain()` で `Timestamp` → `Date` に変換
 - クエリロジックはここに閉じ込める
 
+**更新系メソッドの設計方針**
+
+ドメイン動詞（`resolve`, `addResponder` 等）は repository に持たせない。
+代わりに `update(id, patch)` を定義し、「何を更新するか」は service 側で決める。
+
+```ts
+// NG: ドメイン動詞が repository に漏れる
+async resolve(id, resolvedAt, resolvedBy, resolvedByName): Promise<void>
+async addResponder(incidentId, responder): Promise<Incident>
+
+// OK: repository は「フィールドの更新」のみ担う
+async update(id: string, patch: IncidentPatch): Promise<void>
+```
+
+`patch` の型はドメイン型で表現し、Firestore 固有の型（`FieldValue`, `Timestamp`）は
+`update` 内部に封じ込める。`updatedAt` は `update` が常にサーバータイムスタンプで上書きする。
+
+配列フィールドの操作は `{ add?, remove? }` 構造にする（Firestore の `arrayUnion`/`arrayRemove` に対応）:
+
+```ts
+type IncidentPatch = {
+  status?: IncidentStatus;
+  resolvedAt?: Date;
+  // ...
+  responders?: { add?: Responder; remove?: Responder };
+};
+
+// service 側（ドメインの意図を持つ）
+await incidentRepository.update(id, { responders: { add: responder } });
+await incidentRepository.update(id, { status: "resolved", resolvedAt, resolvedBy, resolvedByName });
+```
+
 #### `*.presenter.ts` — 整形
 - ドメイン型 → Slack ブロック形式への変換（純粋関数）
 - 副作用なし → ユニットテストが容易

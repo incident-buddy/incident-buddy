@@ -70,7 +70,8 @@ export class HonoReceiver implements Receiver {
       return c.json({ challenge: parsedBody.challenge });
     }
 
-    return new Promise<Response>((resolve, reject) => {
+    const self = this;
+    return new Promise<Response>(function (resolve, reject) {
       const event: ReceiverEvent = {
         body: parsedBody,
         ack: async (response) => {
@@ -97,7 +98,7 @@ export class HonoReceiver implements Receiver {
         retryNum: Number(c.req.header("x-slack-retry-num") ?? 0),
         retryReason: c.req.header("x-slack-retry-reason") ?? "",
       };
-      this.app.processEvent(event).catch(reject);
+      self.app.processEvent(event).catch(reject);
     });
   }
 

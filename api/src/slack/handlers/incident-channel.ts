@@ -5,11 +5,16 @@ type SlackClient = {
       channel?: { id?: string; name?: string };
       error?: string;
     }>;
-    invite: (args: { channel: string; users: string }) => Promise<{ ok: boolean; error?: string }>;
+    invite: (args: {
+      channel: string;
+      users: string;
+    }) => Promise<{ ok: boolean; error?: string }>;
   };
   usergroups: {
     users: {
-      list: (args: { usergroup: string }) => Promise<{ ok: boolean; users?: string[]; error?: string }>;
+      list: (args: {
+        usergroup: string;
+      }) => Promise<{ ok: boolean; users?: string[]; error?: string }>;
     };
   };
 };
@@ -17,7 +22,13 @@ type SlackClient = {
 /**
  * inc-YYYYMMDD-NNN 形式のチャンネル名を生成する（純粋関数）
  */
-export function buildChannelName(date: Date, seq: number): string {
+export function buildChannelName({
+  date,
+  seq,
+}: {
+  date: Date;
+  seq: number;
+}): string {
   const y = date.getUTCFullYear();
   const m = String(date.getUTCMonth() + 1).padStart(2, "0");
   const d = String(date.getUTCDate()).padStart(2, "0");
@@ -29,15 +40,21 @@ export function buildChannelName(date: Date, seq: number): string {
  * パブリックチャンネルを作成する。name_taken の場合は連番を増やしてリトライする。
  * Slack WebClient は ok: false を WebAPICallError として throw するため try-catch で処理する。
  */
-export async function createIncidentChannel(
-  client: SlackClient,
-  date: Date,
-): Promise<{ id: string; name: string }> {
+export async function createIncidentChannel({
+  client,
+  date,
+}: {
+  client: SlackClient;
+  date: Date;
+}): Promise<{ id: string; name: string }> {
   const MAX_RETRIES = 10;
   for (let seq = 1; seq <= MAX_RETRIES; seq++) {
-    const name = buildChannelName(date, seq);
+    const name = buildChannelName({ date, seq });
     try {
-      const result = await client.conversations.create({ name, is_private: false });
+      const result = await client.conversations.create({
+        name,
+        is_private: false,
+      });
       if (!result.ok) {
         throw new Error(result.error ?? "conversations.create failed");
       }
@@ -63,10 +80,13 @@ export async function createIncidentChannel(
  * - @U... / @W... → ユーザーID として直接使用
  * - @S... → グループID として usergroups.users.list でメンバー取得
  */
-export async function resolveInvitees(
-  client: SlackClient,
-  mentions: string[],
-): Promise<string[]> {
+export async function resolveInvitees({
+  client,
+  mentions,
+}: {
+  client: SlackClient;
+  mentions: string[];
+}): Promise<string[]> {
   const userIds = new Set<string>();
 
   for (const mention of mentions) {
@@ -89,12 +109,14 @@ export async function resolveInvitees(
             userIds.add(uid);
           }
         } else if (!result.ok) {
-          console.error(`[incident-buddy] Failed to resolve group ${raw}:`, result.error);
+          console.error(
+            `[incident-buddy] Failed to resolve group ${raw}:`,
+            result.error,
+          );
         }
       } catch (e) {
         console.error(`[incident-buddy] Failed to resolve group ${raw}:`, e);
       }
-      continue;
     }
   }
 
@@ -105,11 +127,15 @@ export async function resolveInvitees(
  * チャンネルにユーザーを招待する。
  * 招待失敗はコンソールにログのみ出力し、例外を伝播させない（処理を継続する）。
  */
-export async function inviteToChannel(
-  client: SlackClient,
-  channelId: string,
-  userIds: string[],
-): Promise<void> {
+export async function inviteToChannel({
+  client,
+  channelId,
+  userIds,
+}: {
+  client: SlackClient;
+  channelId: string;
+  userIds: string[];
+}): Promise<void> {
   if (userIds.length === 0) return;
 
   try {
@@ -118,9 +144,15 @@ export async function inviteToChannel(
       users: userIds.join(","),
     });
     if (!result.ok) {
-      console.error("[incident-buddy] Failed to invite users to incident channel:", result.error);
+      console.error(
+        "[incident-buddy] Failed to invite users to incident channel:",
+        result.error,
+      );
     }
   } catch (e) {
-    console.error("[incident-buddy] Failed to invite users to incident channel:", e);
+    console.error(
+      "[incident-buddy] Failed to invite users to incident channel:",
+      e,
+    );
   }
 }

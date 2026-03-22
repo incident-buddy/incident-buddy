@@ -11,18 +11,24 @@ type SlackClient = {
  * @param channelId - 投稿先チャンネル ID
  * @param error - 発生した例外
  */
-export async function postError(
-  client: SlackClient,
-  channelId: string,
-  error: unknown,
-): Promise<void> {
+export async function postError({
+  client,
+  channelId,
+  error,
+}: {
+  client: SlackClient;
+  channelId: string;
+  error: unknown;
+}): Promise<void> {
   if (!channelId) {
-    console.error("[incident-buddy] Cannot post error: channelId is empty. Error:", error);
+    console.error(
+      "[incident-buddy] Cannot post error: channelId is empty. Error:",
+      error,
+    );
     return;
   }
 
-  const message =
-    error instanceof Error ? error.message : "Unknown error";
+  const message = error instanceof Error ? error.message : "Unknown error";
 
   try {
     await client.chat.postMessage({

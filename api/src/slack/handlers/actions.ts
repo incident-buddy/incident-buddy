@@ -1,24 +1,38 @@
 import type { App } from "@slack/bolt";
 import type { WebClient } from "@slack/web-api";
 import { optionalEnv } from "../../env.js";
-import { loadConfig, matchRules } from "../../features/incident-config/incident-config.service.js";
 import type { Severity } from "../../features/incident/incident.model.js";
-import { buildChannelWelcomeMessage, buildIncidentMessage } from "../../features/incident/incident.presenter.js";
+import {
+  buildChannelWelcomeMessage,
+  buildIncidentMessage,
+} from "../../features/incident/incident.presenter.js";
 import { incidentRepository } from "../../features/incident/incident.repository.js";
 import { incidentService } from "../../features/incident/incident.service.js";
-import { createIncidentChannel, inviteToChannel, resolveInvitees } from "./incident-channel.js";
+import {
+  loadConfig,
+  matchRules,
+} from "../../features/incident-config/incident-config.service.js";
+import {
+  createIncidentChannel,
+  inviteToChannel,
+  resolveInvitees,
+} from "./incident-channel.js";
 import { postError } from "./post-error.js";
 
-export async function refreshIncidentSlackMessage(
-  incidentId: string,
-  client: WebClient,
-): Promise<void> {
-  const incident = await incidentRepository.findById(incidentId);
+export async function refreshIncidentSlackMessage({
+  incidentId,
+  client,
+}: {
+  incidentId: string;
+  client: WebClient;
+}): Promise<void> {
+  const incident = await incidentService.findById(incidentId);
   if (!incident) throw new Error(`Incident not found: ${incidentId}`);
   if (!incident.slackMessageTs) return;
 
-  const message = buildIncidentMessage(incident, {
-    incidentChannelId: incident.incidentChannelId,
+  const message = buildIncidentMessage({
+    incident,
+    options: { incidentChannelId: incident.incidentChannelId },
   });
   const result = await client.chat.update({
     channel: incident.slackChannelId,
@@ -42,8 +56,10 @@ export function registerActionHandlers(app: App): void {
     try {
       const values = view.state.values;
       const title = values.title?.title_input?.value ?? "";
-      const severity = (values.severity?.severity_select?.selected_option?.value ?? "Medium") as Severity;
-      const serviceName = values.service?.service_select?.selected_option?.value ?? "";
+      const severity = (values.severity?.severity_select?.selected_option
+        ?.value ?? "Medium") as Severity;
+      const serviceName =
+        values.service?.service_select?.selected_option?.value ?? "";
       const description = values.description?.description_input?.value ?? "";
 
       const userId = body.user.id;
@@ -60,47 +76,78 @@ export function registerActionHandlers(app: App): void {
       });
 
       // インシデント対応チャンネルを作成
-      const incidentChannel = await createIncidentChannel(client, new Date());
+      const incidentChannel = await createIncidentChannel({
+        client,
+        date: new Date(),
+      });
 
-      const message = buildIncidentMessage(incident, { incidentChannelId: incidentChannel.id });
+      const message = buildIncidentMessage({
+        incident,
+        options: { incidentChannelId: incidentChannel.id },
+      });
       const result = await client.chat.postMessage({
         channel: channelId,
         ...message,
       });
 
-      await incidentRepository.updateIncidentChannelId(incident.id, incidentChannel.id);
+      await incidentRepository.updateIncidentChannelId(
+        incident.id,
+        incidentChannel.id,
+      );
       if (result.ts) {
         await incidentRepository.updateSlackMessageTs(incident.id, result.ts);
       }
 
+      // 設定ファイルを読み込む（ウェルカムメッセージのロールボタン・通知ルール共用）
+      const configPath = optionalEnv("INCIDENT_CONFIG_PATH");
+      const configResult = configPath ? await loadConfig(configPath) : null;
+      const config = configResult?.type === "ok" ? configResult.config : null;
+
       // インシデントチャンネルにウェルカムメッセージを投稿
-      const welcomeMessage = buildChannelWelcomeMessage(incident);
+      const welcomeMessage = buildChannelWelcomeMessage(
+        incident,
+        config?.roles ?? [],
+      );
       const welcomeResult = await client.chat.postMessage({
         channel: incidentChannel.id,
         ...welcomeMessage,
       });
       if (!welcomeResult.ok) {
-        throw new Error(welcomeResult.error ?? "chat.postMessage failed for welcome message");
+        throw new Error(
+          welcomeResult.error ?? "chat.postMessage failed for welcome message",
+        );
+      }
+      if (welcomeResult.ts) {
+        await incidentRepository.updateWelcomeMessageTs(
+          incident.id,
+          welcomeResult.ts,
+        );
       }
 
       // 通知ルールの評価と追加通知・招待
-      const configPath = optionalEnv("INCIDENT_CONFIG_PATH");
-      if (!configPath) return;
+      if (!config) return;
 
-      const configResult = await loadConfig(configPath);
-      if (configResult.type !== "ok") return;
-
-      const matched = matchRules(configResult.config, incident.severity, incident.serviceName);
+      const matched = matchRules({
+        config,
+        severity: incident.severity,
+        serviceName: incident.serviceName,
+      });
 
       // 全マッチルールからメンションを集めて招待対象を解決（重複排除）
       const allMentions = matched.flatMap((r) => r.actions.mentions);
-      const invitees = await resolveInvitees(client, allMentions);
-      await inviteToChannel(client, incidentChannel.id, invitees);
+      const invitees = await resolveInvitees({ client, mentions: allMentions });
+      await inviteToChannel({
+        client,
+        channelId: incidentChannel.id,
+        userIds: invitees,
+      });
 
       for (const rule of matched) {
         for (const channel of rule.actions.channels) {
           const mentionText =
-            rule.actions.mentions.length > 0 ? `${rule.actions.mentions.join(" ")} ` : "";
+            rule.actions.mentions.length > 0
+              ? `${rule.actions.mentions.join(" ")} `
+              : "";
           const channelLink = ` | 対応チャンネル: <#${incidentChannel.id}>`;
           try {
             await client.chat.postMessage({
@@ -113,7 +160,109 @@ export function registerActionHandlers(app: App): void {
         }
       }
     } catch (e) {
-      await postError(client, channelId, e);
+      await postError({ client, channelId, error: e });
+    }
+  });
+
+  app.action(/^assign_role_/, async ({ ack, body, action, client }) => {
+    await ack();
+
+    if (body.type !== "block_actions") return;
+
+    const channelId = body.channel?.id;
+    if (!channelId) return;
+
+    const userId = body.user.id;
+    const userName = body.user.name ?? body.user.id;
+
+    // action_id から roleId を取り出す（assign_role_{roleId} 形式）
+    const actionId =
+      "action_id" in action ? (action.action_id as string) : "";
+    const roleId = actionId.replace("assign_role_", "");
+
+    try {
+      const incident = await incidentService.findByChannelId(channelId);
+      if (!incident) {
+        console.error(
+          `[incident-buddy] Incident not found for channel: ${channelId}`,
+        );
+        return;
+      }
+
+      // 重複アサインチェック
+      const alreadyAssigned = incident.responders.some(
+        (r) => r.roleId === roleId && r.userId === userId,
+      );
+      if (alreadyAssigned) {
+        await client.chat.postEphemeral({
+          channel: channelId,
+          user: userId,
+          text: "既にアサイン済みです。同じロールに重複してアサインすることはできません。",
+        });
+        return;
+      }
+
+      // アサイン処理
+      const updatedIncident = await incidentService.addResponder(
+        incident.id,
+        roleId,
+        userId,
+        userName,
+      );
+
+      // ロール設定を取得してラベルを解決
+      const configPath = optionalEnv("INCIDENT_CONFIG_PATH");
+      const configResult = configPath ? await loadConfig(configPath) : null;
+      const roles =
+        configResult?.type === "ok" ? configResult.config.roles : [];
+      const roleLabel =
+        roles.find((r) => r.id === roleId)?.label ?? roleId;
+
+      // ウェルカムメッセージを更新
+      if (incident.welcomeMessageTs) {
+        const updatedWelcome = buildChannelWelcomeMessage(
+          updatedIncident,
+          roles,
+        );
+        const updateResult = await client.chat.update({
+          channel: channelId,
+          ts: incident.welcomeMessageTs,
+          ...updatedWelcome,
+        });
+        if (!updateResult.ok) {
+          throw new Error(
+            updateResult.error ?? "chat.update failed for welcome message",
+          );
+        }
+      }
+
+      // #incidents のインシデントメッセージを更新（失敗時はログのみ）
+      try {
+        await refreshIncidentSlackMessage({
+          incidentId: incident.id,
+          client,
+        });
+      } catch (e) {
+        console.error(
+          "[incident-buddy] Failed to refresh incident slack message:",
+          e,
+        );
+      }
+
+      // チャンネルにアサイン通知を投稿（失敗時はログのみ）
+      try {
+        await client.chat.postMessage({
+          channel: channelId,
+          text: `@${userName} が${roleLabel}になりました`,
+        });
+      } catch (e) {
+        console.error(
+          "[incident-buddy] Failed to post assignment notification:",
+          e,
+        );
+      }
+    } catch (e) {
+      await postError({ client, channelId, error: e });
     }
   });
 }

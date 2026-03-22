@@ -21,17 +21,17 @@ const CONFIG: IncidentConfig = {
         severity: { op: ">=", label: "High" },
         service: "payment-api",
       },
-      actions: { channels: ["#payment-oncall"], mentions: ["@payment-lead"] },
+      actions: { mentions: ["@payment-lead"] },
     },
     {
       name: "All Critical",
       conditions: { severity: { op: "==", label: "Critical" } },
-      actions: { channels: ["#incidents-critical"], mentions: ["@here"] },
+      actions: { mentions: ["@here"] },
     },
     {
       name: "User Service Any",
       conditions: { service: "user-service" },
-      actions: { channels: ["#user-service-alerts"], mentions: [] },
+      actions: { mentions: [] },
     },
   ],
 };
@@ -123,7 +123,7 @@ describe("matchRules", () => {
         {
           name: "Low Priority",
           conditions: { severity: { op: "<=", label: "Medium" } },
-          actions: { channels: ["#low-priority"], mentions: [] },
+          actions: { mentions: [] },
         },
       ],
     };

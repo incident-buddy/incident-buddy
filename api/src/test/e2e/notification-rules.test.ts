@@ -65,17 +65,15 @@ const CONFIG = `# Incident Config
 ### Payment High or Above
 - severity: >= High
 - service: payment-api
-- channel: #payment-oncall
-- mention: @payment-lead
+- mention: @UPAYLEADER
 
 ### All Critical
 - severity: Critical
-- channel: #incidents-critical
 - mention: @here
 
 ### Platform Any Severity
 - service: user-service
-- channel: #user-service-alerts
+- mention: @UPLATFORM
 `;
 
 function buildCreateIncidentPayload({
@@ -183,102 +181,25 @@ describe("Notification rules from markdown config", () => {
 
   describe("設定ファイルあり", () => {
     it(
-      "severity: Critical + service: payment-api → 元チャンネル + #payment-oncall + #incidents-critical へ通知",
+      "severity: Medium + service: payment-api → どのルールにもマッチせず招待通知なし",
       withConfigFile({
         content: CONFIG,
         fn: async () => {
-          const postedChannels: string[] = [];
-          const postedMentions: string[] = [];
-          const allPosted = new Promise<void>((resolve) => {
-            server.use(
-              http.post(
-                "https://slack.com/api/chat.postMessage",
-                async ({ request }) => {
-                  const params = new URLSearchParams(await request.text());
-                  const channel = params.get("channel") ?? "";
-                  const text = params.get("text") ?? "";
-                  postedChannels.push(channel);
-                  if (text) postedMentions.push(text);
-                  if (
-                    postedChannels.includes("#payment-oncall") &&
-                    postedChannels.includes("#incidents-critical")
-                  )
-                    resolve();
-                  return HttpResponse.json({
-                    ok: true,
-                    ts: "1000.0001",
-                    channel,
-                  });
-                },
-              ),
-            );
-          });
+          const incidentChannelId = "C_INC_TEST";
+          server.use(
+            http.post("https://slack.com/api/conversations.create", () =>
+              HttpResponse.json({
+                ok: true,
+                channel: { id: incidentChannelId, name: "inc-20260322-001" },
+              }),
+            ),
+          );
 
-          const res = await submitCreateIncident({
-            severity: "Critical",
-            serviceName: "payment-api",
-          });
-          expect(res.status).toBe(200);
-          await allPosted;
-
-          expect(postedChannels).toContain("C000TEST");
-          expect(postedChannels).toContain("#payment-oncall");
-          expect(postedChannels).toContain("#incidents-critical");
-
-          const allText = postedMentions.join(" ");
-          expect(allText).toContain("@payment-lead");
-          expect(allText).toContain("@here");
-        },
-      }),
-    );
-
-    it(
-      "severity: High + service: payment-api → #payment-oncall へ通知（Criticalルールはマッチしない）",
-      withConfigFile({
-        content: CONFIG,
-        fn: async () => {
-          const postedChannels: string[] = [];
-          const allPosted = new Promise<void>((resolve) => {
-            server.use(
-              http.post(
-                "https://slack.com/api/chat.postMessage",
-                async ({ request }) => {
-                  const params = new URLSearchParams(await request.text());
-                  const channel = params.get("channel") ?? "";
-                  postedChannels.push(channel);
-                  if (postedChannels.includes("#payment-oncall")) resolve();
-                  return HttpResponse.json({
-                    ok: true,
-                    ts: "1000.0001",
-                    channel,
-                  });
-                },
-              ),
-            );
-          });
-
-          const res = await submitCreateIncident({
-            severity: "High",
-            serviceName: "payment-api",
-          });
-          expect(res.status).toBe(200);
-          await allPosted;
-
-          expect(postedChannels).toContain("C000TEST");
-          expect(postedChannels).toContain("#payment-oncall");
-          expect(postedChannels).not.toContain("#incidents-critical");
-        },
-      }),
-    );
-
-    it(
-      "severity: Medium + service: payment-api → どのルールにもマッチせず元チャンネルのみ",
-      withConfigFile({
-        content: CONFIG,
-        fn: async () => {
-          const postedChannels: string[] = [];
-          let resolvePost!: () => void;
-          const postCalled = new Promise<void>((r) => (resolvePost = r));
+          const incidentChannelPosts: string[] = [];
+          let resolveWelcome!: () => void;
+          const welcomePosted = new Promise<void>(
+            (r) => (resolveWelcome = r),
+          );
 
           server.use(
             http.post(
@@ -286,8 +207,11 @@ describe("Notification rules from markdown config", () => {
               async ({ request }) => {
                 const params = new URLSearchParams(await request.text());
                 const channel = params.get("channel") ?? "";
-                postedChannels.push(channel);
-                resolvePost();
+                const text = params.get("text") ?? "";
+                if (channel === incidentChannelId) {
+                  incidentChannelPosts.push(text);
+                  resolveWelcome();
+                }
                 return HttpResponse.json({
                   ok: true,
                   ts: "1000.0001",
@@ -302,48 +226,53 @@ describe("Notification rules from markdown config", () => {
             serviceName: "payment-api",
           });
           expect(res.status).toBe(200);
-          await postCalled;
+          await welcomePosted;
+          await new Promise((r) => setTimeout(r, 50));
 
-          expect(postedChannels).toEqual(["C000TEST"]);
+          // 招待通知は投稿されない
+          expect(
+            incidentChannelPosts.some((t) => t.includes("を招待しました")),
+          ).toBe(false);
         },
       }),
     );
 
     it(
-      "serviceのみ条件ルール（service: user-service）が severity 問わずマッチする",
+      "serviceのみ条件ルール（service: user-service）が severity 問わずマッチし招待される",
       withConfigFile({
         content: CONFIG,
         fn: async () => {
-          const postedChannels: string[] = [];
-          const allPosted = new Promise<void>((resolve) => {
-            server.use(
-              http.post(
-                "https://slack.com/api/chat.postMessage",
-                async ({ request }) => {
-                  const params = new URLSearchParams(await request.text());
-                  const channel = params.get("channel") ?? "";
-                  postedChannels.push(channel);
-                  if (postedChannels.includes("#user-service-alerts"))
-                    resolve();
-                  return HttpResponse.json({
-                    ok: true,
-                    ts: "1000.0001",
-                    channel,
-                  });
-                },
-              ),
-            );
-          });
+          const incidentChannelId = "C_INC_TEST";
+          server.use(
+            http.post("https://slack.com/api/conversations.create", () =>
+              HttpResponse.json({
+                ok: true,
+                channel: { id: incidentChannelId, name: "inc-20260322-001" },
+              }),
+            ),
+          );
+
+          let resolveInvite!: () => void;
+          const inviteDone = new Promise<void>((r) => (resolveInvite = r));
+
+          server.use(
+            http.post(
+              "https://slack.com/api/conversations.invite",
+              async ({ request }) => {
+                const params = new URLSearchParams(await request.text());
+                const users = params.get("users") ?? "";
+                if (users.includes("UPLATFORM")) resolveInvite();
+                return HttpResponse.json({ ok: true });
+              },
+            ),
+          );
 
           const res = await submitCreateIncident({
             severity: "Low",
             serviceName: "user-service",
           });
           expect(res.status).toBe(200);
-          await allPosted;
-
-          expect(postedChannels).toContain("C000TEST");
-          expect(postedChannels).toContain("#user-service-alerts");
+          await inviteDone;
         },
       }),
     );
@@ -353,34 +282,37 @@ describe("Notification rules from markdown config", () => {
       withConfigFile({
         content: CONFIG,
         fn: async () => {
-          const postedChannels: string[] = [];
-          const allPosted = new Promise<void>((resolve) => {
-            server.use(
-              http.post(
-                "https://slack.com/api/chat.postMessage",
-                async ({ request }) => {
-                  const params = new URLSearchParams(await request.text());
-                  const channel = params.get("channel") ?? "";
-                  postedChannels.push(channel);
-                  if (postedChannels.includes("#payment-oncall")) resolve();
-                  return HttpResponse.json({
-                    ok: true,
-                    ts: "1000.0001",
-                    channel,
-                  });
-                },
-              ),
-            );
-          });
+          const incidentChannelId = "C_INC_TEST";
+          server.use(
+            http.post("https://slack.com/api/conversations.create", () =>
+              HttpResponse.json({
+                ok: true,
+                channel: { id: incidentChannelId, name: "inc-20260322-001" },
+              }),
+            ),
+          );
+
+          let resolveInvite!: () => void;
+          const inviteDone = new Promise<void>((r) => (resolveInvite = r));
+
+          server.use(
+            http.post(
+              "https://slack.com/api/conversations.invite",
+              async ({ request }) => {
+                const params = new URLSearchParams(await request.text());
+                const users = params.get("users") ?? "";
+                if (users.includes("UPAYLEADER")) resolveInvite();
+                return HttpResponse.json({ ok: true });
+              },
+            ),
+          );
 
           const res = await submitCreateIncident({
             severity: "High",
             serviceName: "Payment-API",
           });
           expect(res.status).toBe(200);
-          await allPosted;
-
-          expect(postedChannels).toContain("#payment-oncall");
+          await inviteDone;
         },
       }),
     );
@@ -489,49 +421,66 @@ describe("Notification rules from markdown config", () => {
 ## Notification Rules
 ### Low and Below
 - severity: <= Medium
-- channel: #low-priority
+- mention: @ULOWPRIORITY
 `,
         fn: async () => {
-          // Low → マッチ → #low-priority へ通知
-          const lowChannels: string[] = [];
-          const lowDone = new Promise<void>((resolve) => {
-            server.use(
-              http.post(
-                "https://slack.com/api/chat.postMessage",
-                async ({ request }) => {
-                  const params = new URLSearchParams(await request.text());
-                  const channel = params.get("channel") ?? "";
-                  lowChannels.push(channel);
-                  if (lowChannels.includes("#low-priority")) resolve();
-                  return HttpResponse.json({
-                    ok: true,
-                    ts: "1000.0001",
-                    channel,
-                  });
-                },
-              ),
-            );
-          });
+          const incidentChannelId = "C_INC_LEQ";
+          server.use(
+            http.post("https://slack.com/api/conversations.create", () =>
+              HttpResponse.json({
+                ok: true,
+                channel: { id: incidentChannelId, name: "inc-20260322-001" },
+              }),
+            ),
+          );
+
+          // Low → マッチ → ULOWPRIORITY が招待される
+          let resolveInvite!: () => void;
+          const inviteDone = new Promise<void>((r) => (resolveInvite = r));
+          server.use(
+            http.post(
+              "https://slack.com/api/conversations.invite",
+              async ({ request }) => {
+                const params = new URLSearchParams(await request.text());
+                const users = params.get("users") ?? "";
+                if (users.includes("ULOWPRIORITY")) resolveInvite();
+                return HttpResponse.json({ ok: true });
+              },
+            ),
+          );
 
           const res = await submitCreateIncident({ severity: "Low" });
           expect(res.status).toBe(200);
-          await lowDone;
-          expect(lowChannels).toContain("#low-priority");
+          await inviteDone;
 
           server.resetHandlers();
 
-          // High → マッチしない → 元チャンネルのみ1回
-          const highChannels: string[] = [];
-          let resolveHigh!: () => void;
-          const highDone = new Promise<void>((r) => (resolveHigh = r));
+          // High → マッチしない → invite は呼ばれない
+          let inviteCalled = false;
+          server.use(
+            http.post("https://slack.com/api/conversations.create", () =>
+              HttpResponse.json({
+                ok: true,
+                channel: { id: incidentChannelId, name: "inc-20260322-002" },
+              }),
+            ),
+            http.post("https://slack.com/api/conversations.invite", () => {
+              inviteCalled = true;
+              return HttpResponse.json({ ok: true });
+            }),
+          );
+
+          let resolveWelcome!: () => void;
+          const welcomeDone = new Promise<void>(
+            (r) => (resolveWelcome = r),
+          );
           server.use(
             http.post(
               "https://slack.com/api/chat.postMessage",
               async ({ request }) => {
                 const params = new URLSearchParams(await request.text());
                 const channel = params.get("channel") ?? "";
-                highChannels.push(channel);
-                resolveHigh();
+                if (channel === incidentChannelId) resolveWelcome();
                 return HttpResponse.json({
                   ok: true,
                   ts: "1000.0001",
@@ -543,8 +492,9 @@ describe("Notification rules from markdown config", () => {
 
           const res2 = await submitCreateIncident({ severity: "High" });
           expect(res2.status).toBe(200);
-          await highDone;
-          expect(highChannels).not.toContain("#low-priority");
+          await welcomeDone;
+          await new Promise((r) => setTimeout(r, 50));
+          expect(inviteCalled).toBe(false);
         },
       }),
     );

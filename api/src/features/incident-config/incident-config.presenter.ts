@@ -19,9 +19,7 @@ function formatConditions(rule: NotificationRule): string {
 }
 
 function formatActions(rule: NotificationRule): string {
-  const channels = rule.actions.channels.map((c) => `#${c.replace(/^#/, "")}`);
-  const mentions = rule.actions.mentions;
-  return [...channels, ...mentions].join(" ");
+  return rule.actions.mentions.join(" ");
 }
 
 function buildConfigBody(config: IncidentConfig): string {

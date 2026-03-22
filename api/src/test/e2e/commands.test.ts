@@ -154,7 +154,7 @@ describe("POST /slack/events - /inc config command", () => {
     expect(getText()).toContain("Notify Critical");
     // conditions/actions のフォーマット検証
     expect(getText()).toContain("severity==P1");
-    expect(getText()).toContain("→ #incidents @here");
+    expect(getText()).toContain("→ @here");
 
     fs.rmSync(dir, { recursive: true });
   });

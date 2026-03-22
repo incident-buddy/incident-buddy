@@ -30,17 +30,14 @@ const FULL_CONFIG = `# Incident Config
 ### Payment High or Above
 - severity: >= High
 - service: payment-api
-- channel: #payment-oncall
 - mention: @payment-lead @oncall-group
 
 ### All Critical
 - severity: Critical
-- channel: #incidents-critical
 - mention: @here
 
 ### User Service Any
 - service: user-service
-- channel: #user-service-alerts
 `;
 
 describe("parseIncidentConfig", () => {
@@ -101,7 +98,6 @@ describe("parseIncidentConfig", () => {
       expect(rule).toBeDefined();
       expect(rule?.conditions.severity).toEqual({ op: ">=", label: "High" });
       expect(rule?.conditions.service).toBe("payment-api");
-      expect(rule?.actions.channels).toEqual(["#payment-oncall"]);
       expect(rule?.actions.mentions).toEqual([
         "@payment-lead",
         "@oncall-group",
@@ -119,7 +115,6 @@ describe("parseIncidentConfig", () => {
         label: "Critical",
       });
       expect(rule?.conditions.service).toBeUndefined();
-      expect(rule?.actions.channels).toEqual(["#incidents-critical"]);
       expect(rule?.actions.mentions).toEqual(["@here"]);
     });
 
@@ -131,10 +126,23 @@ describe("parseIncidentConfig", () => {
       expect(rule).toBeDefined();
       expect(rule?.conditions.severity).toBeUndefined();
       expect(rule?.conditions.service).toBe("user-service");
-      expect(rule?.actions.channels).toEqual(["#user-service-alerts"]);
       expect(rule?.actions.mentions).toEqual([]);
     });
   });
+
+    it("channel: キーは無視される（フィールドとして保存されない）", () => {
+      const config = parseIncidentConfig(`## Notification Rules
+### Rule With Channel
+- severity: Critical
+- channel: #some-channel
+- mention: @here
+`);
+      const rule = config.notificationRules[0];
+      expect(rule).toBeDefined();
+      // channels フィールドは存在しない
+      expect(Object.keys(rule?.actions ?? {})).not.toContain("channels");
+      expect(rule?.actions.mentions).toEqual(["@here"]);
+    });
 
   describe("空ファイルや不完全な入力", () => {
     it("空文字列を渡すと空の設定を返す", () => {

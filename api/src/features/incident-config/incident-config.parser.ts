@@ -99,7 +99,7 @@ export function parseIncidentConfig(content: string): IncidentConfig {
         currentRule = {
           name: label,
           conditions: {},
-          actions: { channels: [], mentions: [] },
+          actions: { mentions: [] },
         };
       }
       continue;
@@ -121,8 +121,6 @@ export function parseIncidentConfig(content: string): IncidentConfig {
         currentRule.conditions.severity = parseSeverityCondition(value);
       } else if (key === "service") {
         currentRule.conditions.service = value;
-      } else if (key === "channel") {
-        currentRule.actions.channels.push(value);
       } else if (key === "mention") {
         const mentions = value.split(/\s+/).filter(Boolean);
         currentRule.actions.mentions.push(...mentions);

@@ -20,7 +20,6 @@ export type NotificationRule = {
     service?: string;
   };
   actions: {
-    channels: string[];
     mentions: string[];
   };
 };

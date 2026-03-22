@@ -100,7 +100,6 @@ Critical
 
 ### Notify P1
 - severity: P1
-- channel: #incidents
 - mention: @here @UA12345 @UB67890
 `;
 
@@ -116,7 +115,6 @@ Critical
 
 ### Notify P1
 - severity: P1
-- channel: #incidents
 - mention: @SGROUP1
 `;
 
@@ -132,12 +130,10 @@ Critical
 
 ### Rule 1
 - severity: P1
-- channel: #incidents
 - mention: @UA12345 @UB67890
 
 ### Rule 2
 - severity: P1
-- channel: #oncall
 - mention: @UA12345 @UC99999
 `;
 
@@ -395,9 +391,9 @@ describe("インシデントチャンネル自動作成・招待", () => {
     );
 
     it(
-      "@here / @channel は招待に使われない（通知メッセージへのメンションは維持）",
+      "@here / @channel は招待に使われない",
       withConfigFile({
-        content: `# Incident Config\n## Severities\n### P1\nCritical\n## Notification Rules\n### Rule\n- severity: P1\n- channel: #incidents\n- mention: @here @channel\n`,
+        content: `# Incident Config\n## Severities\n### P1\nCritical\n## Notification Rules\n### Rule\n- severity: P1\n- mention: @here @channel\n`,
         fn: async () => {
           server.use(
             http.post("https://slack.com/api/conversations.create", () =>
@@ -415,36 +411,31 @@ describe("インシデントチャンネル自動作成・招待", () => {
             }),
           );
 
-          const postedMessages: string[] = [];
-          const allPosted = new Promise<void>((resolve) => {
-            server.use(
-              http.post(
-                "https://slack.com/api/chat.postMessage",
-                async ({ request }) => {
-                  const params = new URLSearchParams(await request.text());
-                  const text = params.get("text") ?? "";
-                  postedMessages.push(text);
-                  if (text.includes("Incident declared:")) resolve();
-                  return HttpResponse.json({
-                    ok: true,
-                    ts: "1000.0001",
-                    channel: "C000TEST",
-                  });
-                },
-              ),
-            );
-          });
+          let resolveWelcome!: () => void;
+          const welcomePosted = new Promise<void>((r) => (resolveWelcome = r));
+          server.use(
+            http.post(
+              "https://slack.com/api/chat.postMessage",
+              async ({ request }) => {
+                const params = new URLSearchParams(await request.text());
+                const channel = params.get("channel") ?? "";
+                if (channel === "C_INC_001") resolveWelcome();
+                return HttpResponse.json({
+                  ok: true,
+                  ts: "1000.0001",
+                  channel,
+                });
+              },
+            ),
+          );
 
           const res = await submitCreateIncident();
           expect(res.status).toBe(200);
-          await allPosted;
+          await welcomePosted;
+          await new Promise((r) => setTimeout(r, 50));
 
-          // 招待は行われない
+          // @here / @channel は invitees に含まれないため招待は行われない
           expect(inviteSpy).not.toHaveBeenCalled();
-          // 通知メッセージには @here / @channel が含まれる（メンションは維持）
-          const notifyText =
-            postedMessages.find((t) => t.includes("Incident declared:")) ?? "";
-          expect(notifyText).toMatch(/@here|@channel/);
         },
       }),
     );
@@ -566,13 +557,14 @@ describe("インシデントチャンネル自動作成・招待", () => {
               "https://slack.com/api/chat.postMessage",
               async ({ request }) => {
                 const params = new URLSearchParams(await request.text());
-                const text = params.get("text") ?? "";
+                const channel = params.get("channel") ?? "";
                 postMessageCallCount++;
-                if (text.includes("Incident declared:")) resolvePost();
+                // ウェルカムメッセージがインシデントチャンネルに投稿されたら完了
+                if (channel === "C_INC_001") resolvePost();
                 return HttpResponse.json({
                   ok: true,
                   ts: "1000.0001",
-                  channel: "C000TEST",
+                  channel,
                 });
               },
             ),
@@ -581,6 +573,9 @@ describe("インシデントチャンネル自動作成・招待", () => {
           const res = await submitCreateIncident();
           expect(res.status).toBe(200);
           await allPosted;
+          // allPosted はウェルカムメッセージ投稿時に解決されるが、
+          // inviteToChannel はその後に実行されるため完了を待つ
+          await new Promise((r) => setTimeout(r, 100));
 
           // クラッシュしない（postMessage は通常通り実行される）
           expect(postMessageCallCount).toBeGreaterThanOrEqual(1);
@@ -596,56 +591,4 @@ describe("インシデントチャンネル自動作成・招待", () => {
     );
   });
 
-  describe("通知メッセージへのチャンネルリンク", () => {
-    it(
-      "通知チャンネルの通知メッセージにインシデントチャンネルリンクが含まれる",
-      withConfigFile({
-        content: CONFIG_WITH_USER_MENTIONS,
-        fn: async () => {
-          server.use(
-            http.post("https://slack.com/api/conversations.create", () =>
-              HttpResponse.json({
-                ok: true,
-                channel: { id: "C_INC_LINK", name: "inc-20260321-001" },
-              }),
-            ),
-            http.post("https://slack.com/api/conversations.invite", () =>
-              HttpResponse.json({ ok: true }),
-            ),
-          );
-
-          const notificationTexts: string[] = [];
-          const allPosted = new Promise<void>((resolve) => {
-            server.use(
-              http.post(
-                "https://slack.com/api/chat.postMessage",
-                async ({ request }) => {
-                  const params = new URLSearchParams(await request.text());
-                  const text = params.get("text") ?? "";
-                  notificationTexts.push(text);
-                  if (text.includes("Incident declared:")) resolve();
-                  return HttpResponse.json({
-                    ok: true,
-                    ts: "1000.0001",
-                    channel: "C000TEST",
-                  });
-                },
-              ),
-            );
-          });
-
-          const res = await submitCreateIncident();
-          expect(res.status).toBe(200);
-          await allPosted;
-
-          // #incidents への通知メッセージにチャンネルリンクが含まれる
-          const notificationText = notificationTexts.find((t) =>
-            t.includes("Incident declared:"),
-          );
-          expect(notificationText).toBeDefined();
-          expect(notificationText).toContain("<#C_INC_LINK>");
-        },
-      }),
-    );
-  });
 });

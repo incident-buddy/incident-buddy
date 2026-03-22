@@ -1,12 +1,13 @@
 import type {
   IncidentConfig,
   NotificationRule,
+  RoleDef,
   ServiceDef,
   SeverityCondition,
   SeverityDef,
 } from "./incident-config.model.js";
 
-type Section = "severities" | "services" | "notification-rules" | null;
+type Section = "severities" | "services" | "notification-rules" | "roles" | null;
 
 function parseSeverityCondition(value: string): SeverityCondition {
   const trimmed = value.trim();
@@ -25,6 +26,7 @@ export function parseIncidentConfig(content: string): IncidentConfig {
   const severities: SeverityDef[] = [];
   const services: ServiceDef[] = [];
   const notificationRules: NotificationRule[] = [];
+  const roles: RoleDef[] = [];
 
   let currentSection: Section = null;
   let currentEntryLabel: string | null = null;
@@ -38,6 +40,11 @@ export function parseIncidentConfig(content: string): IncidentConfig {
       severities.push({ label: currentEntryLabel, description });
     } else if (currentSection === "services") {
       services.push({ label: currentEntryLabel, description });
+    } else if (currentSection === "roles") {
+      // label は description の最初の「。」前のテキスト、なければ id をそのまま使う
+      const labelMatch = description.match(/^([^。]+)/);
+      const label = labelMatch?.[1]?.trim() ?? currentEntryLabel;
+      roles.push({ id: currentEntryLabel, label, description });
     }
     // notification-rules entries are flushed via flushRule
     currentEntryLabel = null;
@@ -73,6 +80,8 @@ export function parseIncidentConfig(content: string): IncidentConfig {
         currentSection = "services";
       } else if (sectionName === "notification rules") {
         currentSection = "notification-rules";
+      } else if (sectionName === "roles") {
+        currentSection = "roles";
       } else {
         currentSection = null;
       }
@@ -97,7 +106,11 @@ export function parseIncidentConfig(content: string): IncidentConfig {
     }
 
     // List item - key: value
-    if (line.startsWith("- ") && currentSection === "notification-rules" && currentRule) {
+    if (
+      line.startsWith("- ") &&
+      currentSection === "notification-rules" &&
+      currentRule
+    ) {
       const item = line.slice(2).trim();
       const colonIdx = item.indexOf(":");
       if (colonIdx === -1) continue;
@@ -123,7 +136,7 @@ export function parseIncidentConfig(content: string): IncidentConfig {
       !line.startsWith("#") &&
       !line.startsWith("- ") &&
       currentEntryLabel !== null &&
-      (currentSection === "severities" || currentSection === "services")
+      (currentSection === "severities" || currentSection === "services" || currentSection === "roles")
     ) {
       currentDescLines.push(line.trim());
     }
@@ -132,5 +145,5 @@ export function parseIncidentConfig(content: string): IncidentConfig {
   flushEntry();
   flushRule();
 
-  return { severities, services, notificationRules };
+  return { severities, services, notificationRules, roles };
 }

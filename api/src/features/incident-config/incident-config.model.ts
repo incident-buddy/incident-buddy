@@ -25,10 +25,17 @@ export type NotificationRule = {
   };
 };
 
+export type RoleDef = {
+  id: string;
+  label: string;
+  description: string;
+};
+
 export type IncidentConfig = {
   severities: SeverityDef[];
   services: ServiceDef[];
   notificationRules: NotificationRule[];
+  roles: RoleDef[];
 };
 
 export type ConfigLoadResult =

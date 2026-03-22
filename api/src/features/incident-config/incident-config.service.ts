@@ -1,12 +1,21 @@
 import * as fs from "node:fs";
-import type { ConfigLoadResult, IncidentConfig, NotificationRule, SeverityCondition } from "./incident-config.model.js";
+import type {
+  ConfigLoadResult,
+  IncidentConfig,
+  NotificationRule,
+  SeverityCondition,
+} from "./incident-config.model.js";
 import { parseIncidentConfig } from "./incident-config.parser.js";
 
-function compareSeverity(
-  severities: IncidentConfig["severities"],
-  incidentSeverity: string,
-  condition: SeverityCondition,
-): boolean {
+function compareSeverity({
+  severities,
+  incidentSeverity,
+  condition,
+}: {
+  severities: IncidentConfig["severities"];
+  incidentSeverity: string;
+  condition: SeverityCondition;
+}): boolean {
   const idx = severities.findIndex(
     (s) => s.label.toLowerCase() === incidentSeverity.toLowerCase(),
   );
@@ -23,16 +32,27 @@ function compareSeverity(
   return idx === condIdx;
 }
 
-export function matchRules(
-  config: IncidentConfig,
-  severity: string,
-  serviceName: string,
-): NotificationRule[] {
+export function matchRules({
+  config,
+  severity,
+  serviceName,
+}: {
+  config: IncidentConfig;
+  severity: string;
+  serviceName: string;
+}): NotificationRule[] {
   return config.notificationRules.filter((rule) => {
     const { severity: sevCond, service: svcCond } = rule.conditions;
 
     if (sevCond !== undefined) {
-      if (!compareSeverity(config.severities, severity, sevCond)) return false;
+      if (
+        !compareSeverity({
+          severities: config.severities,
+          incidentSeverity: severity,
+          condition: sevCond,
+        })
+      )
+        return false;
     }
 
     if (svcCond !== undefined) {
@@ -44,7 +64,7 @@ export function matchRules(
   });
 }
 
-const KNOWN_SECTIONS = /^## (Severities|Services|Notification Rules)/im;
+const KNOWN_SECTIONS = /^## (Severities|Services|Notification Rules|Roles)/im;
 
 export async function loadConfig(filePath: string): Promise<ConfigLoadResult> {
   try {
@@ -52,7 +72,8 @@ export async function loadConfig(filePath: string): Promise<ConfigLoadResult> {
     if (content.trim().length > 0 && !KNOWN_SECTIONS.test(content)) {
       return {
         type: "error",
-        message: "No recognizable sections found (expected ## Severities, ## Services, or ## Notification Rules)",
+        message:
+          "No recognizable sections found (expected ## Severities, ## Services, or ## Notification Rules)",
       };
     }
     return { type: "ok", config: parseIncidentConfig(content) };

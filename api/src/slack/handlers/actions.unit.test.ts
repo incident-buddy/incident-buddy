@@ -20,7 +20,79 @@ const {
   tryRefreshIncidentSlackMessage,
   tryUpdateWelcomeMessage,
   tryPostResolveNotification,
+  tryPostInviteNotification,
+  tryPostAssignmentNotification,
 } = await import("./actions.js");
+
+describe("tryPostInviteNotification", () => {
+  afterEach(() => vi.clearAllMocks());
+
+  it("招待通知を正しい内容で投稿する", async () => {
+    const mockClient = {
+      chat: { postMessage: vi.fn().mockResolvedValue({ ok: true }) },
+    };
+
+    await expect(
+      tryPostInviteNotification(mockClient as never, "C_INC", "U123"),
+    ).resolves.toBeUndefined();
+
+    expect(mockClient.chat.postMessage).toHaveBeenCalledWith({
+      channel: "C_INC",
+      text: "<@U123> を招待しました",
+    });
+  });
+
+  it("postMessage が失敗しても例外を伝播させず console.error を呼ぶ", async () => {
+    const mockClient = {
+      chat: { postMessage: vi.fn().mockRejectedValue(new Error("fail")) },
+    };
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await expect(
+      tryPostInviteNotification(mockClient as never, "C_INC", "U123"),
+    ).resolves.toBeUndefined();
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "[incident-buddy] Failed to post invite notification:",
+      expect.any(Error),
+    );
+  });
+});
+
+describe("tryPostAssignmentNotification", () => {
+  afterEach(() => vi.clearAllMocks());
+
+  it("アサイン通知を正しい内容で投稿する", async () => {
+    const mockClient = {
+      chat: { postMessage: vi.fn().mockResolvedValue({ ok: true }) },
+    };
+
+    await expect(
+      tryPostAssignmentNotification(mockClient as never, "C123", "alice", "Commander"),
+    ).resolves.toBeUndefined();
+
+    expect(mockClient.chat.postMessage).toHaveBeenCalledWith({
+      channel: "C123",
+      text: "@alice がCommanderになりました",
+    });
+  });
+
+  it("postMessage が失敗しても例外を伝播させず console.error を呼ぶ", async () => {
+    const mockClient = {
+      chat: { postMessage: vi.fn().mockRejectedValue(new Error("fail")) },
+    };
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await expect(
+      tryPostAssignmentNotification(mockClient as never, "C123", "alice", "Commander"),
+    ).resolves.toBeUndefined();
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "[incident-buddy] Failed to post assignment notification:",
+      expect.any(Error),
+    );
+  });
+});
 
 describe("tryUpdateWelcomeMessage", () => {
   afterEach(() => vi.clearAllMocks());

@@ -140,17 +140,7 @@ export function registerActionHandlers(app: App): void {
       });
 
       for (const userId of invitees) {
-        try {
-          await client.chat.postMessage({
-            channel: incidentChannel.id,
-            text: `<@${userId}> を招待しました`,
-          });
-        } catch (e) {
-          console.error(
-            "[incident-buddy] Failed to post invite notification:",
-            e,
-          );
-        }
+        await tryPostInviteNotification(client, incidentChannel.id, userId);
       }
     } catch (e) {
       await postError({ client, channelId, error: e });
@@ -334,17 +324,7 @@ export function registerActionHandlers(app: App): void {
       await tryRefreshIncidentSlackMessage({ incidentId: incident.id, client });
 
       // チャンネルにアサイン通知を投稿（失敗時はログのみ）
-      try {
-        await client.chat.postMessage({
-          channel: channelId,
-          text: `@${userName} が${roleLabel}になりました`,
-        });
-      } catch (e) {
-        console.error(
-          "[incident-buddy] Failed to post assignment notification:",
-          e,
-        );
-      }
+      await tryPostAssignmentNotification(client, channelId, userName, roleLabel);
     } catch (e) {
       await postError({ client, channelId, error: e });
     }
@@ -359,6 +339,37 @@ export async function tryRefreshIncidentSlackMessage(args: {
     await refreshIncidentSlackMessage(args);
   } catch (e) {
     console.error("[incident-buddy] Failed to refresh incident slack message:", e);
+  }
+}
+
+export async function tryPostInviteNotification(
+  client: WebClient,
+  channelId: string,
+  userId: string,
+): Promise<void> {
+  try {
+    await client.chat.postMessage({
+      channel: channelId,
+      text: `<@${userId}> を招待しました`,
+    });
+  } catch (e) {
+    console.error("[incident-buddy] Failed to post invite notification:", e);
+  }
+}
+
+export async function tryPostAssignmentNotification(
+  client: WebClient,
+  channelId: string,
+  userName: string,
+  roleLabel: string,
+): Promise<void> {
+  try {
+    await client.chat.postMessage({
+      channel: channelId,
+      text: `@${userName} が${roleLabel}になりました`,
+    });
+  } catch (e) {
+    console.error("[incident-buddy] Failed to post assignment notification:", e);
   }
 }
 

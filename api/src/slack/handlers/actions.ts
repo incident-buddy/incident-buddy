@@ -2,7 +2,7 @@ import type { App } from "@slack/bolt";
 import type { WebClient } from "@slack/web-api";
 import { z } from "zod";
 import { optionalEnv } from "../../env.js";
-import type { Severity } from "../../features/incident/incident.model.js";
+import type { Incident, Severity } from "../../features/incident/incident.model.js";
 import { AlreadyResolvedError } from "../../features/incident/incident.model.js";
 import {
   buildChannelWelcomeMessage,
@@ -224,19 +224,12 @@ export function registerActionHandlers(app: App): void {
 
       // ウェルカムメッセージを resolved 表示に更新（失敗時ログのみ）
       if (incident.welcomeMessageTs && incidentChannelId) {
-        try {
-          const updatedWelcome = buildChannelWelcomeMessage(incident, []);
-          await client.chat.update({
-            channel: incidentChannelId,
-            ts: incident.welcomeMessageTs,
-            ...updatedWelcome,
-          });
-        } catch (e) {
-          console.error(
-            "[incident-buddy] Failed to update welcome message on resolve:",
-            e,
-          );
-        }
+        await tryUpdateWelcomeMessage(
+          client,
+          incidentChannelId,
+          incident.welcomeMessageTs,
+          incident,
+        );
       }
 
       // #incidents メッセージを更新（失敗時ログのみ）
@@ -247,17 +240,7 @@ export function registerActionHandlers(app: App): void {
         const elapsed = incident.resolvedAt
           ? formatElapsedTime(incident.createdAt, incident.resolvedAt)
           : "";
-        try {
-          await client.chat.postMessage({
-            channel: incidentChannelId,
-            text: `✅ @${userName} がインシデントをクローズしました / 経過時間: ${elapsed}`,
-          });
-        } catch (e) {
-          console.error(
-            "[incident-buddy] Failed to post resolve notification:",
-            e,
-          );
-        }
+        await tryPostResolveNotification(client, incidentChannelId, userName, elapsed);
       }
     } catch (e) {
       if (e instanceof AlreadyResolvedError) {
@@ -376,5 +359,35 @@ export async function tryRefreshIncidentSlackMessage(args: {
     await refreshIncidentSlackMessage(args);
   } catch (e) {
     console.error("[incident-buddy] Failed to refresh incident slack message:", e);
+  }
+}
+
+export async function tryUpdateWelcomeMessage(
+  client: WebClient,
+  channelId: string,
+  ts: string,
+  incident: Incident,
+): Promise<void> {
+  try {
+    const updatedWelcome = buildChannelWelcomeMessage(incident, []);
+    await client.chat.update({ channel: channelId, ts, ...updatedWelcome });
+  } catch (e) {
+    console.error("[incident-buddy] Failed to update welcome message on resolve:", e);
+  }
+}
+
+export async function tryPostResolveNotification(
+  client: WebClient,
+  channelId: string,
+  userName: string,
+  elapsed: string,
+): Promise<void> {
+  try {
+    await client.chat.postMessage({
+      channel: channelId,
+      text: `✅ @${userName} がインシデントをクローズしました / 経過時間: ${elapsed}`,
+    });
+  } catch (e) {
+    console.error("[incident-buddy] Failed to post resolve notification:", e);
   }
 }

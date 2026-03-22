@@ -4,16 +4,6 @@
 
 ---
 
-## A: インシデントのクローズ（`/inc resolve`）
-
-インシデントチャンネルで `/inc resolve` を実行すると、`status: resolved`・`resolvedAt` を書き込み、Slack メッセージを解決済み表示に更新。解決通知をチャンネルに投稿。
-
-**実装のポイント**:
-- `incidentService.resolve(incidentId, userId, userName)` を実装
-- timeline に `resolved` イベントを記録
-- Slack メッセージの色・テキストを resolved 用に変更（`incident.presenter.ts`）
-
----
 
 ## C: インシデント一覧（`/inc list`）
 
@@ -35,7 +25,7 @@
 
 ---
 
-## J: インシデントチャンネルのトピック自動設定
+## L: インシデントチャンネルのトピック自動設定
 
 チャンネル作成後、`conversations.setTopic` でトピックに `[Critical] DB障害 - 対応中` をセット。チャンネル一覧から内容が分かる。解決時は `[Resolved] DB障害` に更新。
 

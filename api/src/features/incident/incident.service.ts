@@ -31,6 +31,10 @@ export const incidentService = {
     await incidentRepository.updateSlackMessageTs(incidentId, ts);
   },
 
+  async setWelcomeMessageTs(incidentId: string, ts: string): Promise<void> {
+    await incidentRepository.updateWelcomeMessageTs(incidentId, ts);
+  },
+
   async addResponder(
     incidentId: string,
     roleId: string,

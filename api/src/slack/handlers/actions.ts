@@ -10,7 +10,6 @@ import {
   buildResolveConfirmModal,
   formatElapsedTime,
 } from "../../features/incident/incident.presenter.js";
-import { incidentRepository } from "../../features/incident/incident.repository.js";
 import { incidentService } from "../../features/incident/incident.service.js";
 import {
   loadConfig,
@@ -119,10 +118,7 @@ export function registerActionHandlers(app: App): void {
         );
       }
       if (welcomeResult.ts) {
-        await incidentRepository.updateWelcomeMessageTs(
-          incident.id,
-          welcomeResult.ts,
-        );
+        await incidentService.setWelcomeMessageTs(incident.id, welcomeResult.ts);
       }
 
       // 通知ルールの評価と追加通知・招待

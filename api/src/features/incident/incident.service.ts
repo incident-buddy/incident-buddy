@@ -23,6 +23,14 @@ export const incidentService = {
     return incidentRepository.findByChannelId(channelId);
   },
 
+  async setChannelId(incidentId: string, channelId: string): Promise<void> {
+    await incidentRepository.updateIncidentChannelId(incidentId, channelId);
+  },
+
+  async setSlackMessageTs(incidentId: string, ts: string): Promise<void> {
+    await incidentRepository.updateSlackMessageTs(incidentId, ts);
+  },
+
   async addResponder(
     incidentId: string,
     roleId: string,

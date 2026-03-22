@@ -94,12 +94,9 @@ export function registerActionHandlers(app: App): void {
         ...message,
       });
 
-      await incidentRepository.updateIncidentChannelId(
-        incident.id,
-        incidentChannel.id,
-      );
+      await incidentService.setChannelId(incident.id, incidentChannel.id);
       if (result.ts) {
-        await incidentRepository.updateSlackMessageTs(incident.id, result.ts);
+        await incidentService.setSlackMessageTs(incident.id, result.ts);
       }
 
       // 設定ファイルを読み込む（ウェルカムメッセージのロールボタン・通知ルール共用）

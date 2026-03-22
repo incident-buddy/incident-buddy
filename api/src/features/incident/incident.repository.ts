@@ -1,7 +1,7 @@
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
-import { incidentsCol } from "../../db/firestore.js";
-import type { CreateIncidentInput, IncidentDoc } from "../../db/types.js";
-import type { Incident } from "./incident.model.js";
+import { incidentsCol, timelineCol } from "../../db/firestore.js";
+import type { CreateIncidentInput, IncidentDoc, TimelineEventDoc } from "../../db/types.js";
+import type { Incident, Responder } from "./incident.model.js";
 
 function toDomain(doc: IncidentDoc): Incident {
   return {
@@ -35,6 +35,16 @@ export const incidentRepository = {
     return data ? toDomain(data) : null;
   },
 
+  async findByChannelId(channelId: string): Promise<Incident | null> {
+    const snap = await incidentsCol
+      .where("incidentChannelId", "==", channelId)
+      .limit(1)
+      .get();
+    if (snap.empty) return null;
+    const data = snap.docs[0]?.data();
+    return data ? toDomain(data) : null;
+  },
+
   async findOpen(): Promise<Incident[]> {
     const snap = await incidentsCol
       .where("status", "==", "open")
@@ -55,6 +65,35 @@ export const incidentRepository = {
       slackMessageTs: ts,
       updatedAt: FieldValue.serverTimestamp(),
     });
+  },
+
+  async updateWelcomeMessageTs(id: string, ts: string): Promise<void> {
+    await incidentsCol.doc(id).update({
+      welcomeMessageTs: ts,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  },
+
+  async addResponder(
+    incidentId: string,
+    responder: Responder,
+  ): Promise<Incident> {
+    await incidentsCol.doc(incidentId).update({
+      responders: FieldValue.arrayUnion(responder),
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+    const updated = await this.findById(incidentId);
+    if (!updated) throw new Error(`Incident not found: ${incidentId}`);
+    return updated;
+  },
+
+  async addTimelineEvent(
+    incidentId: string,
+    event: Omit<TimelineEventDoc, "id">,
+  ): Promise<void> {
+    const ref = timelineCol(incidentId).doc();
+    const doc: TimelineEventDoc = { ...event, id: ref.id };
+    await ref.set(doc);
   },
 
   async resolve(id: string): Promise<void> {

@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase-admin/firestore";
 import { memberRepository } from "../member/member.repository.js";
 import type { CreateIncidentParams, Incident } from "./incident.model.js";
 import { incidentRepository } from "./incident.repository.js";
@@ -10,7 +11,34 @@ export const incidentService = {
       slackMessageTs: "",
       teamIds: [],
       serviceIds: [],
-      responderIds: [],
+      responders: [],
     });
+  },
+
+  async findById(id: string): Promise<Incident | null> {
+    return incidentRepository.findById(id);
+  },
+
+  async findByChannelId(channelId: string): Promise<Incident | null> {
+    return incidentRepository.findByChannelId(channelId);
+  },
+
+  async addResponder(
+    incidentId: string,
+    roleId: string,
+    userId: string,
+    userName: string,
+  ): Promise<Incident> {
+    await memberRepository.upsert(userId, userName);
+    const responder = { roleId, userId, userName };
+    const updated = await incidentRepository.addResponder(incidentId, responder);
+    await incidentRepository.addTimelineEvent(incidentId, {
+      type: "responder_added",
+      actorId: userId,
+      actorName: userName,
+      note: `${userName} が ${roleId} になりました`,
+      occurredAt: Timestamp.now(),
+    });
+    return updated;
   },
 };

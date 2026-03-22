@@ -7,6 +7,12 @@ import type {
 
 export type { IncidentStatus, Severity, TimelineEventType };
 
+export type ResponderDoc = {
+  roleId: string;
+  userId: string;
+  userName: string;
+};
+
 export type IncidentDoc = {
   readonly id: string;
   title: string;
@@ -17,11 +23,12 @@ export type IncidentDoc = {
   slackChannelId: string;
   slackMessageTs: string;
   incidentChannelId?: string;
+  welcomeMessageTs?: string;
   createdBy: string;
   createdByName: string;
   teamIds: string[];
   serviceIds: string[];
-  responderIds: string[];
+  responders: ResponderDoc[];
   createdAt: Timestamp;
   resolvedAt: Timestamp | null;
   updatedAt: Timestamp;

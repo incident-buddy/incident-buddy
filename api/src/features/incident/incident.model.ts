@@ -7,6 +7,12 @@ export type TimelineEventType =
   | "resolved"
   | "note";
 
+export type Responder = {
+  roleId: string;
+  userId: string;
+  userName: string;
+};
+
 export type Incident = {
   readonly id: string;
   title: string;
@@ -17,11 +23,12 @@ export type Incident = {
   slackChannelId: string;
   slackMessageTs: string;
   incidentChannelId?: string;
+  welcomeMessageTs?: string;
   createdBy: string;
   createdByName: string;
   teamIds: string[];
   serviceIds: string[];
-  responderIds: string[];
+  responders: Responder[];
   createdAt: Date;
   resolvedAt: Date | null;
   updatedAt: Date;

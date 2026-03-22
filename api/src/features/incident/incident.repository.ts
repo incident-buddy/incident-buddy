@@ -15,15 +15,15 @@ function toDomain(doc: IncidentDoc): Incident {
 }
 
 export const incidentRepository = {
-  async create(input: CreateIncidentInput): Promise<Incident> {
+  async create(input: CreateIncidentInput, createdAt: Date): Promise<Incident> {
     const ref = incidentsCol.doc();
-    const now = Timestamp.now();
+    const ts = Timestamp.fromDate(createdAt);
     const doc: IncidentDoc = {
       ...input,
       id: ref.id,
       status: "open",
-      createdAt: now,
-      updatedAt: now,
+      createdAt: ts,
+      updatedAt: ts,
       resolvedAt: null,
       resolvedBy: null,
       resolvedByName: null,

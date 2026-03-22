@@ -86,6 +86,7 @@ describe("incidentService.create", () => {
         serviceIds: [],
         responders: [],
       }),
+      expect.any(Date),
     );
   });
 

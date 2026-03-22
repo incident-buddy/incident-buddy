@@ -12,7 +12,7 @@ export const incidentService = {
       teamIds: [],
       serviceIds: [],
       responders: [],
-    });
+    }, new Date());
   },
 
   async findById(id: string): Promise<Incident | null> {

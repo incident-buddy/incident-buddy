@@ -1,9 +1,10 @@
 ---
 description: LLM駆動開発フルワークフロー（計画→仕様→E2E(fail)→TDD→受け入れ→日記）
+argument-hint: <機能の説明>
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, AskUserQuestion
 ---
 
-機能要求: docs/backlog.mdの先頭の項目
+機能要求: $ARGUMENTS
 
 あなたはLLM駆動開発のオーケストレーターです。以下のPhaseを順番に実行してください。
 各Phaseに進む前に、前のPhaseが完了していることを必ず確認してください。
@@ -65,7 +66,7 @@ Agent(
 - ...
 ```
   """,
-  prompt: "以下の機能要求についてヒアリングを実施し、要求サマリーを作成してください。\n\n機能要求: {機能要求（docs/backlog.mdの先頭項目）}"
+  prompt: "以下の機能要求についてヒアリングを実施し、要求サマリーを作成してください。\n\n機能要求: {機能要求（$ARGUMENTS）}"
 )
 ```
 
@@ -78,14 +79,22 @@ Agent(
   prompt: """
 あなたは経験豊富なテックリードです。以下の実装計画をレビューし、問題点を指摘してください。
 
+まず docs/architecture.md と docs/coding-rules.md を読み、このプロジェクトのアーキテクチャルールとコーディング規約を把握してください。
+
 ## レビュー対象の計画
 {計画サマリー（要求仕様・機能仕様・実装方針・受け入れ条件）}
 
 ## レビュー観点
 1. **不明瞭な実装方針**: 「どのコンポーネントをどう変更するか」が具体的でない箇所はないか
-2. **不適切なアプローチ**: アーキテクチャルール違反、過剰設計、責務の混在、既存パターンとの不整合
-3. **考慮漏れ**: 異常系・エッジケースの抜け漏れ、テスト困難な設計
-4. **スコープリスク**: 要求に対して実装範囲が広すぎる・狭すぎる
+2. **アーキテクチャルール違反**: 以下の具体的な違反パターンを必ず確認すること
+   - `slack/handlers/` が `repository` を直接インポート・呼び出していないか（service 経由が必須）
+   - `features/` のコードが `Timestamp` など外部ライブラリ型に依存していないか（`Date` を使う）
+   - `features/` が `@slack/bolt` 型をインポートしていないか
+   - エラーハンドリングの責務が適切に閉じ込められているか（「失敗してもログのみ継続」の仕様は関数内で完結させる）
+   - `as` 型アサーションを使っていないか
+3. **過剰設計・責務の混在**: 不要な抽象化、レイヤー越えの依存、既存パターンとの不整合
+4. **考慮漏れ**: 異常系・エッジケースの抜け漏れ、テスト困難な設計
+5. **スコープリスク**: 要求に対して実装範囲が広すぎる・狭すぎる
 
 ## 出力フォーマット
 ### 判定: APPROVE / REQUEST_CHANGES
@@ -119,7 +128,7 @@ Agent(
 **目的**: Phase 1 の合意内容を仕様書として永続化する。
 
 1. `docs/spec/` ディレクトリに仕様書を作成する。
-   - ファイル名: `{feature-slug}.md`（例: `incident-severity-filter.md`）
+   - ファイル名: `NNN_{feature-slug}.md`（例: `001_incident-severity-filter.md`）
    - feature-slug は機能説明から英語のkebab-caseで生成する
 
 2. 仕様書のフォーマット：
@@ -196,7 +205,22 @@ Agent(
   mise run dc:shell でdevcontainerに入りE2Eテストを実行
   ```
 
-E2EテストががpassしたらPhase 5（受け入れテスト）へ
+E2EテストがpassしたらアーキテクチャチェックをしてからPhase 5（受け入れテスト）へ。
+
+### アーキテクチャ適合チェック（E2E Green後・必須）
+
+**目的**: Phase 5 QAゲートへの持ち越しを防ぐシフトレフト。実装完了直後に以下を自己点検する。
+
+以下の違反パターンを `grep` 等で機械的に確認すること：
+
+| チェック項目 | 確認方法 | NG例 |
+|------------|--------|------|
+| `slack/handlers/` からの repository 直接参照 | `grep -r "Repository" api/src/slack/` | `incidentRepository.findBy...` を handlers 内で呼ぶ |
+| `features/` での Timestamp 型使用 | `grep -r "Timestamp" api/src/features/` | `import { Timestamp } from "firebase-admin/firestore"` |
+| `features/` での `@slack/bolt` 型インポート | `grep -r "@slack/bolt" api/src/features/` | `import type { App } from "@slack/bolt"` |
+| `as` 型アサーションの使用 | `grep -rn " as " api/src/` | `const id = result.id as string` |
+
+違反が見つかった場合はその場で修正してから Phase 5 へ進む。
 
 ---
 

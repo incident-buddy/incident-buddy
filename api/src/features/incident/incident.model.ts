@@ -31,8 +31,17 @@ export type Incident = {
   responders: Responder[];
   createdAt: Date;
   resolvedAt: Date | null;
+  resolvedBy: string | null;
+  resolvedByName: string | null;
   updatedAt: Date;
 };
+
+export class AlreadyResolvedError extends Error {
+  constructor() {
+    super("このインシデントはすでに解決済みです");
+    this.name = "AlreadyResolvedError";
+  }
+}
 
 export type CreateIncidentParams = {
   title: string;

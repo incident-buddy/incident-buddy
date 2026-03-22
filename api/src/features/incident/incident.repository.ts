@@ -1,6 +1,6 @@
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { incidentsCol, timelineCol } from "../../db/firestore.js";
-import type { CreateIncidentInput, IncidentDoc, TimelineEventDoc } from "../../db/types.js";
+import type { AddTimelineEventInput, CreateIncidentInput, IncidentDoc, TimelineEventDoc } from "../../db/types.js";
 import type { Incident, Responder } from "./incident.model.js";
 
 function toDomain(doc: IncidentDoc): Incident {
@@ -9,6 +9,8 @@ function toDomain(doc: IncidentDoc): Incident {
     createdAt: doc.createdAt.toDate(),
     updatedAt: doc.updatedAt.toDate(),
     resolvedAt: doc.resolvedAt?.toDate() ?? null,
+    resolvedBy: doc.resolvedBy ?? null,
+    resolvedByName: doc.resolvedByName ?? null,
   };
 }
 
@@ -23,6 +25,8 @@ export const incidentRepository = {
       createdAt: now,
       updatedAt: now,
       resolvedAt: null,
+      resolvedBy: null,
+      resolvedByName: null,
     };
     await ref.set(doc);
     return toDomain(doc);
@@ -89,17 +93,31 @@ export const incidentRepository = {
 
   async addTimelineEvent(
     incidentId: string,
-    event: Omit<TimelineEventDoc, "id">,
+    event: AddTimelineEventInput,
   ): Promise<void> {
     const ref = timelineCol(incidentId).doc();
-    const doc: TimelineEventDoc = { ...event, id: ref.id };
+    const doc: TimelineEventDoc = {
+      id: ref.id,
+      type: event.type,
+      actorId: event.actorId,
+      actorName: event.actorName,
+      note: event.note,
+      occurredAt: Timestamp.fromDate(event.occurredAt),
+    };
     await ref.set(doc);
   },
 
-  async resolve(id: string): Promise<void> {
+  async resolve(
+    id: string,
+    resolvedAt: Date,
+    resolvedBy: string,
+    resolvedByName: string,
+  ): Promise<void> {
     await incidentsCol.doc(id).update({
       status: "resolved",
-      resolvedAt: FieldValue.serverTimestamp(),
+      resolvedAt: Timestamp.fromDate(resolvedAt),
+      resolvedBy,
+      resolvedByName,
       updatedAt: FieldValue.serverTimestamp(),
     });
   },

@@ -1,6 +1,6 @@
-import { Timestamp } from "firebase-admin/firestore";
 import { memberRepository } from "../member/member.repository.js";
 import type { CreateIncidentParams, Incident } from "./incident.model.js";
+import { AlreadyResolvedError } from "./incident.model.js";
 import { incidentRepository } from "./incident.repository.js";
 
 export const incidentService = {
@@ -37,8 +37,33 @@ export const incidentService = {
       actorId: userId,
       actorName: userName,
       note: `${userName} が ${roleId} になりました`,
-      occurredAt: Timestamp.now(),
+      occurredAt: new Date(),
     });
+    return updated;
+  },
+
+  async resolve(
+    incidentId: string,
+    userId: string,
+    userName: string,
+    note?: string,
+  ): Promise<Incident> {
+    const incident = await incidentRepository.findById(incidentId);
+    if (!incident) throw new Error(`Incident not found: ${incidentId}`);
+    if (incident.status === "resolved") throw new AlreadyResolvedError();
+
+    const resolvedAt = new Date();
+    await incidentRepository.resolve(incidentId, resolvedAt, userId, userName);
+    await incidentRepository.addTimelineEvent(incidentId, {
+      type: "resolved",
+      actorId: userId,
+      actorName: userName,
+      note: note ?? "",
+      occurredAt: resolvedAt,
+    });
+
+    const updated = await incidentRepository.findById(incidentId);
+    if (!updated) throw new Error(`Incident not found after resolve: ${incidentId}`);
     return updated;
   },
 };

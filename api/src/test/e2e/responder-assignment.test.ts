@@ -45,6 +45,8 @@ async function seedIncident(
     createdAt: now,
     updatedAt: now,
     resolvedAt: null,
+    resolvedBy: null,
+    resolvedByName: null,
     ...overrides,
   };
   await ref.set(doc);

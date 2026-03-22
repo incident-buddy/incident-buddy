@@ -31,6 +31,8 @@ export type IncidentDoc = {
   responders: ResponderDoc[];
   createdAt: Timestamp;
   resolvedAt: Timestamp | null;
+  resolvedBy: string | null;
+  resolvedByName: string | null;
   updatedAt: Timestamp;
 };
 
@@ -69,5 +71,13 @@ export type TimelineEventDoc = {
 
 export type CreateIncidentInput = Omit<
   IncidentDoc,
-  "id" | "createdAt" | "updatedAt" | "resolvedAt" | "status"
+  "id" | "createdAt" | "updatedAt" | "resolvedAt" | "resolvedBy" | "resolvedByName" | "status"
 >;
+
+export type AddTimelineEventInput = {
+  type: TimelineEventType;
+  actorId: string;
+  actorName: string;
+  note: string;
+  occurredAt: Date;
+};

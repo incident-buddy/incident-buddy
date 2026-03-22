@@ -1,10 +1,14 @@
 import type { App } from "@slack/bolt";
 import type { WebClient } from "@slack/web-api";
+import { z } from "zod";
 import { optionalEnv } from "../../env.js";
 import type { Severity } from "../../features/incident/incident.model.js";
+import { AlreadyResolvedError } from "../../features/incident/incident.model.js";
 import {
   buildChannelWelcomeMessage,
   buildIncidentMessage,
+  buildResolveConfirmModal,
+  formatElapsedTime,
 } from "../../features/incident/incident.presenter.js";
 import { incidentRepository } from "../../features/incident/incident.repository.js";
 import { incidentService } from "../../features/incident/incident.service.js";
@@ -142,25 +146,142 @@ export function registerActionHandlers(app: App): void {
         userIds: invitees,
       });
 
-      for (const rule of matched) {
-        for (const channel of rule.actions.channels) {
-          const mentionText =
-            rule.actions.mentions.length > 0
-              ? `${rule.actions.mentions.join(" ")} `
-              : "";
-          const channelLink = ` | 対応チャンネル: <#${incidentChannel.id}>`;
-          try {
-            await client.chat.postMessage({
-              channel,
-              text: `${mentionText}Incident declared: *${incident.title}* (${incident.severity}${incident.serviceName ? ` / ${incident.serviceName}` : ""})${channelLink}`,
-            });
-          } catch (e) {
-            console.error("[incident-buddy] Failed to post notification:", e);
-          }
+      for (const userId of invitees) {
+        try {
+          await client.chat.postMessage({
+            channel: incidentChannel.id,
+            text: `<@${userId}> を招待しました`,
+          });
+        } catch (e) {
+          console.error(
+            "[incident-buddy] Failed to post invite notification:",
+            e,
+          );
         }
       }
     } catch (e) {
       await postError({ client, channelId, error: e });
+    }
+  });
+
+  const resolveMetaSchema = z.object({
+    incidentId: z.string(),
+    incidentChannelId: z.string(),
+  });
+
+  app.action("resolve_incident", async ({ ack, body, client }) => {
+    await ack();
+
+    if (body.type !== "block_actions") return;
+
+    const channelId = body.channel?.id;
+    if (!channelId) return;
+
+    const userId = body.user.id;
+    const triggerId = body.trigger_id;
+
+    try {
+      const incident = await incidentService.findByChannelId(channelId);
+      if (!incident) return;
+
+      if (incident.status === "resolved") {
+        await client.chat.postEphemeral({
+          channel: channelId,
+          user: userId,
+          text: "このインシデントはすでに解決済みです。",
+        });
+        return;
+      }
+
+      await client.views.open({
+        trigger_id: triggerId,
+        // SlackModal は Slack SDK の View 型と構造互換だが blocks の型が unknown[] のためキャスト
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        view: buildResolveConfirmModal(incident) as any,
+      });
+    } catch (e) {
+      await postError({ client, channelId, error: e });
+    }
+  });
+
+  app.view("resolve_incident_modal", async ({ ack, body, view, client }) => {
+    await ack();
+
+    const metaResult = resolveMetaSchema.safeParse(
+      JSON.parse(view.private_metadata ?? "{}"),
+    );
+    if (!metaResult.success) return;
+
+    const { incidentId, incidentChannelId } = metaResult.data;
+    const userId = body.user.id;
+    const userName = body.user.name ?? body.user.id;
+    const note =
+      view.state.values["resolve_note_block"]?.["resolve_note"]?.value ??
+      undefined;
+
+    try {
+      const incident = await incidentService.resolve(
+        incidentId,
+        userId,
+        userName,
+        note ?? undefined,
+      );
+
+      // ウェルカムメッセージを resolved 表示に更新（失敗時ログのみ）
+      if (incident.welcomeMessageTs && incidentChannelId) {
+        try {
+          const updatedWelcome = buildChannelWelcomeMessage(incident, []);
+          await client.chat.update({
+            channel: incidentChannelId,
+            ts: incident.welcomeMessageTs,
+            ...updatedWelcome,
+          });
+        } catch (e) {
+          console.error(
+            "[incident-buddy] Failed to update welcome message on resolve:",
+            e,
+          );
+        }
+      }
+
+      // #incidents メッセージを更新（失敗時ログのみ）
+      try {
+        await refreshIncidentSlackMessage({ incidentId, client });
+      } catch (e) {
+        console.error(
+          "[incident-buddy] Failed to refresh incident slack message on resolve:",
+          e,
+        );
+      }
+
+      // インシデントチャンネルに解決通知を投稿（失敗時ログのみ）
+      if (incidentChannelId) {
+        const elapsed = incident.resolvedAt
+          ? formatElapsedTime(incident.createdAt, incident.resolvedAt)
+          : "";
+        try {
+          await client.chat.postMessage({
+            channel: incidentChannelId,
+            text: `✅ @${userName} がインシデントをクローズしました / 経過時間: ${elapsed}`,
+          });
+        } catch (e) {
+          console.error(
+            "[incident-buddy] Failed to post resolve notification:",
+            e,
+          );
+        }
+      }
+    } catch (e) {
+      if (e instanceof AlreadyResolvedError) {
+        if (incidentChannelId) {
+          await client.chat.postMessage({
+            channel: incidentChannelId,
+            text: e.message,
+          });
+        }
+        return;
+      }
+      await postError({ client, channelId: incidentChannelId, error: e });
     }
   });
 

@@ -84,7 +84,7 @@ describe("incidentRepository.findOpen", () => {
       ...baseInput,
       title: "Resolved",
     });
-    await incidentRepository.resolve(toResolve.id);
+    await incidentRepository.resolve(toResolve.id, new Date(), "U_TEST", "testuser");
 
     const incidents = await incidentRepository.findOpen();
 
@@ -126,12 +126,15 @@ describe("incidentRepository.updateSlackMessageTs", () => {
 describe("incidentRepository.resolve", () => {
   afterEach(clearIncidents);
 
-  it("sets status to resolved and populates resolvedAt", async () => {
+  it("sets status to resolved and populates resolvedAt, resolvedBy, resolvedByName", async () => {
     const incident = await incidentRepository.create(baseInput);
-    await incidentRepository.resolve(incident.id);
+    const resolvedAt = new Date();
+    await incidentRepository.resolve(incident.id, resolvedAt, "U_ALICE", "alice");
 
     const resolved = await incidentRepository.findById(incident.id);
     expect(resolved?.status).toBe("resolved");
     expect(resolved?.resolvedAt).toBeInstanceOf(Date);
+    expect(resolved?.resolvedBy).toBe("U_ALICE");
+    expect(resolved?.resolvedByName).toBe("alice");
   });
 });

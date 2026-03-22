@@ -33,6 +33,8 @@ const mockIncident: Incident = {
   responders: [],
   createdAt: new Date("2026-03-21T00:00:00Z"),
   resolvedAt: null,
+  resolvedBy: null,
+  resolvedByName: null,
   updatedAt: new Date("2026-03-21T00:00:00Z"),
 };
 

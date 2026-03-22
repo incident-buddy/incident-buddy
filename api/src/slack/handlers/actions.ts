@@ -188,7 +188,9 @@ export function registerActionHandlers(app: App): void {
 
       await client.views.open({
         trigger_id: triggerId,
-        // SlackModal は Slack SDK の View 型と構造互換だが blocks の型が unknown[] のためキャスト
+        // coding-rules.md 例外: Slack SDK の View 型は blocks を KnownBlock[] と要求するが、
+        // presenter が返す型の blocks は Block[] のため構造互換でも型が一致しない。
+        // SDK 側の型定義の不正確さによる不一致であり、ランタイムでは問題ない。
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         view: buildResolveConfirmModal(incident) as any,
       });

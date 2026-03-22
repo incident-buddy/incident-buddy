@@ -165,8 +165,8 @@ describe("エラー通知 - create_incident ビュー送信でハンドラーが
     await clearIncidents();
   });
 
-  it("incidentService.create が例外を投げたとき、チャンネルにエラーメッセージを投稿する", async () => {
-    vi.spyOn(incidentService, "create").mockRejectedValue(
+  it("incidentService.open が例外を投げたとき、チャンネルにエラーメッセージを投稿する", async () => {
+    vi.spyOn(incidentService, "open").mockRejectedValue(
       new Error("DB connection failed"),
     );
 
@@ -211,7 +211,7 @@ describe("エラー通知 - create_incident ビュー送信でハンドラーが
   });
 
   it("エラー投稿自体が失敗してもアプリがクラッシュしない", async () => {
-    vi.spyOn(incidentService, "create").mockRejectedValue(
+    vi.spyOn(incidentService, "open").mockRejectedValue(
       new Error("DB connection failed"),
     );
 
@@ -241,7 +241,7 @@ describe("エラー通知 - create_incident ビュー送信でハンドラーが
 
   it("channel_id が欠落しているとき、エラー投稿を行わず console.error でログのみ出力する", async () => {
     // サービス層で例外を発生させ、channelId が空のときガードが機能するか検証する
-    vi.spyOn(incidentService, "create").mockRejectedValue(
+    vi.spyOn(incidentService, "open").mockRejectedValue(
       new Error("some error"),
     );
 

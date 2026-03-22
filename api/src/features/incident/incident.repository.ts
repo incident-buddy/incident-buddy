@@ -3,6 +3,12 @@ import { incidentsCol, timelineCol } from "../../db/firestore.js";
 import type { AddTimelineEventInput, CreateIncidentInput, IncidentDoc, TimelineEventDoc } from "../../db/types.js";
 import type { Incident, Responder } from "./incident.model.js";
 
+/**
+ * Firestore ドキュメント形式のインシデントをドメインモデルに変換する
+ *
+ * @param doc - Firestore から取得した `IncidentDoc`（`Timestamp` 型を含む）
+ * @returns `Timestamp` を `Date` に変換した `Incident` ドメインオブジェクト
+ */
 function toDomain(doc: IncidentDoc): Incident {
   return {
     ...doc,
@@ -15,8 +21,18 @@ function toDomain(doc: IncidentDoc): Incident {
 }
 
 export const incidentRepository = {
-  async create(input: CreateIncidentInput, createdAt: Date): Promise<Incident> {
-    const ref = incidentsCol.doc();
+  /**
+   * インシデントを Firestore に新規作成する
+   *
+   * @description 呼び出し元が発番した `id` を使って Firestore ドキュメントを作成する。
+   * `status` は `"open"` 固定、解決関連フィールドはすべて `null` で初期化される。
+   * @param id - 事前に発番済みのドキュメント ID（ULID 推奨）
+   * @param input - インシデントの初期データ（チャンネル ID・メッセージ ts を含む）
+   * @param createdAt - 作成日時
+   * @returns 作成されたインシデントのドメインオブジェクト
+   */
+  async create(id: string, input: CreateIncidentInput, createdAt: Date): Promise<Incident> {
+    const ref = incidentsCol.doc(id);
     const ts = Timestamp.fromDate(createdAt);
     const doc: IncidentDoc = {
       ...input,
@@ -32,6 +48,12 @@ export const incidentRepository = {
     return toDomain(doc);
   },
 
+  /**
+   * ドキュメント ID でインシデントを取得する
+   *
+   * @param id - 検索するインシデントの ID
+   * @returns 見つかった場合はドメインオブジェクト、存在しない場合は `null`
+   */
   async findById(id: string): Promise<Incident | null> {
     const snap = await incidentsCol.doc(id).get();
     if (!snap.exists) return null;
@@ -39,6 +61,12 @@ export const incidentRepository = {
     return data ? toDomain(data) : null;
   },
 
+  /**
+   * インシデント対応チャンネル ID でインシデントを取得する
+   *
+   * @param channelId - 検索するインシデント対応チャンネルの Slack チャンネル ID
+   * @returns 見つかった場合はドメインオブジェクト、存在しない場合は `null`
+   */
   async findByChannelId(channelId: string): Promise<Incident | null> {
     const snap = await incidentsCol
       .where("incidentChannelId", "==", channelId)
@@ -49,6 +77,11 @@ export const incidentRepository = {
     return data ? toDomain(data) : null;
   },
 
+  /**
+   * ステータスが `"open"` のインシデントを作成日時の降順で取得する
+   *
+   * @returns オープン中のインシデント一覧（新しい順）
+   */
   async findOpen(): Promise<Incident[]> {
     const snap = await incidentsCol
       .where("status", "==", "open")
@@ -57,27 +90,14 @@ export const incidentRepository = {
     return snap.docs.map((d) => toDomain(d.data()));
   },
 
-  async updateIncidentChannelId(id: string, channelId: string): Promise<void> {
-    await incidentsCol.doc(id).update({
-      incidentChannelId: channelId,
-      updatedAt: FieldValue.serverTimestamp(),
-    });
-  },
-
-  async updateSlackMessageTs(id: string, ts: string): Promise<void> {
-    await incidentsCol.doc(id).update({
-      slackMessageTs: ts,
-      updatedAt: FieldValue.serverTimestamp(),
-    });
-  },
-
-  async updateWelcomeMessageTs(id: string, ts: string): Promise<void> {
-    await incidentsCol.doc(id).update({
-      welcomeMessageTs: ts,
-      updatedAt: FieldValue.serverTimestamp(),
-    });
-  },
-
+  /**
+   * インシデントにレスポンダーを追加する
+   *
+   * @param incidentId - 対象インシデントの ID
+   * @param responder - 追加するレスポンダー情報（ロール・ユーザー）
+   * @returns レスポンダー追加後の最新インシデント
+   * @throws インシデントが存在しない場合
+   */
   async addResponder(
     incidentId: string,
     responder: Responder,
@@ -91,6 +111,12 @@ export const incidentRepository = {
     return updated;
   },
 
+  /**
+   * インシデントのタイムラインにイベントを追加する
+   *
+   * @param incidentId - 対象インシデントの ID
+   * @param event - 追加するタイムラインイベント
+   */
   async addTimelineEvent(
     incidentId: string,
     event: AddTimelineEventInput,
@@ -107,6 +133,14 @@ export const incidentRepository = {
     await ref.set(doc);
   },
 
+  /**
+   * インシデントを解決済みに更新する
+   *
+   * @param id - 対象インシデントの ID
+   * @param resolvedAt - 解決日時
+   * @param resolvedBy - 解決操作を行ったユーザーの Slack ユーザー ID
+   * @param resolvedByName - 解決操作を行ったユーザーの表示名
+   */
   async resolve(
     id: string,
     resolvedAt: Date,

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Incident } from "./incident.model.js";
+import type { IncidentSlackPort } from "./incident.slack-port.js";
 
 vi.mock("./incident.repository.js", () => ({
   incidentRepository: {
@@ -24,8 +25,9 @@ const mockIncident: Incident = {
   severity: "P1",
   serviceName: "",
   slackChannelId: "C000TEST",
-  slackMessageTs: "",
+  slackMessageTs: "1111111111.000001",
   incidentChannelId: "C_INC_001",
+  welcomeMessageTs: "2222222222.000001",
   createdBy: "U000TEST",
   createdByName: "testuser",
   teamIds: [],
@@ -38,7 +40,18 @@ const mockIncident: Incident = {
   updatedAt: new Date("2026-03-21T00:00:00Z"),
 };
 
-describe("incidentService.create", () => {
+function makeStubAdapter(overrides: Partial<IncidentSlackPort> = {}): IncidentSlackPort {
+  return {
+    createChannel: vi.fn().mockResolvedValue({ id: "C_INC_001" }),
+    postIncidentMessage: vi.fn().mockResolvedValue({ ts: "1111111111.000001" }),
+    postWelcomeMessage: vi.fn().mockResolvedValue({ ts: "2222222222.000001" }),
+    inviteAndNotify: vi.fn().mockResolvedValue(undefined),
+    onResolved: vi.fn().mockResolvedValue(undefined),
+    ...overrides,
+  };
+}
+
+describe("incidentService.open", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(incidentRepository.create).mockResolvedValue(mockIncident);
@@ -46,34 +59,44 @@ describe("incidentService.create", () => {
   });
 
   it("upserts the member using createdBy and createdByName", async () => {
-    await incidentService.create({
-      title: "DB down",
-      description: "",
-      severity: "P1",
-      serviceName: "",
-      slackChannelId: "C000TEST",
-      createdBy: "U000TEST",
-      createdByName: "testuser",
-    });
-
-    expect(memberRepository.upsert).toHaveBeenCalledWith(
-      "U000TEST",
-      "testuser",
+    await incidentService.open(
+      {
+        title: "DB down",
+        description: "",
+        severity: "P1",
+        serviceName: "",
+        slackChannelId: "C000TEST",
+        createdBy: "U000TEST",
+        createdByName: "testuser",
+      },
+      makeStubAdapter(),
     );
+
+    expect(memberRepository.upsert).toHaveBeenCalledWith("U000TEST", "testuser");
   });
 
-  it("creates the incident with empty slackMessageTs and empty relation arrays", async () => {
-    await incidentService.create({
-      title: "DB down",
-      description: "Details",
-      severity: "P1",
-      serviceName: "",
-      slackChannelId: "C000TEST",
-      createdBy: "U000TEST",
-      createdByName: "testuser",
-    });
+  it("creates channel, posts messages, then persists incident in one repository call", async () => {
+    const adapter = makeStubAdapter();
+
+    await incidentService.open(
+      {
+        title: "DB down",
+        description: "Details",
+        severity: "P1",
+        serviceName: "",
+        slackChannelId: "C000TEST",
+        createdBy: "U000TEST",
+        createdByName: "testuser",
+      },
+      adapter,
+    );
+
+    expect(adapter.createChannel).toHaveBeenCalledOnce();
+    expect(adapter.postIncidentMessage).toHaveBeenCalledOnce();
+    expect(adapter.postWelcomeMessage).toHaveBeenCalledOnce();
 
     expect(incidentRepository.create).toHaveBeenCalledWith(
+      expect.any(String),
       expect.objectContaining({
         title: "DB down",
         description: "Details",
@@ -81,7 +104,9 @@ describe("incidentService.create", () => {
         slackChannelId: "C000TEST",
         createdBy: "U000TEST",
         createdByName: "testuser",
-        slackMessageTs: "",
+        incidentChannelId: "C_INC_001",
+        slackMessageTs: "1111111111.000001",
+        welcomeMessageTs: "2222222222.000001",
         teamIds: [],
         serviceIds: [],
         responders: [],
@@ -91,15 +116,18 @@ describe("incidentService.create", () => {
   });
 
   it("returns the created incident from the repository", async () => {
-    const result = await incidentService.create({
-      title: "DB down",
-      description: "",
-      severity: "P1",
-      serviceName: "",
-      slackChannelId: "C000TEST",
-      createdBy: "U000TEST",
-      createdByName: "testuser",
-    });
+    const result = await incidentService.open(
+      {
+        title: "DB down",
+        description: "",
+        severity: "P1",
+        serviceName: "",
+        slackChannelId: "C000TEST",
+        createdBy: "U000TEST",
+        createdByName: "testuser",
+      },
+      makeStubAdapter(),
+    );
 
     expect(result).toBe(mockIncident);
   });

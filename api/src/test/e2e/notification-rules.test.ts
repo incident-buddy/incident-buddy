@@ -153,10 +153,11 @@ describe("Notification rules from markdown config", () => {
   });
 
   describe("設定ファイルなし（INCIDENT_CONFIG_PATH 未設定）", () => {
-    it("通常フローが継続し、元チャンネルのみへ通知される", async () => {
-      const postedChannels: string[] = [];
-      let resolvePost!: () => void;
-      const postCalled = new Promise<void>((r) => (resolvePost = r));
+    it("通常フローが継続し、招待通知は送信されない", async () => {
+      const INCIDENT_CHANNEL_ID = "C_DEFAULT_INC"; // default MSW handler
+      const incidentChannelPosts: string[] = [];
+      let resolveWelcome!: () => void;
+      const welcomePosted = new Promise<void>((r) => (resolveWelcome = r));
 
       server.use(
         http.post(
@@ -164,8 +165,11 @@ describe("Notification rules from markdown config", () => {
           async ({ request }) => {
             const params = new URLSearchParams(await request.text());
             const channel = params.get("channel") ?? "";
-            postedChannels.push(channel);
-            resolvePost();
+            const text = params.get("text") ?? "";
+            if (channel === INCIDENT_CHANNEL_ID) {
+              incidentChannelPosts.push(text);
+              resolveWelcome();
+            }
             return HttpResponse.json({ ok: true, ts: "1000.0001", channel });
           },
         ),
@@ -173,9 +177,13 @@ describe("Notification rules from markdown config", () => {
 
       const res = await submitCreateIncident({ severity: "Critical" });
       expect(res.status).toBe(200);
-      await postCalled;
+      await welcomePosted;
+      await new Promise((r) => setTimeout(r, 50));
 
-      expect(postedChannels).toEqual(["C000TEST"]);
+      // 設定ファイルがないため招待通知は投稿されない
+      expect(
+        incidentChannelPosts.some((t) => t.includes("を招待しました")),
+      ).toBe(false);
     });
   });
 
@@ -317,12 +325,12 @@ describe("Notification rules from markdown config", () => {
       }),
     );
 
-    it("設定ファイルが存在しない場合は通常フロー継続", async () => {
+    it("設定ファイルが存在しない場合は通常フロー継続（招待通知なし）", async () => {
       process.env.INCIDENT_CONFIG_PATH = "/nonexistent/path/incident-config.md";
-
-      const postedChannels: string[] = [];
-      let resolvePost!: () => void;
-      const postCalled = new Promise<void>((r) => (resolvePost = r));
+      const INCIDENT_CHANNEL_ID = "C_DEFAULT_INC"; // default MSW handler
+      const incidentChannelPosts: string[] = [];
+      let resolveWelcome!: () => void;
+      const welcomePosted = new Promise<void>((r) => (resolveWelcome = r));
 
       server.use(
         http.post(
@@ -330,8 +338,11 @@ describe("Notification rules from markdown config", () => {
           async ({ request }) => {
             const params = new URLSearchParams(await request.text());
             const channel = params.get("channel") ?? "";
-            postedChannels.push(channel);
-            resolvePost();
+            const text = params.get("text") ?? "";
+            if (channel === INCIDENT_CHANNEL_ID) {
+              incidentChannelPosts.push(text);
+              resolveWelcome();
+            }
             return HttpResponse.json({ ok: true, ts: "1000.0001", channel });
           },
         ),
@@ -339,9 +350,13 @@ describe("Notification rules from markdown config", () => {
 
       const res = await submitCreateIncident({ severity: "Critical" });
       expect(res.status).toBe(200);
-      await postCalled;
+      await welcomePosted;
+      await new Promise((r) => setTimeout(r, 50));
 
-      expect(postedChannels).toEqual(["C000TEST"]);
+      // 設定ファイルが存在しないため招待通知は投稿されない
+      expect(
+        incidentChannelPosts.some((t) => t.includes("を招待しました")),
+      ).toBe(false);
     });
   });
 

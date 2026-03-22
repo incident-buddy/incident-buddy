@@ -90,7 +90,7 @@ describe("POST /slack/interactions - create_incident view submission", () => {
     });
     expect(res.status).toBe(200);
     await postMessageCalled;
-    // updateIncidentChannelId は chat.postMessage の直後に非同期で実行されるため完了を待つ
+    // DB への書き込みは両方の postMessage 完了後に行われるため、完了を待つ
     await new Promise((r) => setTimeout(r, 50));
 
     const incidents = await incidentRepository.findOpen();
@@ -171,7 +171,9 @@ describe("POST /slack/interactions - create_incident view submission", () => {
     });
 
     expect(res.status).toBe(200);
-    await postMessageCalled; // Bolt の非同期処理(Firestore書き込み)が完了するまで待つ
+    await postMessageCalled;
+    // DB への書き込みは両方の postMessage 完了後に行われるため、完了を待つ
+    await new Promise((r) => setTimeout(r, 100));
 
     const incidents = await incidentRepository.findOpen();
     expect(incidents).toHaveLength(1);
@@ -353,84 +355,4 @@ describe("POST /slack/interactions - create_incident view submission", () => {
     expect(capturedErrorText).toContain("channel_not_found");
   });
 
-  it("updateIncidentChannelId 失敗時、postError でエラーメッセージが投稿される", async () => {
-    vi.spyOn(
-      incidentRepository,
-      "updateIncidentChannelId",
-    ).mockRejectedValueOnce(new Error("Firestore update failed"));
-
-    let resolveError!: () => void;
-    const errorCalled = new Promise<void>((r) => {
-      resolveError = r;
-    });
-    let capturedErrorText: string | undefined;
-
-    server.use(
-      http.post(
-        "https://slack.com/api/chat.postMessage",
-        async ({ request }) => {
-          const params = new URLSearchParams(await request.text());
-          const text = params.get("text") ?? "";
-          // updateIncidentChannelId は chat.postMessage の後に実行されるため、
-          // エラーメッセージを含む 2 回目の postMessage を待つ
-          if (text.includes("コマンドの実行に失敗しました")) {
-            capturedErrorText = text;
-            resolveError();
-          }
-          return HttpResponse.json({
-            ok: true,
-            ts: "1234567890.000001",
-            channel: "C000TEST",
-          });
-        },
-      ),
-    );
-
-    const payload = {
-      type: "view_submission",
-      team: { id: "T000TEST", domain: "testteam" },
-      user: { id: "U000TEST", name: "testuser" },
-      api_app_id: "A000TEST",
-      token: "test-token",
-      trigger_id: "test-trigger",
-      view: {
-        id: "V000TEST",
-        type: "modal",
-        callback_id: "create_incident",
-        private_metadata: JSON.stringify({ channel_id: "C000TEST" }),
-        state: {
-          values: {
-            title: {
-              title_input: { type: "plain_text_input", value: "DB is down" },
-            },
-            severity: {
-              severity_select: {
-                type: "static_select",
-                selected_option: {
-                  value: "P1",
-                  text: { type: "plain_text", text: "P1" },
-                },
-              },
-            },
-          },
-        },
-      },
-    };
-
-    const body = new URLSearchParams({
-      payload: JSON.stringify(payload),
-    }).toString();
-    const headers = signSlackRequest({ body, signingSecret: SIGNING_SECRET });
-
-    const res = await app.request("/slack/interactions", {
-      method: "POST",
-      headers,
-      body,
-    });
-    expect(res.status).toBe(200);
-    await errorCalled;
-
-    expect(capturedErrorText).toMatch(/コマンドの実行に失敗しました/);
-    expect(capturedErrorText).toContain("Firestore update failed");
-  });
 });

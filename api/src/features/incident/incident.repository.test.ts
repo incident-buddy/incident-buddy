@@ -24,17 +24,17 @@ const baseInput = {
 describe("incidentRepository.create", () => {
   afterEach(clearIncidents);
 
-  it("returns an Incident with a generated id and status=open", async () => {
-    const incident = await incidentRepository.create(baseInput, new Date());
+  it("stores the incident with the provided id and status=open", async () => {
+    const incident = await incidentRepository.create("TEST_ID_001", baseInput, new Date());
 
-    expect(incident.id).toBeTruthy();
+    expect(incident.id).toBe("TEST_ID_001");
     expect(incident.status).toBe("open");
     expect(incident.title).toBe("DB is down");
     expect(incident.severity).toBe("P1");
   });
 
   it("returns Date instances for timestamp fields", async () => {
-    const incident = await incidentRepository.create(baseInput, new Date());
+    const incident = await incidentRepository.create("TEST_ID_002", baseInput, new Date());
 
     expect(incident.createdAt).toBeInstanceOf(Date);
     expect(incident.updatedAt).toBeInstanceOf(Date);
@@ -46,7 +46,7 @@ describe("incidentRepository.findById", () => {
   afterEach(clearIncidents);
 
   it("returns the incident when it exists", async () => {
-    const created = await incidentRepository.create(baseInput, new Date());
+    const created = await incidentRepository.create("TEST_ID_003", baseInput, new Date());
     const found = await incidentRepository.findById(created.id);
 
     expect(found).not.toBeNull();
@@ -64,8 +64,8 @@ describe("incidentRepository.findOpen", () => {
   afterEach(clearIncidents);
 
   it("returns open incidents ordered by createdAt desc", async () => {
-    await incidentRepository.create({ ...baseInput, title: "First" }, new Date());
-    await incidentRepository.create({ ...baseInput, title: "Second" }, new Date());
+    await incidentRepository.create("TEST_ID_004", { ...baseInput, title: "First" }, new Date());
+    await incidentRepository.create("TEST_ID_005", { ...baseInput, title: "Second" }, new Date());
 
     const incidents = await incidentRepository.findOpen();
 
@@ -76,11 +76,11 @@ describe("incidentRepository.findOpen", () => {
   });
 
   it("excludes resolved incidents", async () => {
-    const open = await incidentRepository.create({
+    const open = await incidentRepository.create("TEST_ID_006", {
       ...baseInput,
       title: "Open",
     }, new Date());
-    const toResolve = await incidentRepository.create({
+    const toResolve = await incidentRepository.create("TEST_ID_007", {
       ...baseInput,
       title: "Resolved",
     }, new Date());
@@ -93,41 +93,11 @@ describe("incidentRepository.findOpen", () => {
   });
 });
 
-describe("incidentRepository.updateIncidentChannelId", () => {
-  afterEach(clearIncidents);
-
-  it("updates the incidentChannelId field", async () => {
-    const incident = await incidentRepository.create(baseInput, new Date());
-    await incidentRepository.updateIncidentChannelId(
-      incident.id,
-      "C_INC_UPDATED",
-    );
-
-    const updated = await incidentRepository.findById(incident.id);
-    expect(updated?.incidentChannelId).toBe("C_INC_UPDATED");
-  });
-});
-
-describe("incidentRepository.updateSlackMessageTs", () => {
-  afterEach(clearIncidents);
-
-  it("updates the slackMessageTs field", async () => {
-    const incident = await incidentRepository.create(baseInput, new Date());
-    await incidentRepository.updateSlackMessageTs(
-      incident.id,
-      "1234567890.000001",
-    );
-
-    const updated = await incidentRepository.findById(incident.id);
-    expect(updated?.slackMessageTs).toBe("1234567890.000001");
-  });
-});
-
 describe("incidentRepository.resolve", () => {
   afterEach(clearIncidents);
 
   it("sets status to resolved and populates resolvedAt, resolvedBy, resolvedByName", async () => {
-    const incident = await incidentRepository.create(baseInput, new Date());
+    const incident = await incidentRepository.create("TEST_ID_008", baseInput, new Date());
     const resolvedAt = new Date();
     await incidentRepository.resolve(incident.id, resolvedAt, "U_ALICE", "alice");
 

@@ -1,4 +1,8 @@
-import type { ConfigLoadResult, IncidentConfig, NotificationRule } from "./incident-config.model.js";
+import type {
+  ConfigLoadResult,
+  IncidentConfig,
+  NotificationRule,
+} from "./incident-config.model.js";
 
 const DEFAULT_SEVERITIES = ["Critical", "High", "Medium", "Low"];
 
@@ -24,31 +28,40 @@ function buildConfigBody(config: IncidentConfig): string {
   const severitiesText =
     config.severities.length > 0
       ? config.severities
-          .map((s) => `• ${s.label}${s.description ? ` - ${s.description}` : ""}`)
+          .map(
+            (s) => `• ${s.label}${s.description ? ` - ${s.description}` : ""}`,
+          )
           .join("\n")
       : "なし";
 
   const servicesText =
     config.services.length > 0
       ? config.services
-          .map((s) => `• ${s.label}${s.description ? ` - ${s.description}` : ""}`)
+          .map(
+            (s) => `• ${s.label}${s.description ? ` - ${s.description}` : ""}`,
+          )
           .join("\n")
       : "なし";
 
   const rulesText =
     config.notificationRules.length > 0
       ? config.notificationRules
-          .map((r) => `• ${r.name}: ${formatConditions(r)} → ${formatActions(r)}`)
+          .map(
+            (r) => `• ${r.name}: ${formatConditions(r)} → ${formatActions(r)}`,
+          )
           .join("\n")
       : "なし";
 
   return `*Severities*\n${severitiesText}\n\n*Services*\n${servicesText}\n\n*Notification Rules*\n${rulesText}`;
 }
 
-export function buildConfigMessage(
-  result: ConfigLoadResult | null,
-  configPath: string | undefined,
-): string {
+export function buildConfigMessage({
+  result,
+  configPath,
+}: {
+  result: ConfigLoadResult | null;
+  configPath: string | undefined;
+}): string {
   if (result === null) {
     const defaultList = DEFAULT_SEVERITIES.join(" / ");
     return [

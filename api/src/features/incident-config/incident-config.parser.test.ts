@@ -48,15 +48,32 @@ describe("parseIncidentConfig", () => {
     it("ラベルと説明文をパースする", () => {
       const config = parseIncidentConfig(FULL_CONFIG);
       expect(config.severities).toHaveLength(4);
-      expect(config.severities[0]).toEqual({ label: "Critical", description: "本番サービスが完全停止している" });
-      expect(config.severities[1]).toEqual({ label: "High", description: "本番サービスが部分的に影響を受けている" });
-      expect(config.severities[2]).toEqual({ label: "Medium", description: "機能の一部が劣化している" });
-      expect(config.severities[3]).toEqual({ label: "Low", description: "軽微な問題" });
+      expect(config.severities[0]).toEqual({
+        label: "Critical",
+        description: "本番サービスが完全停止している",
+      });
+      expect(config.severities[1]).toEqual({
+        label: "High",
+        description: "本番サービスが部分的に影響を受けている",
+      });
+      expect(config.severities[2]).toEqual({
+        label: "Medium",
+        description: "機能の一部が劣化している",
+      });
+      expect(config.severities[3]).toEqual({
+        label: "Low",
+        description: "軽微な問題",
+      });
     });
 
     it("記載順が保たれる", () => {
       const config = parseIncidentConfig(FULL_CONFIG);
-      expect(config.severities.map((s) => s.label)).toEqual(["Critical", "High", "Medium", "Low"]);
+      expect(config.severities.map((s) => s.label)).toEqual([
+        "Critical",
+        "High",
+        "Medium",
+        "Low",
+      ]);
     });
   });
 
@@ -64,40 +81,58 @@ describe("parseIncidentConfig", () => {
     it("ラベルと説明文をパースする", () => {
       const config = parseIncidentConfig(FULL_CONFIG);
       expect(config.services).toHaveLength(2);
-      expect(config.services[0]).toEqual({ label: "payment-api", description: "決済処理サービス" });
-      expect(config.services[1]).toEqual({ label: "user-service", description: "ユーザー管理サービス" });
+      expect(config.services[0]).toEqual({
+        label: "payment-api",
+        description: "決済処理サービス",
+      });
+      expect(config.services[1]).toEqual({
+        label: "user-service",
+        description: "ユーザー管理サービス",
+      });
     });
   });
 
   describe("Notification Rules", () => {
     it("severity + service のAND条件ルールをパースする", () => {
       const config = parseIncidentConfig(FULL_CONFIG);
-      const rule = config.notificationRules.find((r) => r.name === "Payment High or Above");
+      const rule = config.notificationRules.find(
+        (r) => r.name === "Payment High or Above",
+      );
       expect(rule).toBeDefined();
-      expect(rule!.conditions.severity).toEqual({ op: ">=", label: "High" });
-      expect(rule!.conditions.service).toBe("payment-api");
-      expect(rule!.actions.channels).toEqual(["#payment-oncall"]);
-      expect(rule!.actions.mentions).toEqual(["@payment-lead", "@oncall-group"]);
+      expect(rule?.conditions.severity).toEqual({ op: ">=", label: "High" });
+      expect(rule?.conditions.service).toBe("payment-api");
+      expect(rule?.actions.channels).toEqual(["#payment-oncall"]);
+      expect(rule?.actions.mentions).toEqual([
+        "@payment-lead",
+        "@oncall-group",
+      ]);
     });
 
     it("severityのみのルールをパースする", () => {
       const config = parseIncidentConfig(FULL_CONFIG);
-      const rule = config.notificationRules.find((r) => r.name === "All Critical");
+      const rule = config.notificationRules.find(
+        (r) => r.name === "All Critical",
+      );
       expect(rule).toBeDefined();
-      expect(rule!.conditions.severity).toEqual({ op: "==", label: "Critical" });
-      expect(rule!.conditions.service).toBeUndefined();
-      expect(rule!.actions.channels).toEqual(["#incidents-critical"]);
-      expect(rule!.actions.mentions).toEqual(["@here"]);
+      expect(rule?.conditions.severity).toEqual({
+        op: "==",
+        label: "Critical",
+      });
+      expect(rule?.conditions.service).toBeUndefined();
+      expect(rule?.actions.channels).toEqual(["#incidents-critical"]);
+      expect(rule?.actions.mentions).toEqual(["@here"]);
     });
 
     it("serviceのみのルールをパースする", () => {
       const config = parseIncidentConfig(FULL_CONFIG);
-      const rule = config.notificationRules.find((r) => r.name === "User Service Any");
+      const rule = config.notificationRules.find(
+        (r) => r.name === "User Service Any",
+      );
       expect(rule).toBeDefined();
-      expect(rule!.conditions.severity).toBeUndefined();
-      expect(rule!.conditions.service).toBe("user-service");
-      expect(rule!.actions.channels).toEqual(["#user-service-alerts"]);
-      expect(rule!.actions.mentions).toEqual([]);
+      expect(rule?.conditions.severity).toBeUndefined();
+      expect(rule?.conditions.service).toBe("user-service");
+      expect(rule?.actions.channels).toEqual(["#user-service-alerts"]);
+      expect(rule?.actions.mentions).toEqual([]);
     });
   });
 
@@ -110,7 +145,9 @@ describe("parseIncidentConfig", () => {
     });
 
     it("Severitiesセクションのみのファイルをパースできる", () => {
-      const config = parseIncidentConfig("## Severities\n\n### Critical\n本番停止\n");
+      const config = parseIncidentConfig(
+        "## Severities\n\n### Critical\n本番停止\n",
+      );
       expect(config.severities).toHaveLength(1);
       expect(config.services).toHaveLength(0);
       expect(config.notificationRules).toHaveLength(0);

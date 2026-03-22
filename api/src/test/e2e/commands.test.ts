@@ -7,7 +7,7 @@ import { app } from "../../index.js";
 import { signSlackRequest } from "../helpers/slack-request.js";
 import { server } from "../setup.js";
 
-const SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET!;
+const SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET ?? "";
 
 const RESPONSE_URL = "https://hooks.slack.com/commands/T000TEST/test-response";
 
@@ -22,7 +22,10 @@ function makeIncCommand(text: string) {
     response_url: RESPONSE_URL,
     text,
   }).toString();
-  return { body, headers: signSlackRequest(body, SIGNING_SECRET) };
+  return {
+    body,
+    headers: signSlackRequest({ body, signingSecret: SIGNING_SECRET }),
+  };
 }
 
 const VALID_CONFIG = `# Incident Config
@@ -67,7 +70,8 @@ describe("POST /slack/events - /inc command", () => {
       http.post("https://slack.com/api/views.open", async ({ request }) => {
         const params = new URLSearchParams(await request.text());
         const viewJson = params.get("view");
-        if (viewJson) capturedView = JSON.parse(viewJson) as Record<string, unknown>;
+        if (viewJson)
+          capturedView = JSON.parse(viewJson) as Record<string, unknown>;
         resolveViewsOpen();
         return HttpResponse.json({ ok: true, view: { id: "V000TEST" } });
       }),
@@ -96,11 +100,13 @@ describe("POST /slack/events - /inc config command", () => {
   function captureEphemeral() {
     let capturedText: string | undefined;
     let resolve!: () => void;
-    const called = new Promise<void>((r) => { resolve = r; });
+    const called = new Promise<void>((r) => {
+      resolve = r;
+    });
     // respond() は response_url に JSON POST する（chat.postEphemeral とは異なる）
     server.use(
       http.post(RESPONSE_URL, async ({ request }) => {
-        const body = await request.json() as { text?: string };
+        const body = (await request.json()) as { text?: string };
         capturedText = body.text;
         resolve();
         return HttpResponse.json({ ok: true });
@@ -113,7 +119,11 @@ describe("POST /slack/events - /inc config command", () => {
     const { called, getText } = captureEphemeral();
 
     const { body, headers } = makeIncCommand("config");
-    const res = await app.request("/slack/events", { method: "POST", headers, body });
+    const res = await app.request("/slack/events", {
+      method: "POST",
+      headers,
+      body,
+    });
 
     expect(res.status).toBe(200);
     await called;
@@ -130,7 +140,11 @@ describe("POST /slack/events - /inc config command", () => {
     const { called, getText } = captureEphemeral();
 
     const { body, headers } = makeIncCommand("config");
-    const res = await app.request("/slack/events", { method: "POST", headers, body });
+    const res = await app.request("/slack/events", {
+      method: "POST",
+      headers,
+      body,
+    });
 
     expect(res.status).toBe(200);
     await called;
@@ -151,7 +165,11 @@ describe("POST /slack/events - /inc config command", () => {
     const { called, getText } = captureEphemeral();
 
     const { body, headers } = makeIncCommand("config");
-    const res = await app.request("/slack/events", { method: "POST", headers, body });
+    const res = await app.request("/slack/events", {
+      method: "POST",
+      headers,
+      body,
+    });
 
     expect(res.status).toBe(200);
     await called;
@@ -162,13 +180,21 @@ describe("POST /slack/events - /inc config command", () => {
   it("calls chat.postEphemeral with error message when config file has unrecognizable content", async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "inc-config-"));
     const filePath = path.join(dir, "config.md");
-    fs.writeFileSync(filePath, "this is not a valid incident config file", "utf8");
+    fs.writeFileSync(
+      filePath,
+      "this is not a valid incident config file",
+      "utf8",
+    );
     process.env.INCIDENT_CONFIG_PATH = filePath;
 
     const { called, getText } = captureEphemeral();
 
     const { body, headers } = makeIncCommand("config");
-    const res = await app.request("/slack/events", { method: "POST", headers, body });
+    const res = await app.request("/slack/events", {
+      method: "POST",
+      headers,
+      body,
+    });
 
     expect(res.status).toBe(200);
     await called;
@@ -181,20 +207,28 @@ describe("POST /slack/events - /inc config command", () => {
   it("displays (no condition) when notification rule has no conditions", async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "inc-config-"));
     const filePath = path.join(dir, "config.md");
-    fs.writeFileSync(filePath, [
-      "# Incident Config",
-      "",
-      "## Notification Rules",
-      "",
-      "### Alert All",
-      "- channel: #general",
-    ].join("\n"), "utf8");
+    fs.writeFileSync(
+      filePath,
+      [
+        "# Incident Config",
+        "",
+        "## Notification Rules",
+        "",
+        "### Alert All",
+        "- channel: #general",
+      ].join("\n"),
+      "utf8",
+    );
     process.env.INCIDENT_CONFIG_PATH = filePath;
 
     const { called, getText } = captureEphemeral();
 
     const { body, headers } = makeIncCommand("config");
-    const res = await app.request("/slack/events", { method: "POST", headers, body });
+    const res = await app.request("/slack/events", {
+      method: "POST",
+      headers,
+      body,
+    });
 
     expect(res.status).toBe(200);
     await called;

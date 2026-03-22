@@ -9,7 +9,7 @@ function checkFirestoreEmulator(): Promise<void> {
   const [hostname, portStr] = host.split(":");
   const port = Number(portStr ?? 9080);
 
-  return new Promise((resolve, reject) => {
+  return new Promise(function (resolve, reject) {
     const socket = connect({ host: hostname, port }, () => {
       socket.destroy();
       resolve();

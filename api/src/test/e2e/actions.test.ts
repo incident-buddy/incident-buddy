@@ -8,7 +8,7 @@ import { server } from "../setup.js";
 
 const INCIDENT_CHANNEL_ID = "C_INC_PERSISTED";
 
-const SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET!;
+const SIGNING_SECRET = process.env.SLACK_SIGNING_SECRET ?? "";
 
 async function clearIncidents() {
   const snap = await db.collection("incidents").get();
@@ -39,7 +39,11 @@ describe("POST /slack/interactions - create_incident view submission", () => {
     server.use(
       http.post("https://slack.com/api/chat.postMessage", () => {
         resolvePostMessage();
-        return HttpResponse.json({ ok: true, ts: "1234567890.000001", channel: "C000TEST" });
+        return HttpResponse.json({
+          ok: true,
+          ts: "1234567890.000001",
+          channel: "C000TEST",
+        });
       }),
     );
 
@@ -57,11 +61,16 @@ describe("POST /slack/interactions - create_incident view submission", () => {
         private_metadata: JSON.stringify({ channel_id: "C000TEST" }),
         state: {
           values: {
-            title: { title_input: { type: "plain_text_input", value: "DB is down" } },
+            title: {
+              title_input: { type: "plain_text_input", value: "DB is down" },
+            },
             severity: {
               severity_select: {
                 type: "static_select",
-                selected_option: { value: "P1", text: { type: "plain_text", text: "P1" } },
+                selected_option: {
+                  value: "P1",
+                  text: { type: "plain_text", text: "P1" },
+                },
               },
             },
           },
@@ -69,10 +78,16 @@ describe("POST /slack/interactions - create_incident view submission", () => {
       },
     };
 
-    const body = new URLSearchParams({ payload: JSON.stringify(payload) }).toString();
-    const headers = signSlackRequest(body, SIGNING_SECRET);
+    const body = new URLSearchParams({
+      payload: JSON.stringify(payload),
+    }).toString();
+    const headers = signSlackRequest({ body, signingSecret: SIGNING_SECRET });
 
-    const res = await app.request("/slack/interactions", { method: "POST", headers, body });
+    const res = await app.request("/slack/interactions", {
+      method: "POST",
+      headers,
+      body,
+    });
     expect(res.status).toBe(200);
     await postMessageCalled;
     // updateIncidentChannelId は chat.postMessage の直後に非同期で実行されるため完了を待つ
@@ -80,8 +95,8 @@ describe("POST /slack/interactions - create_incident view submission", () => {
 
     const incidents = await incidentRepository.findOpen();
     expect(incidents).toHaveLength(1);
-    const incident = incidents[0]!;
-    expect(incident.incidentChannelId).toBe(INCIDENT_CHANNEL_ID);
+    const incident = incidents[0];
+    expect(incident?.incidentChannelId).toBe(INCIDENT_CHANNEL_ID);
   });
 
   it("creates an incident in Firestore and responds 200", async () => {
@@ -147,7 +162,7 @@ describe("POST /slack/interactions - create_incident view submission", () => {
       payload: JSON.stringify(payload),
     }).toString();
 
-    const headers = signSlackRequest(body, SIGNING_SECRET);
+    const headers = signSlackRequest({ body, signingSecret: SIGNING_SECRET });
 
     const res = await app.request("/slack/interactions", {
       method: "POST",
@@ -160,10 +175,10 @@ describe("POST /slack/interactions - create_incident view submission", () => {
 
     const incidents = await incidentRepository.findOpen();
     expect(incidents).toHaveLength(1);
-    const incident = incidents[0]!;
-    expect(incident.title).toBe("Database is down");
-    expect(incident.severity).toBe("P1");
-    expect(incident.createdBy).toBe("U000TEST");
+    const incident = incidents[0];
+    expect(incident?.title).toBe("Database is down");
+    expect(incident?.severity).toBe("P1");
+    expect(incident?.createdBy).toBe("U000TEST");
   });
 
   it("インシデント宣言後、インシデントチャンネルにウェルカムメッセージが投稿される", async () => {
@@ -182,13 +197,16 @@ describe("POST /slack/interactions - create_incident view submission", () => {
     });
 
     server.use(
-      http.post("https://slack.com/api/chat.postMessage", async ({ request }) => {
-        const params = new URLSearchParams(await request.text());
-        if (params.get("channel") === INCIDENT_CHANNEL_ID) {
-          resolveWelcome(params);
-        }
-        return HttpResponse.json({ ok: true, ts: "1234567890.000001" });
-      }),
+      http.post(
+        "https://slack.com/api/chat.postMessage",
+        async ({ request }) => {
+          const params = new URLSearchParams(await request.text());
+          if (params.get("channel") === INCIDENT_CHANNEL_ID) {
+            resolveWelcome(params);
+          }
+          return HttpResponse.json({ ok: true, ts: "1234567890.000001" });
+        },
+      ),
     );
 
     const payload = {
@@ -205,11 +223,16 @@ describe("POST /slack/interactions - create_incident view submission", () => {
         private_metadata: JSON.stringify({ channel_id: "C000TEST" }),
         state: {
           values: {
-            title: { title_input: { type: "plain_text_input", value: "DB is down" } },
+            title: {
+              title_input: { type: "plain_text_input", value: "DB is down" },
+            },
             severity: {
               severity_select: {
                 type: "static_select",
-                selected_option: { value: "P1", text: { type: "plain_text", text: "P1" } },
+                selected_option: {
+                  value: "P1",
+                  text: { type: "plain_text", text: "P1" },
+                },
               },
             },
             description: {
@@ -223,10 +246,16 @@ describe("POST /slack/interactions - create_incident view submission", () => {
       },
     };
 
-    const body = new URLSearchParams({ payload: JSON.stringify(payload) }).toString();
-    const headers = signSlackRequest(body, SIGNING_SECRET);
+    const body = new URLSearchParams({
+      payload: JSON.stringify(payload),
+    }).toString();
+    const headers = signSlackRequest({ body, signingSecret: SIGNING_SECRET });
 
-    const res = await app.request("/slack/interactions", { method: "POST", headers, body });
+    const res = await app.request("/slack/interactions", {
+      method: "POST",
+      headers,
+      body,
+    });
     expect(res.status).toBe(200);
 
     const welcomeParams = await welcomePosted;
@@ -256,21 +285,24 @@ describe("POST /slack/interactions - create_incident view submission", () => {
     let capturedErrorText: string | undefined;
 
     server.use(
-      http.post("https://slack.com/api/chat.postMessage", async ({ request }) => {
-        const params = new URLSearchParams(await request.text());
-        const channel = params.get("channel");
-        const text = params.get("text") ?? "";
+      http.post(
+        "https://slack.com/api/chat.postMessage",
+        async ({ request }) => {
+          const params = new URLSearchParams(await request.text());
+          const channel = params.get("channel");
+          const text = params.get("text") ?? "";
 
-        if (channel === INCIDENT_CHANNEL_ID) {
-          // ウェルカムメッセージ投稿を失敗させる
-          return HttpResponse.json({ ok: false, error: "channel_not_found" });
-        }
-        if (text.includes("コマンドの実行に失敗しました")) {
-          capturedErrorText = text;
-          resolveError();
-        }
-        return HttpResponse.json({ ok: true, ts: "1234567890.000001" });
-      }),
+          if (channel === INCIDENT_CHANNEL_ID) {
+            // ウェルカムメッセージ投稿を失敗させる
+            return HttpResponse.json({ ok: false, error: "channel_not_found" });
+          }
+          if (text.includes("コマンドの実行に失敗しました")) {
+            capturedErrorText = text;
+            resolveError();
+          }
+          return HttpResponse.json({ ok: true, ts: "1234567890.000001" });
+        },
+      ),
     );
 
     const payload = {
@@ -287,11 +319,16 @@ describe("POST /slack/interactions - create_incident view submission", () => {
         private_metadata: JSON.stringify({ channel_id: "C000TEST" }),
         state: {
           values: {
-            title: { title_input: { type: "plain_text_input", value: "DB is down" } },
+            title: {
+              title_input: { type: "plain_text_input", value: "DB is down" },
+            },
             severity: {
               severity_select: {
                 type: "static_select",
-                selected_option: { value: "P1", text: { type: "plain_text", text: "P1" } },
+                selected_option: {
+                  value: "P1",
+                  text: { type: "plain_text", text: "P1" },
+                },
               },
             },
           },
@@ -299,10 +336,16 @@ describe("POST /slack/interactions - create_incident view submission", () => {
       },
     };
 
-    const body = new URLSearchParams({ payload: JSON.stringify(payload) }).toString();
-    const headers = signSlackRequest(body, SIGNING_SECRET);
+    const body = new URLSearchParams({
+      payload: JSON.stringify(payload),
+    }).toString();
+    const headers = signSlackRequest({ body, signingSecret: SIGNING_SECRET });
 
-    const res = await app.request("/slack/interactions", { method: "POST", headers, body });
+    const res = await app.request("/slack/interactions", {
+      method: "POST",
+      headers,
+      body,
+    });
     expect(res.status).toBe(200);
     await errorCalled;
 
@@ -311,9 +354,10 @@ describe("POST /slack/interactions - create_incident view submission", () => {
   });
 
   it("updateIncidentChannelId 失敗時、postError でエラーメッセージが投稿される", async () => {
-    vi.spyOn(incidentRepository, "updateIncidentChannelId").mockRejectedValueOnce(
-      new Error("Firestore update failed"),
-    );
+    vi.spyOn(
+      incidentRepository,
+      "updateIncidentChannelId",
+    ).mockRejectedValueOnce(new Error("Firestore update failed"));
 
     let resolveError!: () => void;
     const errorCalled = new Promise<void>((r) => {
@@ -322,17 +366,24 @@ describe("POST /slack/interactions - create_incident view submission", () => {
     let capturedErrorText: string | undefined;
 
     server.use(
-      http.post("https://slack.com/api/chat.postMessage", async ({ request }) => {
-        const params = new URLSearchParams(await request.text());
-        const text = params.get("text") ?? "";
-        // updateIncidentChannelId は chat.postMessage の後に実行されるため、
-        // エラーメッセージを含む 2 回目の postMessage を待つ
-        if (text.includes("コマンドの実行に失敗しました")) {
-          capturedErrorText = text;
-          resolveError();
-        }
-        return HttpResponse.json({ ok: true, ts: "1234567890.000001", channel: "C000TEST" });
-      }),
+      http.post(
+        "https://slack.com/api/chat.postMessage",
+        async ({ request }) => {
+          const params = new URLSearchParams(await request.text());
+          const text = params.get("text") ?? "";
+          // updateIncidentChannelId は chat.postMessage の後に実行されるため、
+          // エラーメッセージを含む 2 回目の postMessage を待つ
+          if (text.includes("コマンドの実行に失敗しました")) {
+            capturedErrorText = text;
+            resolveError();
+          }
+          return HttpResponse.json({
+            ok: true,
+            ts: "1234567890.000001",
+            channel: "C000TEST",
+          });
+        },
+      ),
     );
 
     const payload = {
@@ -349,11 +400,16 @@ describe("POST /slack/interactions - create_incident view submission", () => {
         private_metadata: JSON.stringify({ channel_id: "C000TEST" }),
         state: {
           values: {
-            title: { title_input: { type: "plain_text_input", value: "DB is down" } },
+            title: {
+              title_input: { type: "plain_text_input", value: "DB is down" },
+            },
             severity: {
               severity_select: {
                 type: "static_select",
-                selected_option: { value: "P1", text: { type: "plain_text", text: "P1" } },
+                selected_option: {
+                  value: "P1",
+                  text: { type: "plain_text", text: "P1" },
+                },
               },
             },
           },
@@ -361,10 +417,16 @@ describe("POST /slack/interactions - create_incident view submission", () => {
       },
     };
 
-    const body = new URLSearchParams({ payload: JSON.stringify(payload) }).toString();
-    const headers = signSlackRequest(body, SIGNING_SECRET);
+    const body = new URLSearchParams({
+      payload: JSON.stringify(payload),
+    }).toString();
+    const headers = signSlackRequest({ body, signingSecret: SIGNING_SECRET });
 
-    const res = await app.request("/slack/interactions", { method: "POST", headers, body });
+    const res = await app.request("/slack/interactions", {
+      method: "POST",
+      headers,
+      body,
+    });
     expect(res.status).toBe(200);
     await errorCalled;
 

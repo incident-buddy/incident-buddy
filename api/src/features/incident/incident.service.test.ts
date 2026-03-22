@@ -30,7 +30,7 @@ const mockIncident: Incident = {
   createdByName: "testuser",
   teamIds: [],
   serviceIds: [],
-  responderIds: [],
+  responders: [],
   createdAt: new Date("2026-03-21T00:00:00Z"),
   resolvedAt: null,
   updatedAt: new Date("2026-03-21T00:00:00Z"),
@@ -82,7 +82,7 @@ describe("incidentService.create", () => {
         slackMessageTs: "",
         teamIds: [],
         serviceIds: [],
-        responderIds: [],
+        responders: [],
       }),
     );
   });

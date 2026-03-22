@@ -1,10 +1,10 @@
-import { HttpResponse, http } from "msw";
 import { Timestamp } from "firebase-admin/firestore";
+import { HttpResponse, http } from "msw";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { db, incidentsCol } from "../../db/firestore.js";
 import type { IncidentDoc } from "../../db/types.js";
-import { refreshIncidentSlackMessage } from "../../slack/handlers/actions.js";
 import { boltApp } from "../../slack/app.js";
+import { refreshIncidentSlackMessage } from "../../slack/handlers/actions.js";
 import { server } from "../setup.js";
 
 const SLACK_CHANNEL_ID = "C_ORIGINAL_CHANNEL";
@@ -16,7 +16,9 @@ async function clearIncidents() {
   await Promise.all(snap.docs.map((d) => d.ref.delete()));
 }
 
-async function seedIncident(overrides: Partial<IncidentDoc> = {}): Promise<IncidentDoc> {
+async function seedIncident(
+  overrides: Partial<IncidentDoc> = {},
+): Promise<IncidentDoc> {
   const ref = incidentsCol.doc();
   const now = Timestamp.now();
   const doc: IncidentDoc = {
@@ -33,7 +35,7 @@ async function seedIncident(overrides: Partial<IncidentDoc> = {}): Promise<Incid
     createdByName: "testuser",
     teamIds: [],
     serviceIds: [],
-    responderIds: [],
+    responders: [],
     createdAt: now,
     updatedAt: now,
     resolvedAt: null,
@@ -52,24 +54,32 @@ describe("refreshIncidentSlackMessage", () => {
   it("slackMessageTs が設定されているインシデントに対して chat.update が呼ばれる", async () => {
     const incident = await seedIncident();
 
-    let capturedUpdateParams: Record<string, string> | null = null;
+    let capturedChannel: string | null = null;
+    let capturedTs: string | null = null;
     server.use(
       http.post("https://slack.com/api/chat.update", async ({ request }) => {
         const params = new URLSearchParams(await request.text());
-        capturedUpdateParams = Object.fromEntries(params);
+        capturedChannel = params.get("channel");
+        capturedTs = params.get("ts");
         return HttpResponse.json({ ok: true, ts: SLACK_MESSAGE_TS });
       }),
     );
 
-    await refreshIncidentSlackMessage(incident.id, boltApp.client);
+    await refreshIncidentSlackMessage({
+      incidentId: incident.id,
+      client: boltApp.client,
+    });
 
-    expect(capturedUpdateParams).not.toBeNull();
-    expect(capturedUpdateParams!["channel"]).toBe(SLACK_CHANNEL_ID);
-    expect(capturedUpdateParams!["ts"]).toBe(SLACK_MESSAGE_TS);
+    expect(capturedChannel).toBe(SLACK_CHANNEL_ID);
+    expect(capturedTs).toBe(SLACK_MESSAGE_TS);
   });
 
   it("更新メッセージに現在のインシデント情報（title・severity・status）が含まれる", async () => {
-    const incident = await seedIncident({ title: "API Outage", severity: "P2", status: "open" });
+    const incident = await seedIncident({
+      title: "API Outage",
+      severity: "P2",
+      status: "open",
+    });
 
     let capturedBody = "";
     server.use(
@@ -80,7 +90,10 @@ describe("refreshIncidentSlackMessage", () => {
       }),
     );
 
-    await refreshIncidentSlackMessage(incident.id, boltApp.client);
+    await refreshIncidentSlackMessage({
+      incidentId: incident.id,
+      client: boltApp.client,
+    });
 
     expect(capturedBody).toContain("API Outage");
     expect(capturedBody).toContain("P2");
@@ -88,7 +101,9 @@ describe("refreshIncidentSlackMessage", () => {
   });
 
   it("incidentChannelId がある場合、更新メッセージにチャンネルリンクが含まれる", async () => {
-    const incident = await seedIncident({ incidentChannelId: INCIDENT_CHANNEL_ID });
+    const incident = await seedIncident({
+      incidentChannelId: INCIDENT_CHANNEL_ID,
+    });
 
     let capturedBody = "";
     server.use(
@@ -99,7 +114,10 @@ describe("refreshIncidentSlackMessage", () => {
       }),
     );
 
-    await refreshIncidentSlackMessage(incident.id, boltApp.client);
+    await refreshIncidentSlackMessage({
+      incidentId: incident.id,
+      client: boltApp.client,
+    });
 
     expect(capturedBody).toContain(INCIDENT_CHANNEL_ID);
   });
@@ -115,14 +133,20 @@ describe("refreshIncidentSlackMessage", () => {
       }),
     );
 
-    await refreshIncidentSlackMessage(incident.id, boltApp.client);
+    await refreshIncidentSlackMessage({
+      incidentId: incident.id,
+      client: boltApp.client,
+    });
 
     expect(updateCalled).toBe(false);
   });
 
   it("存在しない incidentId を渡した場合、エラーをスローする", async () => {
     await expect(
-      refreshIncidentSlackMessage("nonexistent-id", boltApp.client),
+      refreshIncidentSlackMessage({
+        incidentId: "nonexistent-id",
+        client: boltApp.client,
+      }),
     ).rejects.toThrow("Incident not found: nonexistent-id");
   });
 
@@ -136,7 +160,7 @@ describe("refreshIncidentSlackMessage", () => {
     );
 
     await expect(
-      refreshIncidentSlackMessage(incident.id, boltApp.client),
+      refreshIncidentSlackMessage({ incidentId: incident.id, client: boltApp.client }),
     ).rejects.toThrow("message_not_found");
   });
 });

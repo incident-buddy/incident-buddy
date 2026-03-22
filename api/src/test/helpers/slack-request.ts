@@ -12,11 +12,15 @@ type SignedHeaders = {
  * HonoReceiver の verifySignature() と同じアルゴリズム:
  *   v0:${timestamp}:${body}  を HMAC-SHA256 で署名
  */
-export function signSlackRequest(
-  body: string,
-  signingSecret: string,
+export function signSlackRequest({
+  body,
+  signingSecret,
   contentType = "application/x-www-form-urlencoded",
-): SignedHeaders {
+}: {
+  body: string;
+  signingSecret: string;
+  contentType?: string;
+}): SignedHeaders {
   const timestamp = Math.floor(Date.now() / 1000).toString();
   const hmac = createHmac("sha256", signingSecret);
   hmac.update(`v0:${timestamp}:${body}`);

@@ -9,6 +9,12 @@ import type {
 
 type Section = "severities" | "services" | "notification-rules" | "roles" | null;
 
+/**
+ * `severity` フィールドの値文字列を `SeverityCondition` にパースする
+ *
+ * @param value - 例: `">= High"`, `"<= Low"`, `"Critical"`
+ * @returns パース済みの `SeverityCondition`
+ */
 function parseSeverityCondition(value: string): SeverityCondition {
   const trimmed = value.trim();
   if (trimmed.startsWith(">=")) {
@@ -20,6 +26,16 @@ function parseSeverityCondition(value: string): SeverityCondition {
   return { op: "==", label: trimmed };
 }
 
+/**
+ * Markdown 形式の設定ファイルのテキストをパースして `IncidentConfig` を返す
+ *
+ * @description `## Severities` / `## Services` / `## Notification Rules` / `## Roles`
+ * の H2 見出しをセクション区切りとして認識し、H3 (`###`) をエントリ、
+ * `- key: value` 形式のリストを通知ルールのフィールドとして解釈する。
+ * 認識できないセクションは無視される。
+ * @param content - 設定ファイルの全テキスト（`fs.readFileSync` の戻り値など）
+ * @returns パース済みの `IncidentConfig`
+ */
 export function parseIncidentConfig(content: string): IncidentConfig {
   const lines = content.split("\n");
 

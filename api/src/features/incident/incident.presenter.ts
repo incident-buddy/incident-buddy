@@ -4,6 +4,13 @@ import type { Incident } from "./incident.model.js";
 const DEFAULT_INCIDENT_COLOR = "#718096";
 const RESOLVED_INCIDENT_COLOR = "#2EB67D";
 
+/**
+ * インシデントの経過時間を人間が読みやすい文字列にフォーマットする
+ *
+ * @param createdAt - インシデント作成日時
+ * @param resolvedAt - インシデント解決日時
+ * @returns 60 分未満は `"XX分"`、以降は `"Xh"` / `"Xh YYm"` 形式
+ */
 export function formatElapsedTime(createdAt: Date, resolvedAt: Date): string {
   const diffMs = resolvedAt.getTime() - createdAt.getTime();
   const totalMinutes = Math.floor(diffMs / 60000);
@@ -13,6 +20,12 @@ export function formatElapsedTime(createdAt: Date, resolvedAt: Date): string {
   return minutes === 0 ? `${hours}h` : `${hours}h ${minutes}m`;
 }
 
+/**
+ * インシデント解決確認モーダルのペイロードを構築する
+ *
+ * @param incident - 解決対象のインシデント
+ * @returns Slack モーダルの定義オブジェクト（`views.open` に渡す）
+ */
 export function buildResolveConfirmModal(incident: Incident): SlackModal {
   return {
     type: "modal",
@@ -44,11 +57,13 @@ export function buildResolveConfirmModal(incident: Incident): SlackModal {
   };
 }
 
+/** `chat.postMessage` に渡す Slack メッセージペイロード */
 export type SlackMessage = {
   text: string;
   blocks: unknown[];
 };
 
+/** `chat.postMessage` に渡すインシデントメッセージペイロード（attachments でカラーバー付き） */
 export type SlackIncidentMessage = {
   text: string;
   attachments: Array<{
@@ -59,6 +74,7 @@ export type SlackIncidentMessage = {
 
 type PlainText = { type: "plain_text"; text: string };
 
+/** `views.open` に渡す Slack モーダルペイロード */
 export type SlackModal = {
   type: "modal";
   callback_id: string;
@@ -69,6 +85,16 @@ export type SlackModal = {
   blocks: unknown[];
 };
 
+/**
+ * インシデント対応チャンネルに投稿するウェルカムメッセージを構築する
+ *
+ * @description インシデントの現在の状態に応じてブロックを切り替える:
+ * - `open` 時: ロールアサインボタン（設定がある場合）と解決ボタンを表示
+ * - `resolved` 時: 解決者・解決日時・経過時間を表示
+ * @param incident - ウェルカムメッセージの元となるインシデント情報
+ * @param roles - ロールアサインボタンの定義一覧（省略時は空配列）
+ * @returns `chat.postMessage` / `chat.update` に渡す Slack メッセージペイロード
+ */
 export function buildChannelWelcomeMessage(
   incident: Incident,
   roles: RoleDef[] = [],
@@ -164,6 +190,16 @@ export function buildChannelWelcomeMessage(
   };
 }
 
+/**
+ * インシデント宣言元チャンネルに投稿するインシデントメッセージを構築する
+ *
+ * @description ステータスに応じてカラーバー・テキストを切り替える:
+ * - `open` 時: グレー、`<!here>` で確認を促す
+ * - `resolved` 時: グリーン、解決日時と経過時間を表示
+ * @param incident - メッセージの元となるインシデント情報
+ * @param options.incidentChannelId - インシデント対応チャンネルの ID（指定時はリンクを付与）
+ * @returns `chat.postMessage` / `chat.update` に渡す Slack メッセージペイロード
+ */
 export function buildIncidentMessage({
   incident,
   options,

@@ -1,10 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { AlreadyResolvedError } from "./incident.model.js";
 import type { Incident } from "./incident.model.js";
 import type { IncidentSlackPort } from "./incident.slack-port.js";
 
 vi.mock("./incident.repository.js", () => ({
   incidentRepository: {
     create: vi.fn(),
+    update: vi.fn(),
+    findById: vi.fn(),
+    addTimelineEvent: vi.fn(),
   },
 }));
 vi.mock("../member/member.repository.js", () => ({
@@ -130,5 +134,90 @@ describe("incidentService.open", () => {
     );
 
     expect(result).toBe(mockIncident);
+  });
+});
+
+describe("incidentService.addResponder", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(memberRepository.upsert).mockResolvedValue(undefined);
+    vi.mocked(incidentRepository.update).mockResolvedValue(undefined);
+    vi.mocked(incidentRepository.addTimelineEvent).mockResolvedValue(undefined);
+    vi.mocked(incidentRepository.findById).mockResolvedValue(mockIncident);
+  });
+
+  it("upserts the member and appends a responder via update", async () => {
+    await incidentService.addResponder("INC001", "commander", "U_BOB", "bob");
+
+    expect(memberRepository.upsert).toHaveBeenCalledWith("U_BOB", "bob");
+    expect(incidentRepository.update).toHaveBeenCalledWith("INC001", {
+      responders: { add: { roleId: "commander", userId: "U_BOB", userName: "bob" } },
+    });
+  });
+
+  it("records a responder_added timeline event", async () => {
+    await incidentService.addResponder("INC001", "commander", "U_BOB", "bob");
+
+    expect(incidentRepository.addTimelineEvent).toHaveBeenCalledWith(
+      "INC001",
+      expect.objectContaining({ type: "responder_added", actorId: "U_BOB", actorName: "bob" }),
+    );
+  });
+
+  it("returns the latest incident fetched after update", async () => {
+    const result = await incidentService.addResponder("INC001", "commander", "U_BOB", "bob");
+    expect(result).toBe(mockIncident);
+  });
+});
+
+describe("incidentService.resolve", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(incidentRepository.update).mockResolvedValue(undefined);
+    vi.mocked(incidentRepository.addTimelineEvent).mockResolvedValue(undefined);
+    vi.mocked(incidentRepository.findById).mockResolvedValue(mockIncident);
+  });
+
+  it("updates status and resolved fields via update", async () => {
+    await incidentService.resolve("INC001", "U_ALICE", "alice", undefined, makeStubAdapter());
+
+    expect(incidentRepository.update).toHaveBeenCalledWith(
+      "INC001",
+      expect.objectContaining({
+        status: "resolved",
+        resolvedBy: "U_ALICE",
+        resolvedByName: "alice",
+        resolvedAt: expect.any(Date),
+      }),
+    );
+  });
+
+  it("records a resolved timeline event with note", async () => {
+    await incidentService.resolve("INC001", "U_ALICE", "alice", "fixed!", makeStubAdapter());
+
+    expect(incidentRepository.addTimelineEvent).toHaveBeenCalledWith(
+      "INC001",
+      expect.objectContaining({ type: "resolved", actorId: "U_ALICE", note: "fixed!" }),
+    );
+  });
+
+  it("throws AlreadyResolvedError when the incident is already resolved", async () => {
+    vi.mocked(incidentRepository.findById).mockResolvedValue({ ...mockIncident, status: "resolved" });
+
+    await expect(
+      incidentService.resolve("INC001", "U_ALICE", "alice", undefined, makeStubAdapter()),
+    ).rejects.toThrow(AlreadyResolvedError);
+  });
+
+  it("calls slack.onResolved with the incident fetched after update", async () => {
+    const resolvedMockIncident: Incident = { ...mockIncident, status: "resolved" };
+    vi.mocked(incidentRepository.findById)
+      .mockResolvedValueOnce(mockIncident)          // 1回目: status チェック用
+      .mockResolvedValueOnce(resolvedMockIncident); // 2回目: update 後の取得
+
+    const adapter = makeStubAdapter();
+    await incidentService.resolve("INC001", "U_ALICE", "alice", undefined, adapter);
+
+    expect(adapter.onResolved).toHaveBeenCalledWith(resolvedMockIncident);
   });
 });

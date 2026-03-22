@@ -113,6 +113,7 @@ export const incidentService = {
    * @param userId - アサインするユーザーの Slack ユーザー ID
    * @param userName - アサインするユーザーの表示名
    * @returns レスポンダー追加後の最新インシデント
+   * @throws インシデントが存在しない場合
    */
   async addResponder(
     incidentId: string,
@@ -121,8 +122,9 @@ export const incidentService = {
     userName: string,
   ): Promise<Incident> {
     await memberRepository.upsert(userId, userName);
-    const responder = { roleId, userId, userName };
-    const updated = await incidentRepository.addResponder(incidentId, responder);
+    await incidentRepository.update(incidentId, {
+      responders: { add: { roleId, userId, userName } },
+    });
     await incidentRepository.addTimelineEvent(incidentId, {
       type: "responder_added",
       actorId: userId,
@@ -130,6 +132,8 @@ export const incidentService = {
       note: `${userName} が ${roleId} になりました`,
       occurredAt: new Date(),
     });
+    const updated = await incidentRepository.findById(incidentId);
+    if (!updated) throw new Error(`Incident not found: ${incidentId}`);
     return updated;
   },
 
@@ -159,7 +163,12 @@ export const incidentService = {
     if (incident.status === "resolved") throw new AlreadyResolvedError();
 
     const resolvedAt = new Date();
-    await incidentRepository.resolve(incidentId, resolvedAt, userId, userName);
+    await incidentRepository.update(incidentId, {
+      status: "resolved",
+      resolvedAt,
+      resolvedBy: userId,
+      resolvedByName: userName,
+    });
     await incidentRepository.addTimelineEvent(incidentId, {
       type: "resolved",
       actorId: userId,

@@ -84,7 +84,12 @@ describe("incidentRepository.findOpen", () => {
       ...baseInput,
       title: "Resolved",
     }, new Date());
-    await incidentRepository.resolve(toResolve.id, new Date(), "U_TEST", "testuser");
+    await incidentRepository.update(toResolve.id, {
+      status: "resolved",
+      resolvedAt: new Date(),
+      resolvedBy: "U_TEST",
+      resolvedByName: "testuser",
+    });
 
     const incidents = await incidentRepository.findOpen();
 
@@ -93,18 +98,44 @@ describe("incidentRepository.findOpen", () => {
   });
 });
 
-describe("incidentRepository.resolve", () => {
+describe("incidentRepository.update", () => {
   afterEach(clearIncidents);
 
-  it("sets status to resolved and populates resolvedAt, resolvedBy, resolvedByName", async () => {
+  it("updates scalar fields: status, resolvedAt, resolvedBy, resolvedByName", async () => {
     const incident = await incidentRepository.create("TEST_ID_008", baseInput, new Date());
     const resolvedAt = new Date();
-    await incidentRepository.resolve(incident.id, resolvedAt, "U_ALICE", "alice");
+    await incidentRepository.update(incident.id, {
+      status: "resolved",
+      resolvedAt,
+      resolvedBy: "U_ALICE",
+      resolvedByName: "alice",
+    });
 
-    const resolved = await incidentRepository.findById(incident.id);
-    expect(resolved?.status).toBe("resolved");
-    expect(resolved?.resolvedAt).toBeInstanceOf(Date);
-    expect(resolved?.resolvedBy).toBe("U_ALICE");
-    expect(resolved?.resolvedByName).toBe("alice");
+    const updated = await incidentRepository.findById(incident.id);
+    expect(updated?.status).toBe("resolved");
+    expect(updated?.resolvedAt).toBeInstanceOf(Date);
+    expect(updated?.resolvedBy).toBe("U_ALICE");
+    expect(updated?.resolvedByName).toBe("alice");
+  });
+
+  it("appends a responder via responders.add", async () => {
+    const incident = await incidentRepository.create("TEST_ID_009", baseInput, new Date());
+    await incidentRepository.update(incident.id, {
+      responders: { add: { roleId: "commander", userId: "U_BOB", userName: "bob" } },
+    });
+
+    const updated = await incidentRepository.findById(incident.id);
+    expect(updated?.responders).toHaveLength(1);
+    expect(updated?.responders[0]?.userId).toBe("U_BOB");
+  });
+
+  it("removes a responder via responders.remove", async () => {
+    const incident = await incidentRepository.create("TEST_ID_010", baseInput, new Date());
+    const responder = { roleId: "commander", userId: "U_BOB", userName: "bob" };
+    await incidentRepository.update(incident.id, { responders: { add: responder } });
+    await incidentRepository.update(incident.id, { responders: { remove: responder } });
+
+    const updated = await incidentRepository.findById(incident.id);
+    expect(updated?.responders).toHaveLength(0);
   });
 });

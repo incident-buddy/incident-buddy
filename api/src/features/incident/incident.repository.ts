@@ -1,7 +1,23 @@
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { incidentsCol, timelineCol } from "../../db/firestore.js";
 import type { AddTimelineEventInput, CreateIncidentInput, IncidentDoc, TimelineEventDoc } from "../../db/types.js";
-import type { Incident, Responder } from "./incident.model.js";
+import type { Incident, IncidentStatus, Responder } from "./incident.model.js";
+
+/**
+ * `incidentRepository.update` に渡すフィールド更新パッチ
+ *
+ * @description ドメイン型で表現する。Firestore 固有の型（`FieldValue`, `Timestamp`）は
+ * `update` 内部に封じ込め、呼び出し元に露出しない。
+ * `responders.add` は `arrayUnion`、`responders.remove` は `arrayRemove` に変換される。
+ * `updatedAt` は `update` が常にサーバータイムスタンプで上書きする。
+ */
+type IncidentPatch = {
+  status?: IncidentStatus;
+  resolvedAt?: Date;
+  resolvedBy?: string | null;
+  resolvedByName?: string | null;
+  responders?: { add?: Responder; remove?: Responder };
+};
 
 /**
  * Firestore ドキュメント形式のインシデントをドメインモデルに変換する
@@ -91,24 +107,25 @@ export const incidentRepository = {
   },
 
   /**
-   * インシデントにレスポンダーを追加する
+   * インシデントの任意フィールドを更新する
    *
-   * @param incidentId - 対象インシデントの ID
-   * @param responder - 追加するレスポンダー情報（ロール・ユーザー）
-   * @returns レスポンダー追加後の最新インシデント
-   * @throws インシデントが存在しない場合
+   * @description ドメイン型を Firestore 型に変換する責務を持つ。
+   * `responders.add` は `arrayUnion`、`responders.remove` は `arrayRemove` に変換される。
+   * `updatedAt` は常にサーバータイムスタンプで上書きされる。
+   * @param id - 対象インシデントの ID
+   * @param patch - 更新するフィールドのパッチ
    */
-  async addResponder(
-    incidentId: string,
-    responder: Responder,
-  ): Promise<Incident> {
-    await incidentsCol.doc(incidentId).update({
-      responders: FieldValue.arrayUnion(responder),
+  async update(id: string, patch: IncidentPatch): Promise<void> {
+    const firestoreUpdate: Record<string, unknown> = {
       updatedAt: FieldValue.serverTimestamp(),
-    });
-    const updated = await this.findById(incidentId);
-    if (!updated) throw new Error(`Incident not found: ${incidentId}`);
-    return updated;
+    };
+    if (patch.status !== undefined) firestoreUpdate.status = patch.status;
+    if (patch.resolvedAt !== undefined) firestoreUpdate.resolvedAt = Timestamp.fromDate(patch.resolvedAt);
+    if (patch.resolvedBy !== undefined) firestoreUpdate.resolvedBy = patch.resolvedBy;
+    if (patch.resolvedByName !== undefined) firestoreUpdate.resolvedByName = patch.resolvedByName;
+    if (patch.responders?.add !== undefined) firestoreUpdate.responders = FieldValue.arrayUnion(patch.responders.add);
+    if (patch.responders?.remove !== undefined) firestoreUpdate.responders = FieldValue.arrayRemove(patch.responders.remove);
+    await incidentsCol.doc(id).update(firestoreUpdate);
   },
 
   /**
@@ -131,28 +148,5 @@ export const incidentRepository = {
       occurredAt: Timestamp.fromDate(event.occurredAt),
     };
     await ref.set(doc);
-  },
-
-  /**
-   * インシデントを解決済みに更新する
-   *
-   * @param id - 対象インシデントの ID
-   * @param resolvedAt - 解決日時
-   * @param resolvedBy - 解決操作を行ったユーザーの Slack ユーザー ID
-   * @param resolvedByName - 解決操作を行ったユーザーの表示名
-   */
-  async resolve(
-    id: string,
-    resolvedAt: Date,
-    resolvedBy: string,
-    resolvedByName: string,
-  ): Promise<void> {
-    await incidentsCol.doc(id).update({
-      status: "resolved",
-      resolvedAt: Timestamp.fromDate(resolvedAt),
-      resolvedBy,
-      resolvedByName,
-      updatedAt: FieldValue.serverTimestamp(),
-    });
   },
 };

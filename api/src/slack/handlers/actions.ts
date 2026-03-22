@@ -293,7 +293,9 @@ export function registerActionHandlers(app: App): void {
 
     // action_id から roleId を取り出す（assign_role_{roleId} 形式）
     const actionId =
-      "action_id" in action ? (action.action_id as string) : "";
+      "action_id" in action && typeof action.action_id === "string"
+        ? action.action_id
+        : "";
     const roleId = actionId.replace("assign_role_", "");
 
     try {

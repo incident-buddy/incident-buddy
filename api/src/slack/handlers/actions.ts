@@ -51,10 +51,10 @@ export function registerActionHandlers(app: App): void {
   app.view("create_incident", async ({ ack, body, view, client }) => {
     await ack();
 
-    const meta = JSON.parse(view.private_metadata ?? "{}") as {
-      channel_id?: string;
-    };
-    const channelId = meta.channel_id ?? "";
+    const metaResult = z
+      .object({ channel_id: z.string().optional() })
+      .safeParse(JSON.parse(view.private_metadata ?? "{}"));
+    const channelId = metaResult.success ? (metaResult.data.channel_id ?? "") : "";
 
     try {
       const values = view.state.values;

@@ -1,6 +1,6 @@
 import { defineConfig } from "vitest/config";
 
-// Firestore エミュレータ不要なユニットテスト（presenter, service）用設定
+// Firestore エミュレータ不要なユニットテスト（presenter, service, handler tryXxx）用設定
 // globalSetup を含まないため、エミュレータなしで実行できる
 export default defineConfig({
   test: {
@@ -10,6 +10,7 @@ export default defineConfig({
       "src/features/**/*.presenter.test.ts",
       "src/features/**/*.service.test.ts",
       "src/features/**/*.parser.test.ts",
+      "src/slack/handlers/**/*.unit.test.ts",
     ],
     env: {
       SLACK_SIGNING_SECRET: "test-signing-secret-32-characters!",

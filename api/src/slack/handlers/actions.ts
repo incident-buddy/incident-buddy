@@ -240,14 +240,7 @@ export function registerActionHandlers(app: App): void {
       }
 
       // #incidents メッセージを更新（失敗時ログのみ）
-      try {
-        await refreshIncidentSlackMessage({ incidentId, client });
-      } catch (e) {
-        console.error(
-          "[incident-buddy] Failed to refresh incident slack message on resolve:",
-          e,
-        );
-      }
+      await tryRefreshIncidentSlackMessage({ incidentId, client });
 
       // インシデントチャンネルに解決通知を投稿（失敗時ログのみ）
       if (incidentChannelId) {
@@ -355,17 +348,7 @@ export function registerActionHandlers(app: App): void {
       }
 
       // #incidents のインシデントメッセージを更新（失敗時はログのみ）
-      try {
-        await refreshIncidentSlackMessage({
-          incidentId: incident.id,
-          client,
-        });
-      } catch (e) {
-        console.error(
-          "[incident-buddy] Failed to refresh incident slack message:",
-          e,
-        );
-      }
+      await tryRefreshIncidentSlackMessage({ incidentId: incident.id, client });
 
       // チャンネルにアサイン通知を投稿（失敗時はログのみ）
       try {
@@ -383,4 +366,15 @@ export function registerActionHandlers(app: App): void {
       await postError({ client, channelId, error: e });
     }
   });
+}
+
+export async function tryRefreshIncidentSlackMessage(args: {
+  incidentId: string;
+  client: WebClient;
+}): Promise<void> {
+  try {
+    await refreshIncidentSlackMessage(args);
+  } catch (e) {
+    console.error("[incident-buddy] Failed to refresh incident slack message:", e);
+  }
 }

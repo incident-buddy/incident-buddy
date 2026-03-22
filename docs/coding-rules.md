@@ -76,3 +76,25 @@ export async function inviteToChannel(...) {
 ```
 
 **理由**: 仕様（「失敗はログのみ、処理継続」）が関数シグネチャに表れる。呼び出し元がシンプルになる。
+
+---
+
+### `JSON.parse` の型安全化に `zod` を使う
+
+**ルール**: `JSON.parse` の結果は `zod` で検証する。`as` による強制キャストは使わない。
+
+```typescript
+// NG: as キャストで型安全性をバイパス
+const meta = JSON.parse(raw) as { incidentId: string };
+
+// OK: zod で安全にパース
+import { z } from "zod";
+const schema = z.object({ incidentId: z.string() });
+const result = schema.safeParse(JSON.parse(raw));
+if (!result.success) return; // 不正データは早期リターン
+const { incidentId } = result.data;
+```
+
+**理由**: `JSON.parse` は `any` を返す。`as` で型を付けても実行時エラーは防げない。`zod` は実行時バリデーションと型安全性を同時に提供する。
+
+**プロジェクト標準**: `zod` は本プロジェクトの標準依存。新しく `JSON.parse` を使う箇所では必ず `zod` を使うこと。

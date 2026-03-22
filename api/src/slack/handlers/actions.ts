@@ -59,8 +59,8 @@ export function registerActionHandlers(app: App): void {
     try {
       const values = view.state.values;
       const title = values.title?.title_input?.value ?? "";
-      const severity = (values.severity?.severity_select?.selected_option
-        ?.value ?? "Medium") as Severity;
+      const severity: Severity =
+        values.severity?.severity_select?.selected_option?.value ?? "Medium";
       const serviceName =
         values.service?.service_select?.selected_option?.value ?? "";
       const description = values.description?.description_input?.value ?? "";

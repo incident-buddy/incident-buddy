@@ -19,6 +19,7 @@
 ## エラーハンドリング
 
 - [2026-03-22 incident-close] "失敗してもログのみ継続" 処理は handler 内でインライン `try-catch` を書かず、自己完結した内部 `try-catch` を持つ関数（`tryXxx()` 命名）として切り出す。これにより仕様が関数シグネチャに表れ、呼び出し元がシンプルになる。
+- [2026-03-22 error-handling-pattern] 失敗時の責務に応じて関数シグネチャを使い分ける。「失敗しても無視してよい」処理は `tryXxx()` 命名・返り型 `void`（内部で `try-catch` を完結させ例外を伝播させない）。「失敗時に呼び出し元がハンドリングを必要とする」処理は関数固有の `Result` 型（`{ ok: true; data: T } | { ok: false; error: unknown }` 等）を返す。どちらも handler 内にインライン `try-catch` を書かない点は共通。
 - [2026-03-22 incident-close] `view_submission` ハンドラーでは `await ack()` を先頭で呼ぶ（Slack の 3 秒制限対応）。`AlreadyResolvedError` などの業務エラーは `ack()` 後に `chat.postMessage` で通知する（モーダル内のインラインエラーは表示不可）。
 
 ## 型設計

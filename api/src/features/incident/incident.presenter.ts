@@ -153,12 +153,6 @@ export function buildChannelWelcomeMessage(
           action_id: "resolve_incident",
           style: "danger",
           value: "resolve",
-          confirm: {
-            title: { type: "plain_text", text: "確認" },
-            text: { type: "mrkdwn", text: "解決モーダルを開きますか？" },
-            confirm: { type: "plain_text", text: "開く" },
-            deny: { type: "plain_text", text: "キャンセル" },
-          },
         },
       ],
     });

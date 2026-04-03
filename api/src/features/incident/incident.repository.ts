@@ -1,5 +1,6 @@
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { incidentsCol, timelineCol } from "../../db/firestore.js";
+import { withSpan } from "../../telemetry.js";
 import type { AddTimelineEventInput, CreateIncidentInput, IncidentDoc, TimelineEventDoc } from "../../db/types.js";
 import type { Incident, IncidentStatus, Responder } from "./incident.model.js";
 
@@ -48,20 +49,22 @@ export const incidentRepository = {
    * @returns 作成されたインシデントのドメインオブジェクト
    */
   async create(id: string, input: CreateIncidentInput, createdAt: Date): Promise<Incident> {
-    const ref = incidentsCol.doc(id);
-    const ts = Timestamp.fromDate(createdAt);
-    const doc: IncidentDoc = {
-      ...input,
-      id: ref.id,
-      status: "open",
-      createdAt: ts,
-      updatedAt: ts,
-      resolvedAt: null,
-      resolvedBy: null,
-      resolvedByName: null,
-    };
-    await ref.set(doc);
-    return toDomain(doc);
+    return withSpan("incident.repository.create", { collection: "incidents", operation: "create" }, async () => {
+      const ref = incidentsCol.doc(id);
+      const ts = Timestamp.fromDate(createdAt);
+      const doc: IncidentDoc = {
+        ...input,
+        id: ref.id,
+        status: "open",
+        createdAt: ts,
+        updatedAt: ts,
+        resolvedAt: null,
+        resolvedBy: null,
+        resolvedByName: null,
+      };
+      await ref.set(doc);
+      return toDomain(doc);
+    });
   },
 
   /**
@@ -71,10 +74,12 @@ export const incidentRepository = {
    * @returns 見つかった場合はドメインオブジェクト、存在しない場合は `null`
    */
   async findById(id: string): Promise<Incident | null> {
-    const snap = await incidentsCol.doc(id).get();
-    if (!snap.exists) return null;
-    const data = snap.data();
-    return data ? toDomain(data) : null;
+    return withSpan("incident.repository.findById", { collection: "incidents", operation: "findById" }, async () => {
+      const snap = await incidentsCol.doc(id).get();
+      if (!snap.exists) return null;
+      const data = snap.data();
+      return data ? toDomain(data) : null;
+    });
   },
 
   /**
@@ -84,13 +89,15 @@ export const incidentRepository = {
    * @returns 見つかった場合はドメインオブジェクト、存在しない場合は `null`
    */
   async findByChannelId(channelId: string): Promise<Incident | null> {
-    const snap = await incidentsCol
-      .where("incidentChannelId", "==", channelId)
-      .limit(1)
-      .get();
-    if (snap.empty) return null;
-    const data = snap.docs[0]?.data();
-    return data ? toDomain(data) : null;
+    return withSpan("incident.repository.findByChannelId", { collection: "incidents", operation: "findByChannelId" }, async () => {
+      const snap = await incidentsCol
+        .where("incidentChannelId", "==", channelId)
+        .limit(1)
+        .get();
+      if (snap.empty) return null;
+      const data = snap.docs[0]?.data();
+      return data ? toDomain(data) : null;
+    });
   },
 
   /**
@@ -100,12 +107,14 @@ export const incidentRepository = {
    * @returns オープン中のインシデント一覧（新しい順）
    */
   async findOpen(limit = 10): Promise<Incident[]> {
-    const snap = await incidentsCol
-      .where("status", "==", "open")
-      .orderBy("createdAt", "desc")
-      .limit(limit)
-      .get();
-    return snap.docs.map((d) => toDomain(d.data()));
+    return withSpan("incident.repository.findOpen", { collection: "incidents", operation: "findOpen" }, async () => {
+      const snap = await incidentsCol
+        .where("status", "==", "open")
+        .orderBy("createdAt", "desc")
+        .limit(limit)
+        .get();
+      return snap.docs.map((d) => toDomain(d.data()));
+    });
   },
 
   /**
@@ -118,16 +127,18 @@ export const incidentRepository = {
    * @param patch - 更新するフィールドのパッチ
    */
   async update(id: string, patch: IncidentPatch): Promise<void> {
-    const firestoreUpdate: Record<string, unknown> = {
-      updatedAt: FieldValue.serverTimestamp(),
-    };
-    if (patch.status !== undefined) firestoreUpdate.status = patch.status;
-    if (patch.resolvedAt !== undefined) firestoreUpdate.resolvedAt = Timestamp.fromDate(patch.resolvedAt);
-    if (patch.resolvedBy !== undefined) firestoreUpdate.resolvedBy = patch.resolvedBy;
-    if (patch.resolvedByName !== undefined) firestoreUpdate.resolvedByName = patch.resolvedByName;
-    if (patch.responders?.add !== undefined) firestoreUpdate.responders = FieldValue.arrayUnion(patch.responders.add);
-    if (patch.responders?.remove !== undefined) firestoreUpdate.responders = FieldValue.arrayRemove(patch.responders.remove);
-    await incidentsCol.doc(id).update(firestoreUpdate);
+    return withSpan("incident.repository.update", { collection: "incidents", operation: "update" }, async () => {
+      const firestoreUpdate: Record<string, unknown> = {
+        updatedAt: FieldValue.serverTimestamp(),
+      };
+      if (patch.status !== undefined) firestoreUpdate.status = patch.status;
+      if (patch.resolvedAt !== undefined) firestoreUpdate.resolvedAt = Timestamp.fromDate(patch.resolvedAt);
+      if (patch.resolvedBy !== undefined) firestoreUpdate.resolvedBy = patch.resolvedBy;
+      if (patch.resolvedByName !== undefined) firestoreUpdate.resolvedByName = patch.resolvedByName;
+      if (patch.responders?.add !== undefined) firestoreUpdate.responders = FieldValue.arrayUnion(patch.responders.add);
+      if (patch.responders?.remove !== undefined) firestoreUpdate.responders = FieldValue.arrayRemove(patch.responders.remove);
+      await incidentsCol.doc(id).update(firestoreUpdate);
+    });
   },
 
   /**
@@ -140,15 +151,17 @@ export const incidentRepository = {
     incidentId: string,
     event: AddTimelineEventInput,
   ): Promise<void> {
-    const ref = timelineCol(incidentId).doc();
-    const doc: TimelineEventDoc = {
-      id: ref.id,
-      type: event.type,
-      actorId: event.actorId,
-      actorName: event.actorName,
-      note: event.note,
-      occurredAt: Timestamp.fromDate(event.occurredAt),
-    };
-    await ref.set(doc);
+    return withSpan("incident.repository.addTimelineEvent", { collection: "timeline", operation: "addTimelineEvent" }, async () => {
+      const ref = timelineCol(incidentId).doc();
+      const doc: TimelineEventDoc = {
+        id: ref.id,
+        type: event.type,
+        actorId: event.actorId,
+        actorName: event.actorName,
+        note: event.note,
+        occurredAt: Timestamp.fromDate(event.occurredAt),
+      };
+      await ref.set(doc);
+    });
   },
 };

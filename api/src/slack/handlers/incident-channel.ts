@@ -1,3 +1,5 @@
+import { withSpan } from "../../telemetry.js";
+
 type SlackClient = {
   conversations: {
     create: (args: { name: string; is_private?: boolean }) => Promise<{
@@ -47,31 +49,33 @@ export async function createIncidentChannel({
   client: SlackClient;
   date: Date;
 }): Promise<{ id: string; name: string }> {
-  const MAX_RETRIES = 10;
-  for (let seq = 1; seq <= MAX_RETRIES; seq++) {
-    const name = buildChannelName({ date, seq });
-    try {
-      const result = await client.conversations.create({
-        name,
-        is_private: false,
-      });
-      if (!result.ok) {
-        throw new Error(result.error ?? "conversations.create failed");
+  return withSpan("slack.conversations.create", { api: "conversations.create" }, async () => {
+    const MAX_RETRIES = 10;
+    for (let seq = 1; seq <= MAX_RETRIES; seq++) {
+      const name = buildChannelName({ date, seq });
+      try {
+        const result = await client.conversations.create({
+          name,
+          is_private: false,
+        });
+        if (!result.ok) {
+          throw new Error(result.error ?? "conversations.create failed");
+        }
+        const id = result.channel?.id;
+        const channelName = result.channel?.name;
+        if (id && channelName) {
+          return { id, name: channelName };
+        }
+        throw new Error(`Failed to create channel: missing id/name in response`);
+      } catch (e) {
+        if (e instanceof Error && e.message.includes("name_taken")) {
+          continue;
+        }
+        throw e;
       }
-      const id = result.channel?.id;
-      const channelName = result.channel?.name;
-      if (id && channelName) {
-        return { id, name: channelName };
-      }
-      throw new Error(`Failed to create channel: missing id/name in response`);
-    } catch (e) {
-      if (e instanceof Error && e.message.includes("name_taken")) {
-        continue;
-      }
-      throw e;
     }
-  }
-  throw new Error(`Failed to create channel after ${MAX_RETRIES} retries`);
+    throw new Error(`Failed to create channel after ${MAX_RETRIES} retries`);
+  });
 }
 
 /**
@@ -138,21 +142,23 @@ export async function inviteToChannel({
 }): Promise<void> {
   if (userIds.length === 0) return;
 
-  try {
-    const result = await client.conversations.invite({
-      channel: channelId,
-      users: userIds.join(","),
-    });
-    if (!result.ok) {
+  return withSpan("slack.conversations.invite", { api: "conversations.invite" }, async () => {
+    try {
+      const result = await client.conversations.invite({
+        channel: channelId,
+        users: userIds.join(","),
+      });
+      if (!result.ok) {
+        console.error(
+          "[incident-buddy] Failed to invite users to incident channel:",
+          result.error,
+        );
+      }
+    } catch (e) {
       console.error(
         "[incident-buddy] Failed to invite users to incident channel:",
-        result.error,
+        e,
       );
     }
-  } catch (e) {
-    console.error(
-      "[incident-buddy] Failed to invite users to incident channel:",
-      e,
-    );
-  }
+  });
 }

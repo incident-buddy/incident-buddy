@@ -1,3 +1,4 @@
+import "./telemetry.js";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { requireEnv } from "./env.js";

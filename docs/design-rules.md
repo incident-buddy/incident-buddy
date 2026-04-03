@@ -37,6 +37,18 @@
 - [2026-03-22 incident-close] Firestore ドキュメント型（`*Doc`）に新フィールドを追加する際は、既存ドキュメントとの後方互換性を考慮し、`toDomain()` で `doc.newField ?? null` のフォールバックを設ける。
 - [2026-03-22 incident-close] `CreateIncidentInput` 等の Omit 派生型にも新フィールドを除外するか否か検討が必要。デフォルト値が決まっているフィールド（`resolvedBy: null` 等）は Omit して repository の `create()` でデフォルト値を設定する。
 
+## アーキテクチャ（OTel・計装）
+
+- [2026-04-04 otel-jaeger] Slack ハンドラー（`app.view(...)` / `app.action(...)` のコールバック）はスパン生成コードを持たない。スパン化はラッパー関数（`incident-channel.ts` 等）内で完結させる。ハンドラーの責務は「`ack()` + service 呼び出し + Slack API 呼び出し」のみ。
+- [2026-04-04 otel-jaeger] Metrics の記録場所はレイヤーに従う: リクエスト数・エラー率は service 層、Firestore クエリレイテンシは repository 層、Slack API 呼び出し時間はラッパー関数内。ハンドラーは計測コードを持たない。
+- [2026-04-04 otel-jaeger] OTel SDK を初期化する `telemetry.ts` は `withSpan<T>(name, attrs, fn: () => Promise<T>): Promise<T>` のようなラッパー関数を export し、`features/` のコードは `@opentelemetry/api` を直接 import しない。これにより OTel の具体型（`Span` 等）が features 層に漏れることを防ぐ。
+- [2026-04-04 otel-jaeger] OTel SDK の無効化条件は `process.env.VITEST` で判定する（このプロジェクトの慣習）。`NODE_ENV=test` は使わない。
+- [2026-04-04 otel-jaeger] `@opentelemetry/auto-instrumentations-node` は採用しない。意図しない自動スパンによるノイズ・バンドルサイズの増加を避け、手動スパンか個別計装パッケージ（`@opentelemetry/instrumentation-http` 等）を選択的に使う。
+
+## エラーハンドリング（OTel）
+
+- [2026-04-04 otel-jaeger] OTel エクスポーターの送信失敗は `DiagConsoleLogger` と SDK 内部のエラー抑制機構で処理する。アプリコードは OTel 送信に try-catch を書かない。
+
 ## その他
 
 - [2026-03-22 incident-close] 計画書作成前にテックリードエージェントに渡す「変更対象ファイルの現状」を Explorer エージェントで調査し、計画書に含める。これによりテックリードレビューのサイクル数を削減できる（今回は 3 回発生）。

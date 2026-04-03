@@ -1,5 +1,6 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { db } from "../../db/firestore.js";
+import * as telemetry from "../../telemetry.js";
 import { incidentRepository } from "./incident.repository.js";
 
 async function clearIncidents() {
@@ -95,6 +96,123 @@ describe("incidentRepository.findOpen", () => {
 
     expect(incidents).toHaveLength(1);
     expect(incidents[0]?.id).toBe(open.id);
+  });
+});
+
+describe("incidentRepository.findByChannelId", () => {
+  afterEach(clearIncidents);
+
+  it("channelId が一致するインシデントを返す", async () => {
+    await incidentRepository.create("TEST_ID_BCI_001", {
+      ...baseInput,
+      slackChannelId: "C_ORIGINAL",
+      incidentChannelId: "C_INC_001",
+    }, new Date());
+
+    const found = await incidentRepository.findByChannelId("C_INC_001");
+    expect(found?.id).toBe("TEST_ID_BCI_001");
+    expect(found?.createdAt).toBeInstanceOf(Date);
+  });
+
+  it("該当なしのとき null を返す", async () => {
+    const result = await incidentRepository.findByChannelId("C_NONEXISTENT");
+    expect(result).toBeNull();
+  });
+});
+
+describe("incidentRepository.addTimelineEvent", () => {
+  // timeline sub-collection は clearIncidents（親ドキュメント削除）では消えないため個別にクリアする
+  async function clearTimeline(incidentId: string) {
+    const snap = await db.collection("incidents").doc(incidentId).collection("timeline").get();
+    await Promise.all(snap.docs.map((d) => d.ref.delete()));
+  }
+
+  beforeEach(async () => {
+    await clearTimeline("TEST_ID_TL_001");
+    await clearIncidents();
+  });
+
+  afterEach(async () => {
+    await clearTimeline("TEST_ID_TL_001");
+    await clearIncidents();
+  });
+
+  it("タイムラインイベントを Firestore に保存する", async () => {
+    const incident = await incidentRepository.create("TEST_ID_TL_001", baseInput, new Date());
+    await incidentRepository.addTimelineEvent(incident.id, {
+      type: "note",
+      actorId: "U001",
+      actorName: "alice",
+      note: "調査開始",
+      occurredAt: new Date(),
+    });
+
+    const snap = await db.collection("incidents").doc(incident.id).collection("timeline").get();
+    expect(snap.size).toBe(1);
+    expect(snap.docs[0]?.data().type).toBe("note");
+    expect(snap.docs[0]?.data().actorId).toBe("U001");
+    expect(snap.docs[0]?.data().note).toBe("調査開始");
+  });
+});
+
+describe("incidentRepository - withSpan 計装", () => {
+  afterEach(clearIncidents);
+
+  it("create: 正しいスパン名と属性で withSpan が呼ばれる", async () => {
+    const spy = vi.spyOn(telemetry, "withSpan").mockImplementation((_n, _a, fn) => fn());
+    await incidentRepository.create("TEST_ID_SPY_001", baseInput, new Date());
+    expect(spy).toHaveBeenCalledWith(
+      "incident.repository.create",
+      { collection: "incidents", operation: "create" },
+      expect.any(Function),
+    );
+    spy.mockRestore();
+  });
+
+  it("findById: 正しいスパン名と属性で withSpan が呼ばれる", async () => {
+    const spy = vi.spyOn(telemetry, "withSpan").mockImplementation((_n, _a, fn) => fn());
+    await incidentRepository.findById("any-id");
+    expect(spy).toHaveBeenCalledWith(
+      "incident.repository.findById",
+      { collection: "incidents", operation: "findById" },
+      expect.any(Function),
+    );
+    spy.mockRestore();
+  });
+
+  it("findOpen: 正しいスパン名と属性で withSpan が呼ばれる", async () => {
+    const spy = vi.spyOn(telemetry, "withSpan").mockImplementation((_n, _a, fn) => fn());
+    await incidentRepository.findOpen();
+    expect(spy).toHaveBeenCalledWith(
+      "incident.repository.findOpen",
+      { collection: "incidents", operation: "findOpen" },
+      expect.any(Function),
+    );
+    spy.mockRestore();
+  });
+
+  it("update: 正しいスパン名と属性で withSpan が呼ばれる", async () => {
+    const incident = await incidentRepository.create("TEST_ID_SPY_002", baseInput, new Date());
+    const spy = vi.spyOn(telemetry, "withSpan").mockImplementation((_n, _a, fn) => fn());
+    await incidentRepository.update(incident.id, { status: "resolved", resolvedAt: new Date(), resolvedBy: "U001", resolvedByName: "alice" });
+    expect(spy).toHaveBeenCalledWith(
+      "incident.repository.update",
+      { collection: "incidents", operation: "update" },
+      expect.any(Function),
+    );
+    spy.mockRestore();
+  });
+
+  it("addTimelineEvent: 正しいスパン名と属性で withSpan が呼ばれる", async () => {
+    const incident = await incidentRepository.create("TEST_ID_SPY_003", baseInput, new Date());
+    const spy = vi.spyOn(telemetry, "withSpan").mockImplementation((_n, _a, fn) => fn());
+    await incidentRepository.addTimelineEvent(incident.id, { type: "note", actorId: "U001", actorName: "alice", note: "test", occurredAt: new Date() });
+    expect(spy).toHaveBeenCalledWith(
+      "incident.repository.addTimelineEvent",
+      { collection: "timeline", operation: "addTimelineEvent" },
+      expect.any(Function),
+    );
+    spy.mockRestore();
   });
 });
 

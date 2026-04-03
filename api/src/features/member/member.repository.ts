@@ -1,4 +1,5 @@
 import { membersCol } from "../../db/firestore.js";
+import { withSpan } from "../../telemetry.js";
 
 export const memberRepository = {
   /**
@@ -11,8 +12,10 @@ export const memberRepository = {
    * @param displayName - Slack 表示名
    */
   async upsert(slackUserId: string, displayName: string): Promise<void> {
-    await membersCol
-      .doc(slackUserId)
-      .set({ slackUserId, displayName }, { merge: true });
+    return withSpan("member.repository.upsert", { collection: "members", operation: "upsert" }, async () => {
+      await membersCol
+        .doc(slackUserId)
+        .set({ slackUserId, displayName }, { merge: true });
+    });
   },
 };

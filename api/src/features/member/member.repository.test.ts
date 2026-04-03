@@ -1,5 +1,6 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { db } from "../../db/firestore.js";
+import * as telemetry from "../../telemetry.js";
 import { memberRepository } from "./member.repository.js";
 
 async function clearMembers() {
@@ -27,6 +28,17 @@ describe("memberRepository.upsert", () => {
 
     const snap = await db.collection("members").doc("U001").get();
     expect(snap.data()?.displayName).toBe("Alice Updated");
+  });
+
+  it("upsert: 正しいスパン名と属性で withSpan が呼ばれる", async () => {
+    const spy = vi.spyOn(telemetry, "withSpan").mockImplementation((_n, _a, fn) => fn());
+    await memberRepository.upsert("U_SPY", "SpyUser");
+    expect(spy).toHaveBeenCalledWith(
+      "member.repository.upsert",
+      { collection: "members", operation: "upsert" },
+      expect.any(Function),
+    );
+    spy.mockRestore();
   });
 
   it("preserves existing fields not in the upsert payload (merge)", async () => {

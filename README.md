@@ -12,6 +12,21 @@ Slack からインシデントを宣言・管理するボット。Firestore に�
 | 設定確認 | `/inc config` | 現在の重大度・サービス・通知ルール・ロール設定を ephemeral メッセージで表示 |
 | エラー通知 | （自動） | コマンド処理中に例外が発生した場合、チャンネルにエラーメッセージを投稿 |
 
+### OpenTelemetry + Jaeger（可観測性）
+
+OTel SDK による Traces・Metrics・Logs の計装基盤を導入。ローカル開発では Jaeger UI でトレースを可視化できる。
+
+```bash
+# Jaeger を含む開発環境を起動
+docker compose -f docker/compose.yml up
+
+# Jaeger UI
+open http://localhost:16686
+```
+
+- Slack イベント処理・Firestore 操作・Slack API 呼び出しをスパン化
+- `OTEL_EXPORTER_OTLP_ENDPOINT` 環境変数で送信先を切り替え可能（将来の Datadog 等への接続）
+
 ### Markdown による設定カスタマイズ
 
 `INCIDENT_CONFIG_PATH` 環境変数に Markdown ファイルのパスを設定することで、重大度・サービス・通知ルールをカスタマイズできる。

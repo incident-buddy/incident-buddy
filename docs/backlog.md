@@ -5,13 +5,15 @@
 ---
 
 
-## C: インシデント一覧（`/inc list`）
+## ~~C: インシデント一覧（`/inc list`）~~ ✅ 実装済み（2026-04-04）
 
-`/inc list` でオープン中のインシデント一覧を ephemeral 表示。Firestore の `status + createdAt` 複合インデックスはすでに定義済み。
+~~`/inc list` でオープン中のインシデント一覧を ephemeral 表示。Firestore の `status + createdAt` 複合インデックスはすでに定義済み。~~
 
-**実装のポイント**:
-- `incidentRepository.listOpen()` を実装（インデックス活用）
-- 一覧メッセージは `incident.presenter.ts` に追加
+---
+
+## A: Opentelemetry 計装
+
+OpenTelemetryの分散トレーシングを追加してください。Datadogにデータを送信する構成で。
 
 ---
 

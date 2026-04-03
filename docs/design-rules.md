@@ -11,10 +11,19 @@
 - [2026-03-22 incident-close] `resolve()` など Firestore に日時を書き込むメソッドは `FieldValue.serverTimestamp()` ではなく、service 層で `new Date()` を生成して repository に渡し、repository 内で `Timestamp.fromDate(resolvedAt)` に変換する。`serverTimestamp()` はラウンドトリップ後でないと取得できないため、`resolve()` 直後の `findById()` で値が null になるリスクがある。
 - [2026-03-22 incident-close] `slack/handlers/` から `repository` を直接呼び出す既存コード（`incidentRepository.updateIncidentChannelId` 等）は技術的負債として認識する。新機能では必ず `service` 経由とする。
 
+## アーキテクチャ（追加）
+
+- [2026-04-04 inc-list] Firestore クエリには必ず `.limit()` を付ける。アプリ側で `slice()` する実装は、全件取得後に切り捨てるためコスト・メモリ効率が悪い。クエリ制限はリポジトリ層の責務。
+- [2026-04-04 inc-list] スラッシュコマンドのエラーハンドリングは `respond()` で ephemeral エラーを返す。`postError()` でチャンネルに投稿すると、コマンド実行者以外にも見える場合があり UX が不整合になる。
+
 ## テスト
 
 - [2026-03-22 incident-close] `presenter.test.ts` には `resolved` 状態の表示ケース（解決者名・経過時間・ボタン非表示）のユニットテストを追加すること。E2E でカバーされていても presenter の振る舞いは直接テストが望ましい。
 - [2026-03-22 incident-close] `service.test.ts` には主要なメソッド（`resolve()` など）のユニットテストを追加すること。モック前提のユニットテストは E2E よりも高速にフィードバックを得られる。
+
+## テスト（追加）
+
+- [2026-04-04 inc-list] 「現在時刻」に依存する presenter 関数はテスタブルな純粋関数にするため `now: Date` を引数で受け取る。呼び出し元（handler）が `new Date()` を生成して渡す。
 
 ## エラーハンドリング
 

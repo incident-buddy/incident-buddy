@@ -14,6 +14,29 @@ mise run dc:up
 mise run dc:shell
 ```
 
+### devcontainer内でコマンドを実行する正しいパターン
+
+`dc:shell` タスクは対話シェル専用（`devcontainer exec --workspace-folder . bash`）。
+コマンドを渡すには直接 `devcontainer exec` を使うこと：
+
+```bash
+# 正しい（直接devcontainer execを使う）
+devcontainer exec --workspace-folder . bash -c 'pnpm -F api test'
+
+# 間違い（dc:shellに引数を継ぎ足してもbash bash -c...になる）
+# mise run dc:shell -- bash -c 'pnpm -F api test'  ← NG
+```
+
+`mise.toml` の各タスクは `if [ -f /.dockerenv ]` で devcontainer 内かどうかを判定して直接実行するパターンに対応済み：
+
+```bash
+# devcontainer外（ホスト）から実行する場合はmiseタスクを使う
+mise run test          # 全テスト
+mise run test:unit     # ユニットテストのみ
+mise run lint
+mise run typecheck
+```
+
 ## タスクの把握
 
 このプロジェクトで実行できるタスクは `mise tasks` で確認すること。

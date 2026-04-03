@@ -3,6 +3,7 @@ import type { Incident } from "./incident.model.js";
 import {
   buildChannelWelcomeMessage,
   buildIncidentMessage,
+  buildIncidentListMessage,
 } from "./incident.presenter.js";
 
 const baseIncident: Incident = {
@@ -128,5 +129,45 @@ describe("buildChannelWelcomeMessage", () => {
     const json = JSON.stringify(msg);
     // serviceName が空文字のときにサービス名ラベルが出ないことを確認
     expect(json).not.toContain("*Service*");
+  });
+});
+
+describe("buildIncidentListMessage", () => {
+  const now = new Date("2026-04-04T10:00:00Z");
+
+  it("インシデントが0件のとき「オープン中のインシデントはありません」を返す", () => {
+    const msg = buildIncidentListMessage([], now);
+    expect(msg.text).toContain("オープン中のインシデントはありません");
+  });
+
+  it("インシデントのタイトル・severity・宣言者を含む", () => {
+    const msg = buildIncidentListMessage([baseIncident], now);
+    const json = JSON.stringify(msg);
+    expect(json).toContain("Database is down");
+    expect(json).toContain("P1");
+    expect(json).toContain("testuser");
+  });
+
+  it("incidentChannelId が設定されているとき <#channelId> リンクを含む", () => {
+    const msg = buildIncidentListMessage([baseIncident], now);
+    const json = JSON.stringify(msg);
+    expect(json).toContain("<#C_INC_001>");
+  });
+
+  it("経過時間を含む（createdAt から now までの差分）", () => {
+    const createdAt = new Date("2026-04-04T08:30:00Z"); // now より 90 分前
+    const incident: Incident = { ...baseIncident, createdAt };
+    const msg = buildIncidentListMessage([incident], now);
+    const json = JSON.stringify(msg);
+    expect(json).toContain("1h 30m");
+  });
+
+  it("複数件のインシデントをすべて含む", () => {
+    const inc1: Incident = { ...baseIncident, id: "INC001", title: "First Incident" };
+    const inc2: Incident = { ...baseIncident, id: "INC002", title: "Second Incident" };
+    const msg = buildIncidentListMessage([inc1, inc2], now);
+    const json = JSON.stringify(msg);
+    expect(json).toContain("First Incident");
+    expect(json).toContain("Second Incident");
   });
 });

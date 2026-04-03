@@ -2,6 +2,8 @@ import type { App } from "@slack/bolt";
 import { optionalEnv } from "../../env.js";
 import { buildConfigMessage } from "../../features/incident-config/incident-config.presenter.js";
 import { loadConfig } from "../../features/incident-config/incident-config.service.js";
+import { buildIncidentListMessage } from "../../features/incident/incident.presenter.js";
+import { incidentService } from "../../features/incident/incident.service.js";
 import { postError } from "./post-error.js";
 
 export function registerCommandHandlers(app: App): void {
@@ -18,6 +20,23 @@ export function registerCommandHandlers(app: App): void {
         response_type: "ephemeral",
         text: buildConfigMessage({ result, configPath }),
       });
+      return;
+    }
+
+    // /inc list — オープン中インシデント一覧（ephemeral 表示）
+    if (body.text === "list") {
+      try {
+        const incidents = await incidentService.findOpen();
+        await respond({
+          response_type: "ephemeral",
+          ...buildIncidentListMessage(incidents, new Date()),
+        });
+      } catch (e) {
+        await respond({
+          response_type: "ephemeral",
+          text: `インシデント一覧の取得に失敗しました: ${e instanceof Error ? e.message : String(e)}`,
+        });
+      }
       return;
     }
 

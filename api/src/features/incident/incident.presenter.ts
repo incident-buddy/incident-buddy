@@ -268,3 +268,54 @@ export function buildIncidentMessage({
     attachments: [{ color, blocks }],
   };
 }
+
+/**
+ * `/inc list` コマンドの応答メッセージ（オープン中インシデント一覧）を構築する
+ *
+ * @description 純粋関数。副作用なし。`now` を引数で受け取ることでテスタブルに保つ。
+ * 0件のときは「オープン中のインシデントはありません」を返す。
+ * @param incidents - オープン中インシデントの一覧（作成日時降順を想定）
+ * @param now - 経過時間計算の基準となる現在時刻
+ * @returns `respond()` に渡す Slack メッセージペイロード（mrkdwn 形式）
+ */
+export function buildIncidentListMessage(incidents: Incident[], now: Date): SlackMessage {
+  if (incidents.length === 0) {
+    return { text: "オープン中のインシデントはありません", blocks: [] };
+  }
+
+  const blocks: unknown[] = [
+    {
+      type: "section",
+      text: { type: "mrkdwn", text: `*オープン中のインシデント (${incidents.length}件)*` },
+    },
+    { type: "divider" },
+  ];
+
+  for (const incident of incidents) {
+    const elapsed = formatElapsedTime(incident.createdAt, now);
+    const channelLink = incident.incidentChannelId ? ` <#${incident.incidentChannelId}>` : "";
+    blocks.push({
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: [
+          `*${incident.title}*`,
+          `Severity: ${incident.severity} | Declared by: ${incident.createdByName} | 経過: ${elapsed}${channelLink}`,
+        ].join("\n"),
+      },
+    });
+  }
+
+  const textSummary = incidents
+    .map((i) => {
+      const elapsed = formatElapsedTime(i.createdAt, now);
+      const channelLink = i.incidentChannelId ? ` <#${i.incidentChannelId}>` : "";
+      return `• ${i.title} [${i.severity}] ${i.createdByName} 経過:${elapsed}${channelLink}`;
+    })
+    .join("\n");
+
+  return {
+    text: `オープン中のインシデント (${incidents.length}件)\n${textSummary}`,
+    blocks,
+  };
+}

@@ -96,6 +96,15 @@ export const incidentService = {
   },
 
   /**
+   * ステータスが `"open"` のインシデントを作成日時の降順で取得する（最大10件）
+   *
+   * @returns オープン中のインシデント一覧（新しい順）
+   */
+  async findOpen(): Promise<Incident[]> {
+    return incidentRepository.findOpen();
+  },
+
+  /**
    * インシデント対応チャンネル ID でインシデントを取得する
    *
    * @param channelId - 検索するインシデント対応チャンネルの Slack チャンネル ID

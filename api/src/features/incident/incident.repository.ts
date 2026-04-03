@@ -96,12 +96,14 @@ export const incidentRepository = {
   /**
    * ステータスが `"open"` のインシデントを作成日時の降順で取得する
    *
+   * @param limit - 取得件数の上限（デフォルト: 10）。Firestore クエリ側で制限し全件取得を防ぐ
    * @returns オープン中のインシデント一覧（新しい順）
    */
-  async findOpen(): Promise<Incident[]> {
+  async findOpen(limit = 10): Promise<Incident[]> {
     const snap = await incidentsCol
       .where("status", "==", "open")
       .orderBy("createdAt", "desc")
+      .limit(limit)
       .get();
     return snap.docs.map((d) => toDomain(d.data()));
   },

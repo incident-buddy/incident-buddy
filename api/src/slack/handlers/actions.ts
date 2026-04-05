@@ -19,6 +19,7 @@ import {
   createIncidentChannel,
   inviteToChannel,
   resolveInvitees,
+  setChannelTopic,
 } from "./incident-channel.js";
 import { postError } from "./post-error.js";
 
@@ -101,6 +102,7 @@ function makeSlackAdapter(client: WebClient): IncidentSlackPort {
         ? formatElapsedTime(incident.createdAt, incident.resolvedAt)
         : "";
       await tryPostResolveNotification(client, channelId, incident.resolvedByName ?? "", elapsed);
+      await trySetResolvedChannelTopic(client, channelId, incident.title);
     },
   };
 }
@@ -134,7 +136,7 @@ export function registerActionHandlers(app: App): void {
       const userId = body.user.id;
       const userName = body.user.name;
 
-      await incidentService.open(
+      const incident = await incidentService.open(
         {
           title,
           description,
@@ -146,6 +148,14 @@ export function registerActionHandlers(app: App): void {
         },
         makeSlackAdapter(client),
       );
+
+      if (incident.incidentChannelId) {
+        await setChannelTopic({
+          client,
+          channelId: incident.incidentChannelId,
+          topic: `[${incident.severity}] ${incident.title} - 対応中`,
+        });
+      }
     } catch (e) {
       await postError({ client, channelId, error: e });
     }
@@ -402,6 +412,22 @@ async function tryUpdateWelcomeMessage(
   } catch (e) {
     console.error("[incident-buddy] Failed to update welcome message on resolve:", e);
   }
+}
+
+/**
+ * インシデント対応チャンネルのトピックを解決済み表示に best-effort で更新する
+ *
+ * @description 失敗してもエラーを伝播させず `console.error` のみ出力する。
+ * @param client - Slack WebClient
+ * @param channelId - 更新先チャンネル ID
+ * @param title - インシデントタイトル（トピック文字列生成に使用）
+ */
+async function trySetResolvedChannelTopic(
+  client: WebClient,
+  channelId: string,
+  title: string,
+): Promise<void> {
+  await setChannelTopic({ client, channelId, topic: `[Resolved] ${title}` });
 }
 
 /**

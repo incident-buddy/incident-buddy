@@ -5,6 +5,7 @@ import {
   createIncidentChannel,
   inviteToChannel,
   resolveInvitees,
+  setChannelTopic,
 } from "./incident-channel.js";
 
 function makeClient(overrides: Partial<{
@@ -12,6 +13,7 @@ function makeClient(overrides: Partial<{
   createImpl: (args: { name: string }) => Promise<{ ok: boolean; channel?: { id?: string; name?: string }; error?: string }>;
   inviteResult: { ok: boolean; error?: string };
   usergroupsUsers: string[];
+  setTopicResult: { ok: boolean; error?: string };
 }> = {}) {
   return {
     conversations: {
@@ -20,6 +22,9 @@ function makeClient(overrides: Partial<{
       ),
       invite: vi.fn().mockResolvedValue(
         overrides.inviteResult ?? { ok: true }
+      ),
+      setTopic: vi.fn().mockResolvedValue(
+        overrides.setTopicResult ?? { ok: true }
       ),
     },
     usergroups: {
@@ -133,6 +138,39 @@ describe("resolveInvitees", () => {
     client.usergroups.users.list = vi.fn().mockRejectedValue(new Error("group not found"));
     const result = await resolveInvitees({ client, mentions: ["@S_BROKEN"] });
     expect(result).toHaveLength(0);
+  });
+});
+
+describe("setChannelTopic", () => {
+  it("conversations.setTopic に channel と topic を正しく渡す", async () => {
+    const client = makeClient();
+    await setChannelTopic({ client, channelId: "C_INC", topic: "[Critical] DB is down - 対応中" });
+    expect(client.conversations.setTopic).toHaveBeenCalledWith({
+      channel: "C_INC",
+      topic: "[Critical] DB is down - 対応中",
+    });
+  });
+
+  it("ok: true のとき undefined を返し例外を伝播させない", async () => {
+    const client = makeClient({ setTopicResult: { ok: true } });
+    await expect(
+      setChannelTopic({ client, channelId: "C_INC", topic: "[Critical] DB is down - 対応中" })
+    ).resolves.toBeUndefined();
+  });
+
+  it("ok: false のとき例外を伝播させない", async () => {
+    const client = makeClient({ setTopicResult: { ok: false, error: "missing_scope" } });
+    await expect(
+      setChannelTopic({ client, channelId: "C_INC", topic: "some topic" })
+    ).resolves.toBeUndefined();
+  });
+
+  it("setTopic が throw しても例外を伝播させない", async () => {
+    const client = makeClient();
+    client.conversations.setTopic = vi.fn().mockRejectedValue(new Error("network error"));
+    await expect(
+      setChannelTopic({ client, channelId: "C_INC", topic: "some topic" })
+    ).resolves.toBeUndefined();
   });
 });
 

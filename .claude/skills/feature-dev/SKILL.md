@@ -155,10 +155,14 @@ QA評価完了後、**PASS・FAIL にかかわらず必ず Phase 6（Retrospecti
    - READMEに実装機能を追記
    - `docs/backlog.md` から実装済み機能を削除（**specファイルは削除しないこと**）
 
-4. `TaskUpdate` で Phase 7 を complete にする。
+4. `.claude/skills/feature-dev/agents/quiz-generator.md` を Read してpromptを取得し、**アーキテクチャクイズ生成エージェント** を起動する：
+   - promptの `{feature-slug}` に実際のslugを埋め込む
+   - エージェントは仕様書と実装を精読し、`docs/architecture-quiz.md` に新しいセクションを追記する
 
-5. 完了を報告する：
-   > 「開発ワークフローが完了しました。\n\n- 仕様書: `docs/spec/{feature-slug}.md`\n- 活動日誌: `docs/diary/{yyyy-mm-dd}_{feature-slug}.md`\n\nレトロスペクティブは `docs/retro/` に議事録があります。」
+5. `TaskUpdate` で Phase 7 を complete にする。
+
+6. 完了を報告する：
+   > 「開発ワークフローが完了しました。\n\n- 仕様書: `docs/spec/{feature-slug}.md`\n- 活動日誌: `docs/diary/{yyyy-mm-dd}_{feature-slug}.md`\n- クイズ: `docs/architecture-quiz.md`\n\nレトロスペクティブは `docs/retro/` に議事録があります。」
 
 ---
 
@@ -179,6 +183,7 @@ QA評価完了後、**PASS・FAIL にかかわらず必ず Phase 6（Retrospecti
 | テストエンジニア | `.claude/skills/feature-dev/agents/test-engineer.md` |
 | 受け入れテスト担当 | `.claude/skills/feature-dev/agents/acceptance-tester.md` |
 | スクラムマスター | `.claude/skills/feature-dev/agents/scrum-master.md` |
+| アーキテクチャクイズ生成 | `.claude/skills/feature-dev/agents/quiz-generator.md` |
 
 ## テンプレートファイル一覧
 

@@ -4,36 +4,6 @@
 
 ---
 
-## I: 重大度変更（`/inc severity <level>`）
-
-対応中にインシデントの重大度が変わった場合、`/inc severity critical` で更新。Slack メッセージも更新（F）。timeline に記録。
-
-**実装のポイント**:
-- `incidentService.updateSeverity(incidentId, severity, userId, userName)` を実装
-- severity の選択肢はモーダルと同じ Severity 型を再利用
-
----
-
-## L: インシデントチャンネルのトピック自動設定
-
-チャンネル作成後、`conversations.setTopic` でトピックに `[Critical] DB障害 - 対応中` をセット。チャンネル一覧から内容が分かる。解決時は `[Resolved] DB障害` に更新。
-
-**実装のポイント**:
-- `incident-channel.ts` に `setChannelTopic` を追加
-- 解決時（A の実装後）にもトピック更新を呼ぶ
-
----
-
-## G: タイムラインへのメモ追記（`/inc note`）
-
-インシデントチャンネルで `/inc note <テキスト>` を実行すると timeline に `type: "note"` で記録される。ポストモーテムの材料になる。
-
-**実装のポイント**:
-- `incidentService.addNote(incidentId, note, userId, userName)` を実装
-- timeline サブコレクションへの書き込みは B で実装済みのものを再利用
-
----
-
 ## H: 解決時のポストモーテムテンプレート自動生成
 
 `/inc resolve` 時に、timeline の内容（対応者・メモ・所要時間）をもとにポストモーテムのドラフトをチャンネルに投稿する。
@@ -56,3 +26,26 @@ Markdownの設定ファイルに指定したリアクション（`:pushpin:` な
 - `reaction_added` イベントを Bolt でハンドリング → 対象メッセージのチャンネルがインシデントチャンネルかチェック（E の `incidentChannelId` を使う）→ timeline に `type: "pinned_message"` で記録
 - H のポストモーテム生成時に `pinned_message` イベントも取り込む
 - H が実装済みであることが前提
+
+---
+
+## I: 重大度変更（`/inc severity <level>`）
+
+対応中にインシデントの重大度が変わった場合、`/inc severity critical` で更新。Slack メッセージも更新（F）。timeline に記録。
+
+**実装のポイント**:
+- `incidentService.updateSeverity(incidentId, severity, userId, userName)` を実装
+- severity の選択肢はモーダルと同じ Severity 型を再利用
+
+---
+
+## G: タイムラインへのメモ追記（`/inc note`）
+
+インシデントチャンネルで `/inc note <テキスト>` を実行すると timeline に `type: "note"` で記録される。ポストモーテムの材料になる。
+
+**実装のポイント**:
+- `incidentService.addNote(incidentId, note, userId, userName)` を実装
+- timeline サブコレクションへの書き込みは B で実装済みのものを再利用
+
+---
+

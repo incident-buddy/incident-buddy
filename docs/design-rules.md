@@ -49,6 +49,10 @@
 
 - [2026-04-04 otel-jaeger] OTel エクスポーターの送信失敗は `DiagConsoleLogger` と SDK 内部のエラー抑制機構で処理する。アプリコードは OTel 送信に try-catch を書かない。
 
+## 型設計（追加）
+
+- [2026-04-05 incident-channel-topic] `incident-channel.ts` の `SlackClient` ローカル型は使う API メソッドだけを定義する最小インターフェース。新しい Slack API を使う場合（例: `conversations.setTopic`）は型にも追加を忘れずに行う。追加しないとコンパイルエラーになる。
+
 ## その他
 
 - [2026-03-22 incident-close] 計画書作成前にテックリードエージェントに渡す「変更対象ファイルの現状」を Explorer エージェントで調査し、計画書に含める。これによりテックリードレビューのサイクル数を削減できる（今回は 3 回発生）。

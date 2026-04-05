@@ -27,6 +27,20 @@ devcontainer exec --workspace-folder . bash -c 'pnpm -F api test'
 # mise run dc:shell -- bash -c 'pnpm -F api test'  ← NG
 ```
 
+### devcontainer CLI が未インストールの場合のフォールバック
+
+`devcontainer` コマンドがホストにインストールされていない場合、起動済みコンテナに直接 `docker exec` で入ることができる：
+
+```bash
+# 起動中のコンテナ名を確認
+docker ps --format '{{.Names}}' | grep incident-buddy
+
+# docker exec でコマンド実行（コンテナ名は環境によって異なる）
+docker exec <container-name> bash -c 'cd /workspaces/incident-buddy && pnpm -F api test'
+```
+
+`devcontainer` CLI のインストールは `npm install -g @devcontainers/cli` で可能。
+
 `mise.toml` の各タスクは `if [ -f /.dockerenv ]` で devcontainer 内かどうかを判定して直接実行するパターンに対応済み：
 
 ```bash

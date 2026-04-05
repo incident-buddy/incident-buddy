@@ -77,6 +77,28 @@ export async function inviteToChannel(...) {
 
 **理由**: 仕様（「失敗はログのみ、処理継続」）が関数シグネチャに表れる。呼び出し元がシンプルになる。
 
+**命名規則（tryXxx パターン）**: ハンドラー内で「失敗してもログのみ・処理継続」の操作を呼び出す場合、`try` プレフィックス付きのラッパー関数として切り出す。
+
+```typescript
+// OK: tryXxx() 命名・内部完結ラッパーとして切り出す
+async function trySetResolvedChannelTopic(
+  client: SlackClient,
+  channelId: string,
+  title: string,
+): Promise<void> {
+  await setChannelTopic({ client, channelId, topic: `[Resolved] ${title}` });
+}
+
+// NG: ハンドラー内に直接 try-catch を書く、または命名規則なしで呼ぶ
+onResolved: async (incident) => {
+  try {
+    await setChannelTopic(...); // ← tryXxx に切り出すべき
+  } catch (e) { ... }
+}
+```
+
+`setChannelTopic` 自体が内部で try-catch 完結していても、呼び出し側を `tryXxx()` で包むことで「この操作はベストエフォートだ」という意図が読み手に伝わる。
+
 ---
 
 ### `JSON.parse` の型安全化に `zod` を使う

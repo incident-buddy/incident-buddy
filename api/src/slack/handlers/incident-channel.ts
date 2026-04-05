@@ -11,6 +11,10 @@ type SlackClient = {
       channel: string;
       users: string;
     }) => Promise<{ ok: boolean; error?: string }>;
+    setTopic: (args: {
+      channel: string;
+      topic: string;
+    }) => Promise<{ ok: boolean; error?: string }>;
   };
   usergroups: {
     users: {
@@ -125,6 +129,29 @@ export async function resolveInvitees({
   }
 
   return Array.from(userIds);
+}
+
+/**
+ * インシデントチャンネルのトピックを設定する。
+ * 失敗はコンソールにログのみ出力し、例外を伝播させない（処理を継続する）。
+ */
+export async function setChannelTopic({
+  client,
+  channelId,
+  topic,
+}: {
+  client: SlackClient;
+  channelId: string;
+  topic: string;
+}): Promise<void> {
+  try {
+    const result = await client.conversations.setTopic({ channel: channelId, topic });
+    if (!result.ok) {
+      console.error("[incident-buddy] Failed to set channel topic:", result.error);
+    }
+  } catch (e) {
+    console.error("[incident-buddy] Failed to set channel topic:", e);
+  }
 }
 
 /**

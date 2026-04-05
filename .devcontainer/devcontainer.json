@@ -16,12 +16,15 @@
     "source=${localEnv:HOME}/.claude,target=/root/.claude,type=bind,consistency=cached"
   ],
   "remoteEnv": {
-    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}"
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://jaeger:4318"
   },
-  "appPort": [9080, 4000, 8888],
+  "appPort": [9080, 4000, 8888, 16686, 4318],
   "portsAttributes": {
     "9080": { "label": "Firestore Emulator" },
     "4004": { "label": "Firebase Emulator UI" },
-    "8888": { "label": "API Server" }
+    "8888": { "label": "API Server" },
+		"4318": { "label": "OpenTelemetry Collector" },
+		"16686": { "label": "Jaeger UI" }
   }
 }

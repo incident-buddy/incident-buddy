@@ -12,6 +12,7 @@ if (!isTestEnv) {
     process.env.OTEL_EXPORTER_OTLP_ENDPOINT ?? "http://localhost:4318";
 
   sdk = new NodeSDK({
+    serviceName: process.env.OTEL_SERVICE_NAME ?? "incident-buddy",
     traceExporter: new OTLPTraceExporter({ url: `${endpoint}/v1/traces` }),
     metricReader: new PeriodicExportingMetricReader({
       exporter: new OTLPMetricExporter({ url: `${endpoint}/v1/metrics` }),

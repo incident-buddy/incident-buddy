@@ -26,7 +26,11 @@ export interface IncidentSlackPort {
    * @param incidentChannelId - メッセージに含めるインシデント対応チャンネルの ID
    * @returns 投稿したメッセージのタイムスタンプ
    */
-  postIncidentMessage(channelId: string, incident: Incident, incidentChannelId: string): Promise<{ ts: string }>;
+  postIncidentMessage(
+    channelId: string,
+    incident: Incident,
+    incidentChannelId: string,
+  ): Promise<{ ts: string }>;
 
   /**
    * インシデント対応チャンネルにウェルカムメッセージを投稿する
@@ -36,7 +40,26 @@ export interface IncidentSlackPort {
    * @param roles - ウェルカムメッセージに含めるロールボタンの定義
    * @returns 投稿したメッセージのタイムスタンプ
    */
-  postWelcomeMessage(channelId: string, incident: Incident, roles: RoleDef[]): Promise<{ ts: string }>;
+  postWelcomeMessage(
+    channelId: string,
+    incident: Incident,
+    roles: RoleDef[],
+  ): Promise<{ ts: string }>;
+
+	/**
+	 * TODO
+	 */
+	setTopic(
+    channelId: string,
+    incident: Incident,
+  ): Promise<void>;
+
+  /**
+   * インシデント宣言元チャンネルの Slack メッセージを最新状態に更新する
+   *
+   * @param incident - 更新に使用するインシデント情報
+   */
+  refreshIncidentMessage(incident: Incident): Promise<void>;
 
   /**
    * メンション対象ユーザーをチャンネルに招待し、招待通知を投稿する

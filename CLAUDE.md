@@ -12,6 +12,9 @@ mise run dc:up
 
 # devcontainer のシェルに入る
 mise run dc:shell
+
+# devcontainer の停止
+mise run dc:stop
 ```
 
 ### devcontainer内でコマンドを実行する正しいパターン
@@ -45,8 +48,8 @@ docker exec <container-name> bash -c 'cd /workspaces/incident-buddy && pnpm -F a
 
 ```bash
 # devcontainer外（ホスト）から実行する場合はmiseタスクを使う
-mise run test          # 全テスト
-mise run test:unit     # ユニットテストのみ
+mise run test:unit     # ユニットテストのみ（エミュレータ不要）
+mise run test          # 全テスト（事前に mise run dev:firestore でエミュレータ起動が必要）
 mise run lint
 mise run typecheck
 ```

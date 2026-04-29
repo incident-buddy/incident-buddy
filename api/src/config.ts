@@ -1,6 +1,6 @@
 import * as fs from "node:fs/promises";
 import { ResultAsync, ok, err } from "neverthrow";
-import type { AppError } from "./app-error.js";
+import { appError, type AppError } from "./app-error.js";
 import { requireEnv } from "./env.js";
 
 const CONFIG_PATH = requireEnv("INCIDENT_CONFIG_PATH");
@@ -90,10 +90,10 @@ type Section =
  */
 export function loadConfig(): ResultAsync<IncidentConfig, AppError> {
 	return ResultAsync
-		.fromPromise(fs.readFile(CONFIG_PATH, "utf8"), (err) => ({err}))
+		.fromPromise(fs.readFile(CONFIG_PATH, "utf8"), (_err) => (appError.config()))
 		.andThen((conf: string) => {
 			if (conf.trim().length > 0 && !KNOWN_SECTIONS.test(conf)) {
-				return err({ err: `invalid conf: ${conf}` });
+				return err(appError.config());
 			} else return ok(conf)
 		})
 		.map(parseIncidentConfig)

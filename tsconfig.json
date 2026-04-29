@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     // Environment Settings
-    "target": "es2022",
-    "lib": ["es2022"],
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "target": "es2024",
+    "lib": ["es2024"],
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "types": ["node"],
 
     // Other Outputs

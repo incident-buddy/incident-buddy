@@ -1,4 +1,3 @@
-import "./telemetry.js";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { requireEnv } from "./env.js";
@@ -6,6 +5,8 @@ import { boltApp, receiver } from "./slack/app.js";
 import { registerActionHandlers } from "./slack/handlers/actions.js";
 import { registerCommandHandlers } from "./slack/handlers/commands.js";
 import { registerEventHandlers } from "./slack/handlers/events.js";
+
+import "@src/lib/telemetry.js";
 
 // Bolt ハンドラーを登録
 registerCommandHandlers(boltApp);

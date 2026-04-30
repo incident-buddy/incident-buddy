@@ -5,9 +5,14 @@ import type {
   ServiceDef,
   SeverityCondition,
   SeverityDef,
-} from "./incident-config.model.js";
+} from "@src/domain/config/config.model";
 
-type Section = "severities" | "services" | "notification-rules" | "roles" | null;
+type Section =
+  | "severities"
+  | "services"
+  | "notification-rules"
+  | "roles"
+  | null;
 
 /**
  * `severity` フィールドの値文字列を `SeverityCondition` にパースする
@@ -150,7 +155,9 @@ export function parseIncidentConfig(content: string): IncidentConfig {
       !line.startsWith("#") &&
       !line.startsWith("- ") &&
       currentEntryLabel !== null &&
-      (currentSection === "severities" || currentSection === "services" || currentSection === "roles")
+      (currentSection === "severities" ||
+        currentSection === "services" ||
+        currentSection === "roles")
     ) {
       currentDescLines.push(line.trim());
     }

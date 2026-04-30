@@ -1,5 +1,5 @@
+import { parseIncidentConfig } from "@src/features/config/config.parser";
 import { describe, expect, it } from "vitest";
-import { parseIncidentConfig } from "./incident-config.parser.js";
 
 const FULL_CONFIG = `# Incident Config
 

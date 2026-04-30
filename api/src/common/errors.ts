@@ -21,8 +21,8 @@ export type AlreadyResolvedError = {
 };
 
 export type ConfigError = {
-	readonly type: "ConfigError";
-}
+  readonly type: "ConfigError";
+};
 
 export type AppError =
   | SlackApiError
@@ -50,7 +50,7 @@ export const Errors = {
   alreadyResolved: (): AlreadyResolvedError => ({
     type: "AlreadyResolvedError",
   }),
-	config: (): ConfigError => ({
+  config: (): ConfigError => ({
     type: "ConfigError",
   }),
 };

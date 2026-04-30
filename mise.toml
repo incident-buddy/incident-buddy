@@ -2,18 +2,6 @@
 node = "lts"
 pnpm = "latest"
 
-# ── devcontainer ──────────────────────────────────────────────
-[tasks."dc:up"]
-description = "devcontainer をビルド・起動する"
-run = "devcontainer up --workspace-folder ."
-
-[tasks."dc:shell"]
-description = "devcontainer のシェルに入る"
-run = "devcontainer exec --workspace-folder . bash"
-
-[tasks."dc:stop"]
-description = "devcontainer を停止する"
-run = "docker stop $(docker ps -qf 'name=vsc-incident-buddy')"
 
 # ── 開発サーバー ──────────────────────────────────────────────
 [tasks."dev:firestore"]
@@ -28,13 +16,7 @@ fi
 
 [tasks."dev:api"]
 description = "API サーバーを起動する (hot reload)"
-run = """
-if [ -f /.dockerenv ]; then
-  pnpm -F api dev
-else
-  devcontainer exec --workspace-folder . bash -c 'pnpm -F api dev'
-fi
-"""
+run = "pnpm -F api dev"
 
 [tasks."dev:ngrok"]
 description = "ngrok トンネルを起動する (PORT=8888)"
@@ -43,54 +25,24 @@ run = "ngrok http 8888"
 # ── コード品質 ─────────────────────────────────────────────────
 [tasks.lint]
 description = "Biome で lint チェック"
-run = """
-if [ -f /.dockerenv ]; then
-  pnpm lint
-else
-  devcontainer exec --workspace-folder . bash -c 'pnpm lint'
-fi
-"""
+run = "pnpm lint"
 
 [tasks."lint:fix"]
 description = "Biome で lint 自動修正"
-run = """
-if [ -f /.dockerenv ]; then
-  pnpm lint:fix
-else
-  devcontainer exec --workspace-folder . bash -c 'pnpm lint:fix'
-fi
-"""
+run = "pnpm lint:fix"
 
 [tasks.typecheck]
 description = "TypeScript 型チェック"
-run = """
-if [ -f /.dockerenv ]; then
-  pnpm typecheck
-else
-  devcontainer exec --workspace-folder . bash -c 'pnpm typecheck'
-fi
-"""
+run = "pnpm typecheck"
 
 # ── テスト ────────────────────────────────────────────────────
 [tasks."test:unit"]
-description = "ユニットテストを実行する (Firestoreエミュレータ不要)"
-run = """
-if [ -f /.dockerenv ]; then
-  pnpm -F api exec vitest run --config vitest.unit.config.ts
-else
-  devcontainer exec --workspace-folder . bash -c 'pnpm -F api exec vitest run --config vitest.unit.config.ts'
-fi
-"""
+description = "ユニットテストを実行する"
+run = "pnpm -F api exec vitest run --config vitest.unit.config.ts"
 
 [tasks.test]
 description = "全テストを実行する (Firestoreエミュレータ必須)"
-run = """
-if [ -f /.dockerenv ]; then
-  pnpm -F api test
-else
-  devcontainer exec --workspace-folder . bash -c 'pnpm -F api test'
-fi
-"""
+run = "pnpm -F api test"
 
 # ── 動作確認 ──────────────────────────────────────────────────
 [tasks.health]

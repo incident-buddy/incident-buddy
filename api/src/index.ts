@@ -1,24 +1,19 @@
 import { serve } from "@hono/node-server";
+import { App } from "@slack/bolt";
+import { requireEnv } from "@src/env";
 import { Hono } from "hono";
-import { requireEnv } from "./env.js";
-import { boltApp, receiver } from "./slack/app.js";
-import { registerActionHandlers } from "./slack/handlers/actions.js";
-import { registerCommandHandlers } from "./slack/handlers/commands.js";
-import { registerEventHandlers } from "./slack/handlers/events.js";
-
 import "@src/lib/telemetry.js";
-
-// Bolt ハンドラーを登録
-registerCommandHandlers(boltApp);
-registerEventHandlers(boltApp);
-registerActionHandlers(boltApp);
-
-export const app = new Hono();
+import { HonoReceiver } from "@src/adapter/hono-receiver";
+import { registerHandlers } from "@src/adapter/slack-handler";
 
 // Slack エンドポイントを HonoReceiver 経由で Bolt に委譲
-receiver.registerRoutes(app);
+const receiver = new HonoReceiver(requireEnv("SLACK_SIGNING_SECRET"));
+registerHandlers(new App({ token: requireEnv("SLACK_BOT_TOKEN"), receiver }));
 
+export const app = new Hono();
 app.get("/health", (c) => c.json({ status: "ok" }));
+
+receiver.registerRoutes(app);
 
 // テスト実行時はサーバーを起動しない
 if (!process.env.VITEST) {

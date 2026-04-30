@@ -1,13 +1,13 @@
 export interface SlackClient {
-	createChannel(input: CreateChannelInput): PromiseLike<CreateChannelOutput>;
-	postMessage(input: PostMessageInput): PromiseLike<PostMessageOutput>;
-	setTopic(input: SetTopicInput): PromiseLike<SetTopicOutput>;
-	inviteMember(input: InviteMemberInput): PromiseLike<InviteMemberOutput>;
+  createChannel(input: CreateChannelInput): PromiseLike<CreateChannelOutput>;
+  postMessage(input: PostMessageInput): PromiseLike<PostMessageOutput>;
+  setTopic(input: SetTopicInput): PromiseLike<SetTopicOutput>;
+  inviteMember(input: InviteMemberInput): PromiseLike<InviteMemberOutput>;
 }
 
 type CreateChannelInput = {};
 type CreateChannelOutput = {
-	channelId: string;
+  channelId: string;
 };
 
 type PostMessageInput = {};

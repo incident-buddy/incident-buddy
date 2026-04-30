@@ -67,7 +67,6 @@ export type ConfigLoadResult =
   | { type: "ok"; config: IncidentConfig }
   | { type: "error"; message: string };
 
-
 type Section =
   | "severities"
   | "services"

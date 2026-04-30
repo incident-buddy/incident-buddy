@@ -2,11 +2,13 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "composite": true,
-    "baseUrl": ".",
     "jsxImportSource": "hono/jsx",
     "outDir": "./dist",
     "noEmit": false,
-    "allowImportingTsExtensions": false
+    "allowImportingTsExtensions": true,
+		"paths": {
+			"@src/*": ["src/*"]
+		}
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

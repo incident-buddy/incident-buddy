@@ -24,29 +24,6 @@
 - `channel_id` が取得できない場合:
   - エラー投稿は行わず、`console.error` でログのみ
 
-## 実装方針
-
-### 変更対象コンポーネント
-
-- `api/src/slack/handlers/commands.ts` — `/inc` ハンドラーに try-catch を追加
-- `api/src/slack/handlers/actions.ts` — `create_incident` ハンドラーに try-catch を追加
-
-### 技術的アプローチ
-
-1. 共通エラー投稿ユーティリティ関数を `api/src/slack/handlers/post-error.ts` に作成する:
-   ```typescript
-   async function postError(client, channelId, error): Promise<void>
-   ```
-2. 各ハンドラーで `ack()` 以降のロジックを try-catch で囲み、catch ブロックで `postError` を呼ぶ
-3. channel_id の取得元:
-   - `commands.ts`: `body.channel_id`
-   - `actions.ts`: `JSON.parse(view.private_metadata).channel_id`（すでに取得済み）
-4. エラーメッセージ形式:
-   ```
-   コマンドの実行に失敗しました
-   エラー: {error.message}
-   ```
-
 ## 受け入れ条件
 
 - [ ] `/inc` コマンドハンドラーで例外が発生したとき、コマンドを実行したチャンネルにエラーメッセージが公開投稿される

@@ -25,23 +25,6 @@
 - `serviceName` が空文字の場合はサービス名フィールドを表示しない（または空白のままにする）
 - `description` が空文字の場合は説明フィールドを表示しない
 
-## 実装方針
-
-### 変更対象コンポーネント
-
-1. **`features/incident/incident.presenter.ts`**
-   - `buildChannelWelcomeMessage(incident: Incident)` を追加
-   - title / severity / serviceName / description / createdByName を含む Slack ブロックを返す純粋関数
-
-2. **`slack/handlers/actions.ts`**
-   - `inviteToChannel` の後（または config ブロックの前）に `buildChannelWelcomeMessage` を呼び、`chat.postMessage` でインシデントチャンネルへ投稿
-
-### 技術的アプローチ
-
-- `buildChannelWelcomeMessage` は `buildIncidentMessage` と異なる用途（インシデントチャンネル内の詳細掲示用）のため別関数として実装する
-- 投稿タイミング: `inviteToChannel` 呼び出し後に投稿する（招待されたユーザーがチャンネルに入ったときに既にメッセージが見える状態にする）
-- ウェルカムメッセージはコンフィグの有無に依存しないため、`if (!configPath) return` の前に配置する
-
 ## 受け入れ条件
 
 - [ ] インシデント宣言後、インシデントチャンネルにウェルカムメッセージが投稿される

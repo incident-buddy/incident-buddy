@@ -4,6 +4,7 @@
 
 - インシデント宣言者が `/inc` コマンドでインシデントを起票したとき、システムが自動生成するインシデント専用 Slack チャンネルの ID を Firestore の `incidents` ドキュメントに保存したい
 - これにより、後続機能（チャンネルへのメッセージ投稿・更新・join コマンドなど）がチャンネル ID を参照できるようになる
+- ローカル環境では、Firestore Emulatorを用いる
 
 ## 機能仕様
 
@@ -17,22 +18,6 @@
 
 - チャンネル作成失敗時はエラーを上位に伝播し、既存の `postError` ハンドラーが処理する（変更なし）
 - `updateIncidentChannelId` 失敗時はエラーを上位に伝播する
-
-## 実装方針
-
-### 変更対象コンポーネント
-
-1. **`features/incident/incident.model.ts`**
-   - `Incident` 型に `incidentChannelId: string` を追加
-
-2. **`db/types.ts`**
-   - `IncidentDoc` 型に `incidentChannelId: string` を追加
-
-3. **`features/incident/incident.repository.ts`**
-   - `updateIncidentChannelId(id: string, channelId: string): Promise<void>` を追加
-
-4. **`slack/handlers/actions.ts`**
-   - `createIncidentChannel()` 呼び出し直後に `incidentRepository.updateIncidentChannelId(incident.id, incidentChannel.id)` を呼ぶ
 
 ### 技術的アプローチ
 

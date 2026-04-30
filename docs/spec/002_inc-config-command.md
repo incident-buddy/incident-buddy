@@ -69,43 +69,6 @@ Please check the file and fix the issue.
 
 条件なし（`(no condition)`）として表示する。
 
-## 実装方針
-
-### 変更対象コンポーネント
-
-| ファイル | 変更種別 | 内容 |
-|---|---|---|
-| `api/src/features/incident-config/incident-config.service.ts` | 修正 | `loadConfig` の戻り値を Result 型に変更 |
-| `api/src/features/incident-config/incident-config.model.ts` | 修正 | `ConfigLoadResult` 型を追加 |
-| `api/src/features/incident-config/incident-config.presenter.ts` | 新規 | `buildConfigMessage(result, configPath)` — 純粋関数 |
-| `api/src/features/incident-config/incident-config.presenter.test.ts` | 新規 | presenter のユニットテスト |
-| `api/src/slack/handlers/commands.ts` | 修正 | `body.text === "config"` 判定と `chat.postEphemeral` 呼び出し |
-| `api/src/slack/handlers/actions.ts` | 修正 | `loadConfig` の戻り値変更に追従 |
-| `api/src/test/e2e/commands.test.ts` | 修正 | `/inc config` の E2E テスト追加 |
-
-### `loadConfig` の戻り値変更
-
-現在: `IncidentConfig | null`
-
-変更後:
-```typescript
-type ConfigLoadResult =
-  | { type: "ok"; config: IncidentConfig }
-  | { type: "error"; message: string }
-  // INCIDENT_CONFIG_PATH 未設定時は呼び出し元で null を渡さず分岐
-```
-
-`INCIDENT_CONFIG_PATH` が未設定の場合は呼び出し元が `loadConfig` を呼ばない（現行と同様）。
-
-### 技術的アプローチ
-
-- `commands.ts` の `/inc` ハンドラー内で `body.text === "config"` をチェック。該当時は `chat.postEphemeral` を呼び出す
-- `buildConfigMessage(result: ConfigLoadResult | null, configPath: string | undefined): string` を presenter として実装（`@slack/bolt` 型に依存しない純粋関数）
-  - `result === null`（configPath 未設定）→ デフォルト表示
-  - `result.type === "error"` → エラー表示
-  - `result.type === "ok"` → 全設定表示
-- `actions.ts` は `result.type === "ok"` のときだけ `matchRules` を呼ぶよう修正
-
 ### メッセージフォーマット詳細
 
 - conditions の表示: `severity==P1` / `service=payments` / `severity>=P2 & service=auth`

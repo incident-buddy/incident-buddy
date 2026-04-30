@@ -25,22 +25,6 @@
 - `refreshIncidentSlackMessage`（`#incidents` 更新）失敗時はログのみで処理継続（アサイン自体は成功扱い）
 - チャンネルへの通知投稿（`chat.postMessage`）失敗時はログのみで処理継続
 
-## 実装方針
-
-### 変更対象コンポーネント
-
-| ファイル | 変更内容 |
-|--------|--------|
-| `features/incident-config/incident-config.model.ts` | `RoleDef { id, label, description }` 型追加、`IncidentConfig` に `roles: RoleDef[]` 追加 |
-| `features/incident-config/incident-config.parser.ts` | `## Roles` セクションのパース追加（`### {role-id}` 形式） |
-| `features/incident-config/incident-config.service.ts` | `loadConfig` の `KNOWN_SECTIONS` 正規表現に `Roles` を追加 |
-| `features/incident/incident.model.ts` | `Responder { roleId, userId, userName }` 型追加、`responderIds: string[]` → `responders: Responder[]` 変更 |
-| `db/types.ts` | `IncidentDoc` の `responderIds` → `responders`、`welcomeMessageTs?: string` 追加 |
-| `features/incident/incident.repository.ts` | `toDomain()` 更新、`addResponder()` / `findByChannelId()` / `updateWelcomeMessageTs()` 追加 |
-| `features/incident/incident.service.ts` | `findById()` と `addResponder()` 追加（timeline 書き込みも実施） |
-| `features/incident/incident.presenter.ts` | `buildChannelWelcomeMessage(incident, roles)` にロールボタン＋担当者一覧を追加 |
-| `slack/handlers/actions.ts` | `refreshIncidentSlackMessage` を `incidentService.findById()` に変更、welcome message ts 保存、`assign_role_{roleId}` ハンドラー追加 |
-
 ### 技術的アプローチ
 
 **ロール設定ファイル形式**:
@@ -48,36 +32,16 @@
 ## Roles
 
 ### commander
-コマンダー。インシデント全体を指揮する。
+インシデントコマンダー
+インシデント全体を指揮する。
 
 ### investigator
-調査担当。原因究明を担当する。
+調査担当者
+原因究明を担当する。
 ```
 
 - `### {role-id}` 形式（ケバブケース）で定義。既存の parser パターンと一致する
-- `id` は H3 見出しから取得、`label` は description 1 行目の `。` 前を使う（または id をそのまま使う）
-
-**ウェルカムメッセージ更新のための ts 保存**:
-- `actions.ts` の `create_incident` ハンドラーで `welcomeResult.ts` を `incidentRepository.updateWelcomeMessageTs()` で保存
-
-**インシデントのルックアップ**:
-- アクションハンドラーは `body.channel.id`（インシデントチャンネル ID）から `incidentRepository.findByChannelId()` でインシデントを取得
-
-**アーキテクチャ修正**:
-- `refreshIncidentSlackMessage` 内の `incidentRepository.findById()` を `incidentService.findById()` に変更し、`actions.ts` から `incidentRepository` の直接参照をなくす
-
-### アクションハンドラーのフロー（`assign_role_{roleId}`）
-
-```
-1. ack()
-2. body.channel.id → incidentRepository.findByChannelId() → incident
-3. incident.responders で重複チェック → 同一 userId + roleId が既存なら ephemeral で返す
-4. incidentService.addResponder(incidentId, roleId, userId, userName) → responders 更新 + timeline 記録
-5. ロール config を loadConfig() で取得し、buildChannelWelcomeMessage(updatedIncident, roles) でウェルカムメッセージを再構築
-6. chat.update(welcomeMessageTs) → 失敗時は throw → postError
-7. refreshIncidentSlackMessage() → 失敗時はログのみ（try-catch 内部完結）
-8. chat.postMessage("@userName が [ロール名] になりました") → 失敗時はログのみ
-```
+- `id` は H3 見出しから取得、`label` は description 1 行目を使う（descriptionが存在しなければ id をそのまま使う）
 
 ## 受け入れ条件
 

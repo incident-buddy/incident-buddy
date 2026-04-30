@@ -27,33 +27,6 @@
 - **招待対象ゼロ**: 通知ルールにマッチしない、またはすべてのメンションが `@here`/`@channel` の場合は招待処理をスキップ
 - **通知ルール未設定**: `INCIDENT_CONFIG_PATH` 未設定またはルールがマッチしない場合はチャンネルのみ作成し招待なし
 
-## 実装方針
-
-### 変更対象コンポーネント
-
-- **`slack/handlers/incident-channel.ts`**（新規）
-  - `buildChannelName(date: Date, seq: number): string` — `inc-YYYYMMDD-NNN` 生成（純粋関数）
-  - `createIncidentChannel(client, date): Promise<{id: string, name: string}>` — 連番リトライ付きチャンネル作成
-  - `resolveInvitees(client, mentions: string[]): Promise<string[]>` — メンション文字列をユーザーIDリストに変換
-  - `inviteToChannel(client, channelId, userIds: string[]): Promise<void>` — チャンネル招待（失敗は握り潰しログ）
-
-- **`slack/handlers/actions.ts`**（変更）
-  - `incidentService.create` の後に `createIncidentChannel` → `resolveInvitees` → `inviteToChannel` を呼ぶ
-  - `buildIncidentMessage` に `incidentChannelId` を渡す
-  - 通知ルールの `postMessage` テキストにチャンネルリンクを追記
-
-- **`features/incident/incident.presenter.ts`**（変更）
-  - `buildIncidentMessage(incident, options?: { incidentChannelId?: string })` にオプションを追加
-  - `incidentChannelId` が渡された場合、メッセージに `対応チャンネル: <#C...>` を追記
-
-### 技術的アプローチ
-
-- チャンネル作成・招待ロジックはすべて `slack/handlers/` に閉じ込める（Slack SDK 依存を features/ に持ち込まない）
-- `resolveInvitees` は mentions 文字列のプレフィックスで振る舞いを分岐
-  - `@U`, `@W` → `@` を除いた文字列をユーザーIDとして使用
-  - `@S` → `@` を除いた文字列をグループIDとして `usergroups.users.list` を呼ぶ
-  - `@here`, `@channel` → スキップ
-
 ## 受け入れ条件
 
 - [ ] インシデント宣言時、`inc-YYYYMMDD-NNN` 形式のパブリックチャンネルが作成される

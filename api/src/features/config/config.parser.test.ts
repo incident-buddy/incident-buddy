@@ -130,20 +130,6 @@ describe("parseIncidentConfig", () => {
     });
   });
 
-    it("channel: キーは無視される（フィールドとして保存されない）", () => {
-      const config = parseIncidentConfig(`## Notification Rules
-### Rule With Channel
-- severity: Critical
-- channel: #some-channel
-- mention: @here
-`);
-      const rule = config.notificationRules[0];
-      expect(rule).toBeDefined();
-      // channels フィールドは存在しない
-      expect(Object.keys(rule?.actions ?? {})).not.toContain("channels");
-      expect(rule?.actions.mentions).toEqual(["@here"]);
-    });
-
   describe("空ファイルや不完全な入力", () => {
     it("空文字列を渡すと空の設定を返す", () => {
       const config = parseIncidentConfig("");

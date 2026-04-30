@@ -66,3 +66,11 @@ export type IncidentConfig = {
 export type ConfigLoadResult =
   | { type: "ok"; config: IncidentConfig }
   | { type: "error"; message: string };
+
+
+type Section =
+  | "severities"
+  | "services"
+  | "notification-rules"
+  | "roles"
+  | null;

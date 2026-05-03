@@ -6,7 +6,22 @@
     "typecheck": "pnpm -F api typecheck",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "cc-sdd:full": "takt --pipeline --skip-git -w cc-sdd-full -t",
+    "cc-sdd:requirements": "takt --pipeline --skip-git -w cc-sdd-requirements -t",
+    "cc-sdd:validate-gap": "takt --pipeline --skip-git -w cc-sdd-validate-gap -t",
+    "cc-sdd:design": "takt --pipeline --skip-git -w cc-sdd-design -t",
+    "cc-sdd:validate-design": "takt --pipeline --skip-git -w cc-sdd-validate-design -t",
+    "cc-sdd:tasks": "takt --pipeline --skip-git -w cc-sdd-tasks -t",
+    "cc-sdd:impl": "takt --pipeline --skip-git -w cc-sdd-impl -t",
+    "cc-sdd:validate-impl": "takt --pipeline --skip-git -w cc-sdd-validate-impl -t",
+    "cc-sdd:steering": "takt --pipeline --skip-git -w cc-sdd-steering -t",
+    "cc-sdd:steering-custom": "takt --pipeline --skip-git -w cc-sdd-steering-custom -t",
+    "opsx:full": "takt --pipeline --skip-git -w opsx-full -t",
+    "opsx:propose": "takt --pipeline --skip-git -w opsx-propose -t",
+    "opsx:apply": "takt --pipeline --skip-git -w opsx-apply -t",
+    "opsx:archive": "takt --pipeline --skip-git -w opsx-archive -t",
+    "opsx:explore": "takt --skip-git -w opsx-explore"
   },
   "engines": {
     "pnpm": "10.17.1",
@@ -15,6 +30,7 @@
   "packageManager": "pnpm@10.17.1",
   "devDependencies": {
     "@biomejs/biome": "^2.4.8",
-    "@types/node": "^24.0.0"
+    "@types/node": "^24.0.0",
+    "takt": "^0.38.0"
   }
 }

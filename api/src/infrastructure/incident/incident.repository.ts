@@ -1,6 +1,6 @@
-import type { Incident } from "@src/domain/incident/incident.model.js";
-import type { IncidentRepository } from "@src/domain/incident/incident.repository.js";
-import { db, fromTimestamps, toTimestamps } from "@src/lib/firestore.js";
+import type { Incident } from "@src/domain/incident/incident.model";
+import type { IncidentRepository } from "@src/domain/incident/incident.repository";
+import { db, fromTimestamps, toTimestamps } from "@src/lib/firestore";
 import { withSpan } from "@src/lib/telemetry.js";
 import type { CollectionReference } from "firebase-admin/firestore";
 

@@ -1,0 +1,183 @@
+import { readFile } from "node:fs/promises";
+import type {
+  IncidentConfig,
+  NotificationRule,
+  RoleDef,
+  ServiceDef,
+  SeverityCondition,
+  SeverityDef,
+} from "@src/domain/config/config.model";
+
+type Section =
+  | "severities"
+  | "services"
+  | "notification-rules"
+  | "roles"
+  | null;
+
+/**
+ * 指定パスの Markdown 設定ファイルを読み込んで `IncidentConfig` を返す
+ *
+ * @param path - 設定ファイルのパス（省略時は `DefaultConfigPath`）
+ * @returns パース済みの `IncidentConfig`
+ * @throws ファイルが存在しない、または読み取り権限がない場合に Node.js の `ENOENT` / `EACCES` エラーをスロー
+ */
+export async function loadConfig(path: string): Promise<IncidentConfig> {
+  const file = await readFile(path, "utf8");
+  return parseConfig(file);
+}
+
+/**
+ * Markdown 形式の設定ファイルのテキストをパースして `IncidentConfig` を返す
+ *
+ * @description `## Severities` / `## Services` / `## Notification Rules` / `## Roles`
+ * の H2 見出しをセクション区切りとして認識し、H3 (`###`) をエントリ、
+ * `- key: value` 形式のリストを通知ルールのフィールドとして解釈する。
+ * 認識できないセクションは無視される。
+ * @param content - 設定ファイルの全テキスト（`fs.readFileSync` の戻り値など）
+ * @returns パース済みの `IncidentConfig`
+ */
+export function parseConfig(content: string): IncidentConfig {
+  const lines = content.split("\n");
+
+  const severities: SeverityDef[] = [];
+  const services: ServiceDef[] = [];
+  const notificationRules: NotificationRule[] = [];
+  const roles: RoleDef[] = [];
+
+  let currentSection: Section = null;
+  let currentEntryLabel: string | null = null;
+  let currentDescLines: string[] = [];
+
+  function flushEntry() {
+    if (currentEntryLabel === null) return;
+    const description = currentDescLines.join("\n").trim();
+
+    if (currentSection === "severities") {
+      severities.push({ label: currentEntryLabel, description });
+    } else if (currentSection === "services") {
+      services.push({ label: currentEntryLabel, description });
+    } else if (currentSection === "roles") {
+      // label は description の最初の「。」前のテキスト、なければ id をそのまま使う
+      const labelMatch = description.match(/^([^。]+)/);
+      const label = labelMatch?.[1]?.trim() ?? currentEntryLabel;
+      roles.push({ id: currentEntryLabel, label, description });
+    }
+    // notification-rules entries are flushed via flushRule
+    currentEntryLabel = null;
+    currentDescLines = [];
+  }
+
+  // Current rule being built
+  let currentRule: NotificationRule | null = null;
+
+  function flushRule() {
+    if (currentRule) {
+      notificationRules.push(currentRule);
+      currentRule = null;
+    }
+  }
+
+  for (const rawLine of lines) {
+    const line = rawLine.trimEnd();
+
+    // H1 - skip
+    if (line.startsWith("# ") && !line.startsWith("## ")) {
+      continue;
+    }
+
+    // H2 - section switch
+    if (line.startsWith("## ")) {
+      flushEntry();
+      flushRule();
+      const sectionName = line.slice(3).trim().toLowerCase();
+      if (sectionName === "severities") {
+        currentSection = "severities";
+      } else if (sectionName === "services") {
+        currentSection = "services";
+      } else if (sectionName === "notification rules") {
+        currentSection = "notification-rules";
+      } else if (sectionName === "roles") {
+        currentSection = "roles";
+      } else {
+        currentSection = null;
+      }
+      continue;
+    }
+
+    // H3 - entry start
+    if (line.startsWith("### ")) {
+      flushEntry();
+      flushRule();
+      const label = line.slice(4).trim();
+      currentEntryLabel = label;
+      currentDescLines = [];
+      if (currentSection === "notification-rules") {
+        currentRule = {
+          name: label,
+          conditions: {},
+          actions: { mentions: [] },
+        };
+      }
+      continue;
+    }
+
+    // List item - key: value
+    if (
+      line.startsWith("- ") &&
+      currentSection === "notification-rules" &&
+      currentRule
+    ) {
+      const item = line.slice(2).trim();
+      const colonIdx = item.indexOf(":");
+      if (colonIdx === -1) continue;
+      const key = item.slice(0, colonIdx).trim();
+      const value = item.slice(colonIdx + 1).trim();
+
+      if (key === "severity") {
+        currentRule.conditions.severity = parseSeverityCondition(value);
+      } else if (key === "service") {
+        currentRule.conditions.service = value;
+      } else if (key === "mention") {
+        const mentions = value.split(/\s+/).filter(Boolean);
+        currentRule.actions.mentions.push(...mentions);
+      }
+      continue;
+    }
+
+    // Description line (non-empty, non-heading, non-list)
+    if (
+      line.trim() !== "" &&
+      !line.startsWith("#") &&
+      !line.startsWith("- ") &&
+      currentEntryLabel !== null &&
+      (currentSection === "severities" ||
+        currentSection === "services" ||
+        currentSection === "roles")
+    ) {
+      currentDescLines.push(line.trim());
+    }
+  }
+
+  flushEntry();
+  flushRule();
+
+  return { severities, services, notificationRules, roles };
+}
+
+/**
+ * `severity` フィールドの値文字列を `SeverityCondition` にパースする
+ *
+ * @param value - 例: `">= High"`, `"<= Low"`, `"Critical"`
+ * @returns パース済みの `SeverityCondition`
+ */
+function parseSeverityCondition(value: string): SeverityCondition {
+  const trimmed = value.trim();
+  if (trimmed.startsWith(">=")) {
+    return { op: ">=", label: trimmed.slice(2).trim() };
+  }
+  if (trimmed.startsWith("<=")) {
+    return { op: "<=", label: trimmed.slice(2).trim() };
+  }
+  return { op: "==", label: trimmed };
+}
